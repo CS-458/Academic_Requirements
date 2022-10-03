@@ -3,10 +3,12 @@
 # Install Pre-Commit
 
 Install pip from command line using the following commands:
+
 ```
 curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
 python get-pip.py
 ```
+
 Close and reopen command line. Check that pip is found using `pip --version` You may need to add the python Scripts folder to your path if pip is not found.
 Install pre-commit using the following command:
 `pip install pre-commit`
