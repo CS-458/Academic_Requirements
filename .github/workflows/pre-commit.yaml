@@ -28,6 +28,6 @@ jobs:
         shell: bash
       - name: push changes
         if: steps.commit.outputs.push == 'true'
-        uses: ad-m/github-push-action@${{github.ref}}
+        uses: ad-m/github-push-action@GITHUB_REF
         with:
           github_token: ${{ secrets.GITHUB_TOKEN}}
