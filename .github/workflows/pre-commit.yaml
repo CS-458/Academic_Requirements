@@ -30,5 +30,5 @@ jobs:
         if: steps.commit.outputs.push == 'true'
         uses: ad-m/github-push-action@master
         with:
-          branch: ${{ github.ref }}
+          branch: ${{ github.head.ref }}
           github_token: ${{ secrets.GITHUB_TOKEN}}
