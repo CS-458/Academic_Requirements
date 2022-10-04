@@ -16,6 +16,7 @@ jobs:
       - name: commit changes
         id : commit
         run: |
+          git pull
           git config --local user.email "action@github.com"
           git config --local user.name "github-actions"
           git add --all
