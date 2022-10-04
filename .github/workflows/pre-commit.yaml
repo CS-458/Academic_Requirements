@@ -16,7 +16,7 @@ jobs:
       - name: commit changes
         id : commit
         run: |
-          git pull --rebase origin "${GITHUB_REF}"
+          git pull ${{ github.head_ref }}
           git config --local user.email "action@github.com"
           git config --local user.name "github-actions"
           git add --all
