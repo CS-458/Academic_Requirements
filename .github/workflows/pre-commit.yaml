@@ -16,8 +16,6 @@ jobs:
       - name: commit changes
         id : commit
         run: |
-          git config pull.rebase true
-          git pull origin ${{ github.head_ref }}
           git config --local user.email "action@github.com"
           git config --local user.name "github-actions"
           git add --all
@@ -27,6 +25,8 @@ jobs:
             git commit -m "Add changes" -a
             echo "::set-output name=push::true"
           fi
+          git config pull.rebase false
+          git pull origin ${{ github.head_ref }}
         shell: bash
       - name: push changes
         if: steps.commit.outputs.push == 'true'
