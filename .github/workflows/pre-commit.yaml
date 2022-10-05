@@ -25,8 +25,7 @@ jobs:
             git commit -m "Add changes" -a
             echo "::set-output name=push::true"
           fi
-          git config pull.rebase false
-          git pull origin ${{ github.head_ref }}
+          git pull origin ${{ github.head_ref }} --allow-unrelated-histories
         shell: bash
       - name: push changes
         if: steps.commit.outputs.push == 'true'
