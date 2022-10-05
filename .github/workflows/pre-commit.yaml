@@ -18,8 +18,11 @@ jobs:
         run: |
           git config pull.rebase false
           git pull origin ${{ github.head_ref }} --allow-unrelated-histories
+          echo "Pulled updates"
           git config --local user.email "action@github.com"
+          echo "set email"
           git config --local user.name "github-actions"
+          echo "set name"
           git add --all
           if [-z "$(git status --porcelain)"]; then
              echo "::set-output name=push::false"
