@@ -16,7 +16,7 @@ jobs:
       - name: commit changes
         id : commit
         run: |
-          git config pull.rebase true
+          git config pull.rebase false
           git pull origin ${{ github.head_ref }} --allow-unrelated-histories
           git config --local user.email "action@github.com"
           git config --local user.name "github-actions"
