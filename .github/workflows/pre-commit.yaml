@@ -16,7 +16,7 @@ jobs:
       - name: commit changes
         id : commit
         run: |
-          git config pull.rebase false
+          git config pull.rebase true
           git pull origin ${{ github.head_ref }}
           git config --local user.email "action@github.com"
           git config --local user.name "github-actions"
