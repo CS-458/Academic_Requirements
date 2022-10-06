@@ -29,7 +29,6 @@ jobs:
         shell: bash
       - name: pull changes
         run: |
-          git config pull.rebase false
           git pull origin ${{ github.head_ref }} --allow-unrelated-histories
           git push -f origin ${{github.head_ref}}
       - name: push changes
