@@ -16,20 +16,7 @@ jobs:
       - name: commit changes
         id : commit
         run: |
-          # git config pull.rebase false
-          # git pull origin ${{ github.head_ref }} --allow-unrelated-histories
-          # echo "Pulled updates"
-          # git config --local user.email "action@github.com"
-          # echo "set email"
-          # git config --local user.name "github-actions"
-          # echo "set name"
-          # git add --all
-          # if [-z "$(git status --porcelain)"]; then
-          #    echo "::set-output name=push::false"
-          # else
-          #   git commit -m "Add changes" -a
-          #   echo "::set-output name=push::true"
-          # fi
+
           git config --local user.email "action@github.com"
           git config --local user.name "github-actions"
           git add --all
@@ -40,6 +27,10 @@ jobs:
             echo "::set-output name=push::true"
           fi
         shell: bash
+      - name: pull changes
+        run: |
+          git config pull.rebase false
+          git pull origin ${{ github.head_ref }} --allow-unrelated-histories
       - name: push changes
         if: steps.commit.outputs.push == 'true'
         uses: ad-m/github-push-action@master
