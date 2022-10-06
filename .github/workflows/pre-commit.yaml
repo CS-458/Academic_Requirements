@@ -29,9 +29,9 @@ jobs:
         shell: bash
       - name: pull changes
         run: |
-          #git config pull.rebase false
-          #git pull origin ${{ github.head_ref }} --allow-unrelated-histories
-          git checkout --ours ${{github.head_ref}}
+          git config pull.rebase false
+          git pull origin ${{ github.head_ref }} --allow-unrelated-histories
+          git push origin ${{github.head_ref}}
       - name: push changes
         if: steps.commit.outputs.push == 'true'
         uses: ad-m/github-push-action@master
