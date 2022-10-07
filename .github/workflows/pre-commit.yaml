@@ -16,7 +16,7 @@ jobs:
       - name: commit changes
         id : commit
         run: |
-
+          git pull origin ${{ github.head_ref }} --allow-unrelated-histories --rebase
           git config --local user.email "action@github.com"
           git config --local user.name "github-actions"
           git add --all
@@ -29,7 +29,6 @@ jobs:
         shell: bash
       - name: pull changes
         run: |
-          git pull origin ${{ github.head_ref }} --allow-unrelated-histories --rebase
           git push -f origin ${{github.head_ref}}
       - name: push changes
         if: steps.commit.outputs.push == 'true'
