@@ -2,22 +2,60 @@
   text-align: center;
 }
 
+.screen{
+  height:100%;
+  width: 100%;
+}
+
 .column {
   float: left;
   width: 33.33%;
 }
 
-.buttoncolumn {
-  float:left;
-  width:33.33%;
+.row {
+  height:40%;
 }
 
-.row {
+.row2 {
   height:50%;
+  position:absolute;
+  bottom: 0px;
+  width: 100%;
 }
+
+.column2 {
+  float: left;
+  width: 33.33%;
+  align-items: center;
+  height:100%;
+}
+
 /* Clear floats after the columns */
 .row:after {
   content: "";
   display: table;
   clear: both;
+}
+
+button {
+  background-color: #004990;
+  color: white;
+  text-align: center;
+  font-size: 24px;
+  padding:10px;
+  border-radius: 15px;
+}
+
+table{
+  background-color:#004990;
+  color:white;
+  border-radius: 5px;
+  padding-left:20%;
+  padding-right:20%;
+  padding-bottom:20%;
+  height:100%;
+  width: 100%;
+}
+body {
+  font-family:Verdana, Geneva, Tahoma, sans-serif;
 }
