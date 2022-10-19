@@ -53,7 +53,7 @@ function App() {
     // TODO update list of courses based on the selected course acronym and number
     /*TODO Double check that a selected number is reset to null when you select a new course*/
   }
-  
+
   function processCompletedCourse() {
     /*Check that both dropdowns are filled out*/
     if (selectedNumber != null && selectedAcronym != null) {
@@ -142,7 +142,9 @@ function App() {
             <button onClick={importSchedule}>Import Schedule</button>
           </div>
           <div className="column2">
-            <button onClick={generateScheduleButton}>Generate My Schedule</button>
+            <button onClick={generateScheduleButton}>
+              Generate My Schedule
+            </button>
           </div>
           <div className="column2">
             <center>
