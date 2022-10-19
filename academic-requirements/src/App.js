@@ -8,8 +8,8 @@ import concentrations from './mockDataLists/concentrations.tsx';
 import courseSubjectAcronym from './mockDataLists/courseSubjectAcronym.tsx';
 import courseNumber from './mockDataLists/courseNumber.tsx';
 
+var completedClasses = [];
 function App() {
-
   /*
    General variables
   */
@@ -51,7 +51,24 @@ function App() {
     // TODO update list of courses based on the selected course acronym and number
 
   }
-
+  function processCompletedCourse() {
+    /*Check that both dropdowns are filled out*/
+    if (selectedNumber != null && selectedAcronym != null) {
+      /*Add the course to the completed course list*/
+      var arrayLength = completedClasses.push(selectedAcronym + "-" + selectedNumber);
+      /*Output the course into the completed course list*/
+      if (arrayLength >= 10) {
+        var row = document.getElementById("completedCourseTable").rows[
+          (arrayLength % 10) + 1
+        ];
+      } else {
+        var row = document.getElementById("completedCourseTable").insertRow();
+      }
+      row.insertCell().innerHTML = selectedAcronym+"-"+selectedNumber;
+    } else {
+      /* TODO alert the user that they need to enter a complete, valid, course*/
+    }
+  }
   return (
     <div className="App">
       <header className="Four-Year-Plan">
@@ -77,7 +94,7 @@ function App() {
               thin={false}
             />
           </div>
-          <div className="thinColumn" >
+          <div className="column">
             <SearchableDropdown 
               options={courseSubjectAcronym} 
               label="Course Subject"
@@ -85,7 +102,7 @@ function App() {
               showDropdown={true}
               thin={true}
             />
-            <div className="thinColumn" >
+            <div className="column" >
               <SearchableDropdown 
                 options={courseNumber} 
                 label="Course Number"
@@ -96,27 +113,25 @@ function App() {
             </div>
           </div>
         </div>
-        <div className="row2">
-          <div className="column2"><button>Import Schedule</button></div>
-          <div className="column2"><button>Generate My Schedule</button></div>
-          <div className="column2">
-            <center><table>
-              <tr><th><h2>Completed Courses</h2></th></tr>
-              <tr><th>-</th></tr>
-              <tr><th>-</th></tr>
-              <tr><th>A random long string of text for testing purposes</th></tr>
-              <tr><th>-</th></tr>
-              <tr><th>-</th></tr>
-              <tr><th>-</th></tr>
-              <tr><th>-</th></tr>
-              <tr><th>-</th></tr>
-              <tr><th>-</th></tr>
-              <tr><th>-</th></tr>
+        </div>
+        <div class="row2">
+        <button onClick={processCompletedCourse}>Add Course</button>
+          <div class="column2"><button>Import Schedule</button></div>
+          <div class="column2"><button>Generate My Schedule</button></div>
+          <div class="column2">
+            <center><table id="completedCourseTable">
+              <thead>
+                <tr>
+                  <th>
+                    <h2>Completed Courses</h2>
+                  </th>
+                </tr>
+              </thead>
+              <tbody></tbody>
             </table></center>
           </div>
         </div>
       </div>
-    </div>
   );
 }
 export default App;
