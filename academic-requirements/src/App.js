@@ -1,34 +1,61 @@
+import { useEffect, useState } from "react";
 import "./App.css";
-import React, { useState } from "react";
-import Select from "react-select";
+import SearchableDropdown from './components/SearchableDropdown.tsx';
+
+// Temporary imports until we get the real data
+import majors from './mockDataLists/majors.tsx';
+import concentrations from './mockDataLists/concentrations.tsx';
+import courseSubjectAcronym from './mockDataLists/courseSubjectAcronym.tsx';
+import courseNumber from './mockDataLists/courseNumber.tsx';
 
 var completedClasses = [];
 function App() {
-  /*selectedMajor stores the output from the Major dropdown*/
-  const [selectedMajor, setSelectedMajor] = useState(null);
-  const handleMajorChange = (e) => {
-    setSelectedMajor(e.value);
-  };
-  /*selectedConcentration stores the output from the Concentration dropdown*/
-  const [selectedConcentration, setSelectedConcentration] = useState(null);
-  const handleConcentrationChange = (e) => {
-    setSelectedConcentration(e.value);
-  };
-  /*selectedCourseType stores the output from the type dropdown*/
-  const [selectedCourseType, setSelectedCourseType] = useState(null);
-  const handleCourseTypeChange = (e) => {
-    setSelectedCourseType(e.value);
-  };
-  /*selectedCourseNumber stores the output from the subject dropdown*/
-  const [selectedCourseNumber, setSelectedCourseNumber] = useState(null);
-  const handleCoursenumberChange = (e) => {
-    setSelectedCourseNumber(e.value);
-  };
+  /*
+   General variables
+  */
+  const [major, setMajor] = useState('');
+  //const [minor, setMinor] = useState('');
+  const [concentration, setConcentration] = useState('');
+  const [showConcentration, setShowConcentration] = useState(false);
+  const [concentrationCourses, setConcentrationCourses] = useState([]);
+  const [coursesTaken, setCoursesTaken] = useState(null);
+
+  /* 
+    Methods that assign major, minor, or concentration when picking option from a dropdown
+  */
+  function selectedMajor(_major) { 
+    setMajor(_major); 
+    setShowConcentration(true);
+
+    // TODO run a query to update the concentrations when major is selected?
+    setConcentrationCourses(concentrations);
+  }
+
+  //function selectedMinor(_minor) { setMinor(_minor); }
+
+  function selectedConcentration(_concentration) { setConcentration(_concentration); }
+
+  /*
+   Methods for updating the table of previously taken courses
+  */
+  const [selectedAcronym, setSelectedAcronym] = useState('');
+  const [selectedNumber, setSelectedNumber] = useState(0);
+  
+  function selectedCourseSubjectAcronym (_selectedAcronym) {
+    setSelectedAcronym(_selectedAcronym);
+    // TODO update list of course numbers based on the acronym
+  }
+
+  function selectedCourseNumber(_selectedNumber) {
+    setSelectedNumber(_selectedNumber);
+    // TODO update list of courses based on the selected course acronym and number
+
+  }
   function processCompletedCourse() {
     /*Check that both dropdowns are filled out*/
-    if (selectedCourseType != null && selectedCourseNumber != null) {
+    if (selectedNumber != null && selectedAcronym != null) {
       /*Add the course to the completed course list*/
-      var arrayLength = completedClasses.push(selectedMajor);
+      var arrayLength = completedClasses.push(selectedAcronym + "-" + selectedNumber);
       /*Output the course into the completed course list*/
       if (arrayLength >= 10) {
         var row = document.getElementById("completedCourseTable").rows[
@@ -37,19 +64,11 @@ function App() {
       } else {
         var row = document.getElementById("completedCourseTable").insertRow();
       }
-      row.insertCell().innerHTML = selectedMajor;
+      row.insertCell().innerHTML = selectedAcronym+"-"+selectedNumber;
     } else {
       /* TODO alert the user that they need to enter a complete, valid, course*/
     }
   }
-  const aquaticCreatures = [
-    { label: "Shark", value: "Shark" },
-    { label: "Dolphin", value: "Dolphin" },
-    { label: "Whale", value: "Whale" },
-    { label: "Octopus", value: "Octopus" },
-    { label: "Crab", value: "Crab" },
-    { label: "Lobster", value: "Lobster" },
-  ];
   return (
     <div className="App">
       <header className="Four-Year-Plan">
@@ -57,38 +76,56 @@ function App() {
       </header>
       <div class="screen">
         <div class="row">
-          <div class="column">
-            <Select options={aquaticCreatures} onChange={handleMajorChange} />
+          <div class="column" >
+            <SearchableDropdown 
+              options={majors} 
+              label="Major"
+              onSelectOption={selectedMajor}
+              showDropdown={true}
+              thin={false}
+            />
           </div>
-          <div class="column">
-            <button>Concentration dropdown</button>
+          <div class="column" >
+            <SearchableDropdown 
+              options={concentrations} 
+              label="Concentration"
+              onSelectOption={selectedConcentration}
+              showDropdown={showConcentration}
+              thin={false}
+            />
           </div>
-          <div class="column">
-            <button>Completed Course</button>
-            <button>Completed Number</button>
+          <div class="column" >
+            <SearchableDropdown 
+              options={courseSubjectAcronym} 
+              label="Course Subject"
+              onSelectOption={selectedCourseSubjectAcronym}
+              showDropdown={true}
+              thin={true}
+            />
+            <SearchableDropdown 
+              options={courseNumber} 
+              label="Course Number"
+              onSelectOption={selectedCourseNumber}
+              showDropdown={true}
+              thin={true}
+            />
             <button onClick={processCompletedCourse}>Add Course</button>
           </div>
         </div>
         <div class="row2">
+          <div class="column2"><button>Import Schedule</button></div>
+          <div class="column2"><button>Generate My Schedule</button></div>
           <div class="column2">
-            <button>Import Schedule</button>
-          </div>
-          <div class="column2">
-            <button>Generate My Schedule</button>
-          </div>
-          <div class="column2">
-            <center>
-              <table id="completedCourseTable">
-                <thead>
-                  <tr>
-                    <th>
-                      <h2>Completed Courses</h2>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody></tbody>
-              </table>
-            </center>
+            <center><table id="completedCourseTable">
+              <thead>
+                <tr>
+                  <th>
+                    <h2>Completed Courses</h2>
+                  </th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table></center>
           </div>
         </div>
       </div>

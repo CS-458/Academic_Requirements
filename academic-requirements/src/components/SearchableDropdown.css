@@ -1,0 +1,25 @@
+.container, .thinContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.thinContainer {
+    width: 100px;
+}
+
+.container {
+    width: 200px;
+}
+
+.label {
+    margin-left: -37px;
+    padding: 15px;
+}
+
+.thinLabel {
+    margin-left: -15px;
+    padding: 15px;
+}
