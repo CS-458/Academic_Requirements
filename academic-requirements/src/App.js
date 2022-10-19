@@ -17,8 +17,8 @@ function App() {
   //const [minor, setMinor] = useState('');
   const [concentration, setConcentration] = useState("");
   const [showConcentration, setShowConcentration] = useState(false);
-  const [concentrationCourses, setConcentrationCourses] = useState([]);
-  const [coursesTaken, setCoursesTaken] = useState(null);
+  const [concentrationCourses, setConcentrationOptions] = useState([]);
+  const [coursesTaken, setCoursesTaken] = useState([]);
 
   /* 
     Methods that assign major, minor, or concentration when picking option from a dropdown
@@ -28,7 +28,7 @@ function App() {
     setShowConcentration(true);
 
     // TODO run a query to update the concentrations when major is selected?
-    setConcentrationCourses(concentrations);
+    setConcentrationOptions(concentrations);
   }
 
   //function selectedMinor(_minor) { setMinor(_minor); }
@@ -40,8 +40,8 @@ function App() {
   /*
    Methods for updating the table of previously taken courses
   */
-  const [selectedAcronym, setSelectedAcronym] = useState("");
-  const [selectedNumber, setSelectedNumber] = useState(0);
+  const [selectedAcronym, setSelectedAcronym] = useState(null);
+  const [selectedNumber, setSelectedNumber] = useState(null);
 
   function selectedCourseSubjectAcronym(_selectedAcronym) {
     setSelectedAcronym(_selectedAcronym);
@@ -51,23 +51,31 @@ function App() {
   function selectedCourseNumber(_selectedNumber) {
     setSelectedNumber(_selectedNumber);
     // TODO update list of courses based on the selected course acronym and number
+    /*TODO Double check that a selected number is reset to null when you select a new course*/
   }
   function processCompletedCourse() {
     /*Check that both dropdowns are filled out*/
     if (selectedNumber != null && selectedAcronym != null) {
-      /*Add the course to the completed course list*/
-      var arrayLength = completedClasses.push(
-        selectedAcronym + "-" + selectedNumber
-      );
-      /*Output the course into the completed course list*/
-      if (arrayLength >= 10) {
-        var row = document.getElementById("completedCourseTable").rows[
-          (arrayLength % 10) + 1
-        ];
-      } else {
-        var row = document.getElementById("completedCourseTable").insertRow();
+      /*TODO Double check that the course is a valid course in the database */ 
+      if (!coursesTaken.includes(selectedAcronym+"-"+selectedNumber)){
+        /*Add the course to the completed course list*/
+        setCoursesTaken(coursesTaken => [...coursesTaken, (selectedAcronym+"-"+selectedNumber)]);
+        var arrayLength = completedClasses.push(
+          selectedAcronym + "-" + selectedNumber
+        );
+        /*Output the course into the completed course list*/
+        if (arrayLength >= 10) {
+          var row = document.getElementById("completedCourseTable").rows[
+            (arrayLength % 10) + 1
+          ];
+        } else {
+          var row = document.getElementById("completedCourseTable").insertRow();
+        }
+        row.insertCell().innerHTML = selectedAcronym + "-" + selectedNumber;
       }
-      row.insertCell().innerHTML = selectedAcronym + "-" + selectedNumber;
+      else{
+        /*TODO alert the user that the class has already been entered*/
+      }
     } else {
       /* TODO alert the user that they need to enter a complete, valid, course*/
     }
@@ -77,9 +85,9 @@ function App() {
       <header className="Four-Year-Plan">
         <h1>Enter User Input Here</h1>
       </header>
-      <div class="screen">
-        <div class="row">
-          <div class="column">
+      <div className="screen">
+        <div className="row">
+          <div className="column">
             <SearchableDropdown
               options={majors}
               label="Major"
@@ -88,7 +96,7 @@ function App() {
               thin={false}
             />
           </div>
-          <div class="column">
+          <div className="column">
             <SearchableDropdown
               options={concentrations}
               label="Concentration"
@@ -97,7 +105,7 @@ function App() {
               thin={false}
             />
           </div>
-          <div class="column">
+          <div className="column">
             <SearchableDropdown
               options={courseSubjectAcronym}
               label="Course Subject"
@@ -115,14 +123,14 @@ function App() {
             <button onClick={processCompletedCourse}>Add Course</button>
           </div>
         </div>
-        <div class="row2">
-          <div class="column2">
+        <div className="row2">
+          <div className="column2">
             <button>Import Schedule</button>
           </div>
-          <div class="column2">
+          <div className="column2">
             <button>Generate My Schedule</button>
           </div>
-          <div class="column2">
+          <div className="column2">
             <center>
               <table id="completedCourseTable">
                 <thead>
