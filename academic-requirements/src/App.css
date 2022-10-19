@@ -14,7 +14,9 @@
 }
 
 .row {
-  height: 40%;
+  margin-bottom: 20px;
+  float: center;
+  margin-left: 90px;
 }
 
 .row2 {
@@ -31,11 +33,27 @@
   height: 100%;
 }
 
+#completedCourseTable {
+  margin-top: 20px;
+}
+
+.courseInput {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
 /* Clear floats after the columns */
 .row:after {
   content: "";
   display: table;
   clear: both;
+}
+
+.completedCourses {
+  background-color: #004990;
+  color: white;
+  border-radius: 15px;
+  height: 90%;
 }
 
 button {

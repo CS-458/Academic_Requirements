@@ -17,7 +17,7 @@ function App() {
   //const [minor, setMinor] = useState('');
   const [concentration, setConcentration] = useState('');
   const [showConcentration, setShowConcentration] = useState(false);
-  const [concentrationCourses, setConcentrationCourses] = useState([]);
+  const [concentrationOptions, setConcentrationOptions] = useState([]);
   const [coursesTaken, setCoursesTaken] = useState(null);
 
   /* 
@@ -28,7 +28,7 @@ function App() {
     setShowConcentration(true);
 
     // TODO run a query to update the concentrations when major is selected?
-    setConcentrationCourses(concentrations);
+    setConcentrationOptions(concentrations);
   }
 
   //function selectedMinor(_minor) { setMinor(_minor); }
@@ -51,15 +51,16 @@ function App() {
     // TODO update list of courses based on the selected course acronym and number
 
   }
+  
   function processCompletedCourse() {
     /*Check that both dropdowns are filled out*/
     if (selectedNumber != null && selectedAcronym != null) {
       /*Add the course to the completed course list*/
       var arrayLength = completedClasses.push(selectedAcronym + "-" + selectedNumber);
       /*Output the course into the completed course list*/
-      if (arrayLength >= 10) {
+      if (arrayLength > 10) {
         var row = document.getElementById("completedCourseTable").rows[
-          (arrayLength % 10) + 1
+          arrayLength % 10
         ];
       } else {
         var row = document.getElementById("completedCourseTable").insertRow();
@@ -72,7 +73,7 @@ function App() {
   return (
     <div className="App">
       <header className="Four-Year-Plan">
-        <h1>Enter User Input Here</h1>
+        <h1>Academic Planner</h1>
       </header>
       <div className="screen">
         <div className="row">
@@ -94,7 +95,7 @@ function App() {
               thin={false}
             />
           </div>
-          <div className="column">
+          <div className="courseInput">
             <SearchableDropdown 
               options={courseSubjectAcronym} 
               label="Course Subject"
@@ -102,7 +103,6 @@ function App() {
               showDropdown={true}
               thin={true}
             />
-            <div className="column" >
               <SearchableDropdown 
                 options={courseNumber} 
                 label="Course Number"
@@ -110,25 +110,20 @@ function App() {
                 showDropdown={true}
                 thin={true}
               />
-            </div>
           </div>
         </div>
         </div>
-        <div class="row2">
+        <div className="row2">
         <button onClick={processCompletedCourse}>Add Course</button>
-          <div class="column2"><button>Import Schedule</button></div>
-          <div class="column2"><button>Generate My Schedule</button></div>
-          <div class="column2">
+          <div className="column2"><button>Import Schedule</button></div>
+          <div className="column2"><button>Generate My Schedule</button></div>
+          <div className="column2">
+          <div className="completedCourses">
+          <h2>Completed Courses</h2>
             <center><table id="completedCourseTable">
-              <thead>
-                <tr>
-                  <th>
-                    <h2>Completed Courses</h2>
-                  </th>
-                </tr>
-              </thead>
               <tbody></tbody>
             </table></center>
+          </div>
           </div>
         </div>
       </div>
