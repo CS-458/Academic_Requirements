@@ -53,13 +53,17 @@ function App() {
     // TODO update list of courses based on the selected course acronym and number
     /*TODO Double check that a selected number is reset to null when you select a new course*/
   }
+  
   function processCompletedCourse() {
     /*Check that both dropdowns are filled out*/
     if (selectedNumber != null && selectedAcronym != null) {
-      /*TODO Double check that the course is a valid course in the database */ 
-      if (!coursesTaken.includes(selectedAcronym+"-"+selectedNumber)){
+      /*TODO Double check that the course is a valid course in the database */
+      if (!coursesTaken.includes(selectedAcronym + "-" + selectedNumber)) {
         /*Add the course to the completed course list*/
-        setCoursesTaken(coursesTaken => [...coursesTaken, (selectedAcronym+"-"+selectedNumber)]);
+        setCoursesTaken((coursesTaken) => [
+          ...coursesTaken,
+          selectedAcronym + "-" + selectedNumber,
+        ]);
         var arrayLength = completedClasses.push(
           selectedAcronym + "-" + selectedNumber
         );
@@ -72,13 +76,23 @@ function App() {
           var row = document.getElementById("completedCourseTable").insertRow();
         }
         row.insertCell().innerHTML = selectedAcronym + "-" + selectedNumber;
-      }
-      else{
+      } else {
         /*TODO alert the user that the class has already been entered*/
       }
     } else {
       /* TODO alert the user that they need to enter a complete, valid, course*/
     }
+  }
+  function generateScheduleButton() {
+    //TODO throw error if major not selected
+    //TODO throw error if concentration not selected
+    //TODO switch to next screen and pass on major, concentration, and optionally class list
+  }
+  function importSchedule() {
+    //TODO check if the imported file is a valid format (jsonschema)
+    //TODO throw error if the input is not of correct format
+    /*TODO either update existing variables on screen
+     or bypass checking of those variables based on valid import*/
   }
   return (
     <div className="App">
@@ -125,10 +139,10 @@ function App() {
         </div>
         <div className="row2">
           <div className="column2">
-            <button>Import Schedule</button>
+            <button onClick={importSchedule}>Import Schedule</button>
           </div>
           <div className="column2">
-            <button>Generate My Schedule</button>
+            <button onClick={generateScheduleButton}>Generate My Schedule</button>
           </div>
           <div className="column2">
             <center>
