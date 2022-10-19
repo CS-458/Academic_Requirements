@@ -57,9 +57,9 @@ function App() {
       <header className="Four-Year-Plan">
         <h1>Enter User Input Here</h1>
       </header>
-      <div class="screen">
-        <div class="row">
-          <div class="column" >
+      <div className="screen">
+        <div className="row">
+          <div className="column" >
             <SearchableDropdown 
               options={majors} 
               label="Major"
@@ -68,7 +68,7 @@ function App() {
               thin={false}
             />
           </div>
-          <div class="column" >
+          <div className="column">
             <SearchableDropdown 
               options={concentrations} 
               label="Concentration"
@@ -77,7 +77,7 @@ function App() {
               thin={false}
             />
           </div>
-          <div class="column" >
+          <div className="thinColumn" >
             <SearchableDropdown 
               options={courseSubjectAcronym} 
               label="Course Subject"
@@ -85,19 +85,21 @@ function App() {
               showDropdown={true}
               thin={true}
             />
-            <SearchableDropdown 
-              options={courseNumber} 
-              label="Course Number"
-              onSelectOption={selectedCourseNumber}
-              showDropdown={true}
-              thin={true}
-            />
+            <div className="thinColumn" >
+              <SearchableDropdown 
+                options={courseNumber} 
+                label="Course Number"
+                onSelectOption={selectedCourseNumber}
+                showDropdown={true}
+                thin={true}
+              />
+            </div>
           </div>
         </div>
-        <div class="row2">
-          <div class="column2"><button>Import Schedule</button></div>
-          <div class="column2"><button>Generate My Schedule</button></div>
-          <div class="column2">
+        <div className="row2">
+          <div className="column2"><button>Import Schedule</button></div>
+          <div className="column2"><button>Generate My Schedule</button></div>
+          <div className="column2">
             <center><table>
               <tr><th><h2>Completed Courses</h2></th></tr>
               <tr><th>-</th></tr>
