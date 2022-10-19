@@ -4,7 +4,7 @@ import './SearchableDropdown.css';
 
 const SearchableDropdown = 
 (props: { options: Array<string>, label: string, onSelectOption: (option: string) => void
-          showDropdown: boolean}) => {
+          showDropdown: boolean, thin: boolean}) => {
 
   // Runs a debug message with the selected major 
   // and passes the name of the selected class to onSelectOption
@@ -16,9 +16,9 @@ const SearchableDropdown =
   }
 
   return (
-    <div className="container">
+    <div className={props.thin ? "thinContainer" : "container"}>
       {/* Text that labels the search box*/}
-      <div className="label">
+      <div className={props.thin ? "thinLabel" : "label"}>
         {props.label}
       </div>
       {/* Dropdown box */}

@@ -45,7 +45,7 @@ function App() {
     setSelectedAcronym(_selectedAcronym);
     // TODO update list of course numbers based on the acronym
   }
-  
+
   function selectedCourseNumber(_selectedNumber) {
     setSelectedNumber(_selectedNumber);
     // TODO update list of courses based on the selected course acronym and number
@@ -60,6 +60,7 @@ function App() {
         label="Major"
         onSelectOption={selectedMajor}
         showDropdown={true}
+        thin={false}
       />
       {/* Concentration Dropdown */}
       <SearchableDropdown 
@@ -67,6 +68,7 @@ function App() {
         label="Concentration"
         onSelectOption={selectedConcentration}
         showDropdown={showConcentration}
+        thin={false}
       />
       {/* Previously Taken Course SUBJECT Acronym Dropdown */}
       <SearchableDropdown 
@@ -74,6 +76,7 @@ function App() {
         label="Course Subject"
         onSelectOption={selectedCourseSubjectAcronym}
         showDropdown={true}
+        thin={true}
       />
       {/* Previously Taken Course NUMBER Dropdown */}
       <SearchableDropdown 
@@ -81,6 +84,7 @@ function App() {
         label="Course Number"
         onSelectOption={selectedCourseNumber}
         showDropdown={true}
+        thin={true}
       />
     </div>
   );
