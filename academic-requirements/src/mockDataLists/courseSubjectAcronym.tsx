@@ -1,8 +1,3 @@
-const courseSubjectAcronym = [
-    "CS",
-    "MSCS",
-    "POLS",
-    "GDD"
-]
+const courseSubjectAcronym = ["CS", "MSCS", "POLS", "GDD"];
 
 export default courseSubjectAcronym;
