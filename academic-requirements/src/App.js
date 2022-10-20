@@ -17,8 +17,8 @@ function App() {
   //const [minor, setMinor] = useState('');
   const [concentration, setConcentration] = useState("");
   const [showConcentration, setShowConcentration] = useState(false);
-  const [concentrationCourses, setConcentrationOptions] = useState([]);
-  const [coursesTaken, setCoursesTaken] = useState([]);
+  const [concentrationOptions, setConcentrationOptions] = useState([]);
+  const [coursesTaken, setCoursesTaken] = useState(null);
 
   /* 
     Methods that assign major, minor, or concentration when picking option from a dropdown
@@ -97,7 +97,7 @@ function App() {
   return (
     <div className="App">
       <header className="Four-Year-Plan">
-        <h1>Enter User Input Here</h1>
+        <h1>Academic Planner</h1>
       </header>
       <div className="screen">
         <div className="row">
@@ -119,9 +119,9 @@ function App() {
               thin={false}
             />
           </div>
-          <div className="column">
-            <SearchableDropdown
-              options={courseSubjectAcronym}
+          <div className="courseInput">
+            <SearchableDropdown 
+              options={courseSubjectAcronym} 
               label="Course Subject"
               onSelectOption={selectedCourseSubjectAcronym}
               showDropdown={true}
@@ -147,22 +147,16 @@ function App() {
             </button>
           </div>
           <div className="column2">
-            <center>
-              <table id="completedCourseTable">
-                <thead>
-                  <tr>
-                    <th>
-                      <h2>Completed Courses</h2>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody></tbody>
-              </table>
-            </center>
+            <div className="completedCourses">
+              <h2>Completed Courses</h2>
+                <center><table id="completedCourseTable">
+                  <tbody></tbody>
+                </table></center>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
   );
 }
 export default App;
