@@ -1,26 +1,33 @@
-// @ts-nocheck
+// The @ts-ignore rejects the error from having the .tsx file extension on import
 import React, {useState, useRef} from 'react';
+// @ts-ignore
 import SearchableDropdown from './SearchableDropdown.tsx';
 
-// Temporary imports until we get the real data
+// Temporary imports until we get the real data (can be deleted later)
+// @ts-ignore
 import majors from '../mockDataLists/majors.tsx';
+// @ts-ignore
 import concentrations from '../mockDataLists/concentrations.tsx';
+// @ts-ignore
 import courseSubjectAcronym from '../mockDataLists/courseSubjectAcronym.tsx';
+// @ts-ignore
 import courseNumber from '../mockDataLists/courseNumber.tsx';
 
-const completedClasses : string[] = [];
-
-const InputPage = (props: { showing: boolean} ) => {
+// Input page is the page where the user inputs all of their information
+const InputPage = 
+  (props: { showing: boolean, 
+    onClickGenerate(major: string, concentration: string, previousCourses: string[]) : void} ) => {
 
   /*
    General variables
   */
-  const [major, setMajor] = useState('');
-  //const [minor, setMinor] = useState('');
-  const [concentration, setConcentration] = useState('');
-  const [showConcentration, setShowConcentration] = useState(false);
-  const [concentrationOptions, setConcentrationOptions] = useState<Array<string>>();
-  const [coursesTaken, setCoursesTaken] = useState(null);
+  const [major, setMajor] = useState(''); // major that is selected
+  const [concentration, setConcentration] = useState(''); // concentration that is selected
+  const [showConcentration, setShowConcentration] = useState(false); // concentration dropdown menu is shown
+  const [concentrationOptions, setConcentrationOptions] = useState<Array<string>>(); // all available concentrations
+  
+  const [coursesTaken, setCoursesTaken] = useState<Array<string>>([]); // courses taken list of strings
+  const tableRef = useRef<HTMLTableElement>(null);
 
   /* 
     Methods that assign major, minor, or concentration when picking option from a dropdown
@@ -53,14 +60,13 @@ const InputPage = (props: { showing: boolean} ) => {
     // TODO update list of courses based on the selected course acronym and number
 
   }
-
-  const tableRef = useRef<HTMLTableElement>(null);
   
+  // This method handles adding a new taken course to the table
   function processCompletedCourse() {
     /*Check that both dropdowns are filled out*/
     if (selectedNumber != null && selectedAcronym != null) {
       /*Add the course to the completed course list*/
-      var arrayLength = completedClasses.push(selectedAcronym + "-" + selectedNumber);
+      var arrayLength = coursesTaken.push(selectedAcronym + "-" + selectedNumber);
       /*Output the course into the completed course list*/
       if (tableRef.current != null) {
         if (arrayLength > 10) {
@@ -68,51 +74,52 @@ const InputPage = (props: { showing: boolean} ) => {
           if (location == -1) {
             location = 9;
           }
-          var row = document.getElementById("completedCourseTable").rows[
-            location
-          ];
+          var row = tableRef.current.rows[location];
       } else {
         var row = tableRef.current.insertRow();
       }
-      row.insertCell().innerHTML = selectedAcronym+"-"+selectedNumber;
+      row.insertCell().innerHTML = selectedAcronym + "-" + selectedNumber;
     }
     } else {
       /* TODO alert the user that they need to enter a complete, valid, course*/
     }
   }
+
   return (
     <div className="App">
-      <header className="Four-Year-Plan">
-        <h1>Academic Planner</h1>
-      </header>
-      <div className="screen">
-        <div className="row">
-          <div className="column" >
-            <SearchableDropdown 
-              options={majors} 
-              label="Major"
-              onSelectOption={selectedMajor}
-              showDropdown={true}
-              thin={false}
-            />
-          </div>
-          <div className="column">
-            <SearchableDropdown 
-              options={concentrations} 
-              label="Concentration"
-              onSelectOption={selectedConcentration}
-              showDropdown={showConcentration}
-              thin={false}
-            />
-          </div>
-          <div className="courseInput">
-            <SearchableDropdown 
-              options={courseSubjectAcronym} 
-              label="Course Subject"
-              onSelectOption={selectedCourseSubjectAcronym}
-              showDropdown={true}
-              thin={true}
-            />
+      {props.showing && (
+      <div>
+        <header className="Four-Year-Plan">
+          <h1>Academic Planner</h1>
+        </header>
+        <div className="screen">
+          <div className="row">
+            <div className="column" >
+              <SearchableDropdown 
+                options={majors} 
+                label="Major"
+                onSelectOption={selectedMajor}
+                showDropdown={true}
+                thin={false}
+              />
+            </div>
+            <div className="column">
+              <SearchableDropdown 
+                options={concentrations} 
+                label="Concentration"
+                onSelectOption={selectedConcentration}
+                showDropdown={showConcentration}
+                thin={false}
+              />
+            </div>
+            <div className="courseInput">
+              <SearchableDropdown 
+                options={courseSubjectAcronym} 
+                label="Course Subject"
+                onSelectOption={selectedCourseSubjectAcronym}
+                showDropdown={true}
+                thin={true}
+              />
               <SearchableDropdown 
                 options={courseNumber} 
                 label="Course Number"
@@ -120,13 +127,19 @@ const InputPage = (props: { showing: boolean} ) => {
                 showDropdown={true}
                 thin={true}
               />
+            </div>
           </div>
-        </div>
         </div>
         <div className="row2">
         <button onClick={processCompletedCourse}>Add Course</button>
-          <div className="column2"><button>Import Schedule</button></div>
-          <div className="column2"><button>Generate My Schedule</button></div>
+          <div className="column2">
+            <button>Import Schedule</button>
+          </div>
+          <div className="column2">
+            <button onClick={() => props.onClickGenerate(major, concentration, coursesTaken)}>
+              Generate My Schedule
+            </button>
+          </div>
           <div className="column2">
           <div className="completedCourses">
           <h2>Completed Courses</h2>
@@ -137,7 +150,9 @@ const InputPage = (props: { showing: boolean} ) => {
           </div>
         </div>
       </div>
-    )
+    )}
+    </div>
+  )
 }
 
 export default InputPage;
