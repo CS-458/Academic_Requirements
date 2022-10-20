@@ -18,7 +18,7 @@ function App() {
   const [concentration, setConcentration] = useState("");
   const [showConcentration, setShowConcentration] = useState(false);
   const [concentrationOptions, setConcentrationOptions] = useState([]);
-  const [coursesTaken, setCoursesTaken] = useState(null);
+  const [coursesTaken, setCoursesTaken] = useState([]);
 
   /* 
     Methods that assign major, minor, or concentration when picking option from a dropdown
@@ -68,9 +68,13 @@ function App() {
           selectedAcronym + "-" + selectedNumber
         );
         /*Output the course into the completed course list*/
-        if (arrayLength >= 10) {
+        if (arrayLength > 10) {
+          var location = (arrayLength % 10) - 1;
+          if (location == -1) {
+            location = 9;
+          }
           var row = document.getElementById("completedCourseTable").rows[
-            (arrayLength % 10) + 1
+            location
           ];
         } else {
           var row = document.getElementById("completedCourseTable").insertRow();
@@ -120,8 +124,8 @@ function App() {
             />
           </div>
           <div className="courseInput">
-            <SearchableDropdown 
-              options={courseSubjectAcronym} 
+            <SearchableDropdown
+              options={courseSubjectAcronym}
               label="Course Subject"
               onSelectOption={selectedCourseSubjectAcronym}
               showDropdown={true}
@@ -149,14 +153,16 @@ function App() {
           <div className="column2">
             <div className="completedCourses">
               <h2>Completed Courses</h2>
-                <center><table id="completedCourseTable">
+              <center>
+                <table id="completedCourseTable">
                   <tbody></tbody>
-                </table></center>
-              </div>
+                </table>
+              </center>
             </div>
           </div>
         </div>
       </div>
+    </div>
   );
 }
 export default App;
