@@ -1,0 +1,5 @@
+General install:
+npm install
+
+For dropdown menu change:
+npm install react-select

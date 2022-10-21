@@ -1,38 +1,42 @@
+import React, { useState } from "react";
 import "./App.css";
+import InputPage from "./components/InputPage.tsx";
+import FourYearPlanPage from "./components/FourYearPlanPage.tsx";
 
 function App() {
+  /* Variables to store necessary info */
+  const [clickedGenerate, setClickedGenerate] = useState();
+  const [previouslyTakenCourses, setPreviouslyTakenCourses] = useState();
+  const [major, setMajor] = useState("");
+  const [concentration, setConcentration] = useState("");
+
+  // Processes when the user clicks to generate the schedule
+  function generateSchedule(major, concentration, previousCourses) {
+    console.log("Generate Schedule Pressed");
+    setClickedGenerate(true);
+    setPreviouslyTakenCourses(previousCourses);
+    setMajor(major);
+    setConcentration(concentration);
+
+    // Sends information to the console for manual review
+    console.log("Major: " + major + ", Concentration: " + concentration);
+    console.log("Courses taken: ");
+    previousCourses.forEach((course) => {
+      console.log(course + ", ");
+    });
+
+    //TODO run query with major and concentration
+  }
+
   return (
-    <div className="App">
-      <header className="Four-Year-Plan">
-        <h1>Enter User Input Here</h1>
-      </header>
-      <div class="screen">
-        <div class="row">
-          <div class="column" ><button>Major dropdown</button></div>
-          <div class="column" ><button>Concentration dropdown</button></div>
-          <div class="column" ><button>Completed Class</button><button>Completed Number</button></div>
-        </div>
-        <div class="row2">
-          <div class="column2"><button>Import Schedule</button></div>
-          <div class="column2"><button>Generate My Schedule</button></div>
-          <div class="column2">
-            <center><table>
-              <tr><th><h2>Completed Courses</h2></th></tr>
-              <tr><th>-</th></tr>
-              <tr><th>-</th></tr>
-              <tr><th>A random long string of text for testing purposes</th></tr>
-              <tr><th>-</th></tr>
-              <tr><th>-</th></tr>
-              <tr><th>-</th></tr>
-              <tr><th>-</th></tr>
-              <tr><th>-</th></tr>
-              <tr><th>-</th></tr>
-              <tr><th>-</th></tr>
-            </table></center>
-          </div>
-        </div>
-      </div>
+    <div>
+      <InputPage
+        showing={!clickedGenerate}
+        onClickGenerate={generateSchedule}
+      />
+      <FourYearPlanPage showing={clickedGenerate} />
     </div>
   );
 }
+
 export default App;
