@@ -8,7 +8,9 @@
 }
 
 .thinContainer {
-  width: 100px;
+  width: 150px;
+  padding-left: 50px;
+  float: left;
 }
 
 .container {
@@ -23,4 +25,5 @@
 .thinLabel {
   margin-left: -15px;
   padding: 15px;
+  width: 150px;
 }

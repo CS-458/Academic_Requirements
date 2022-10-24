@@ -115,8 +115,8 @@ const InputPage = (props: {
             <h1>Academic Planner</h1>
           </header>
           <div className="screen">
-            <div className="row">
-              <div className="column">
+            <div className="input-grid">
+              <div className="input-grid-item">
                 <SearchableDropdown
                   options={majors}
                   label="Major"
@@ -125,7 +125,7 @@ const InputPage = (props: {
                   thin={false}
                 />
               </div>
-              <div className="column">
+              <div className="input-grid-item">
                 <SearchableDropdown
                   options={concentrations}
                   label="Concentration"
