@@ -3,6 +3,10 @@
   height: 100%;
 }
 
+.four-year-plan {
+  text-align: center;
+}
+
 .screen {
   height: 100%;
   width: 100%;
@@ -53,7 +57,7 @@
   background-color: #004990;
   color: white;
   border-radius: 15px;
-  height: 90%;
+  height: 60%;
 }
 
 button {
@@ -72,10 +76,62 @@ table {
   padding-left: 20%;
   padding-right: 20%;
   padding-bottom: 20%;
-  height: 100%;
+  height: 60%;
   width: 100%;
 }
 
 body {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.grid-container {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 60% auto auto;
+  column-gap: 15px;
+  row-gap: 50px;
+}
+
+.semesters-container {
+  height: 100%;
+  display: grid;
+  grid-template-columns: auto auto auto auto;
+  column-gap: 10px;
+  row-gap: 100px;
+}
+.grid-item {
+  background-color: gainsboro;
+  height: 200px;
+  text-align: center;
+}
+.class-dropdown {
+  background-color: gainsboro;
+  text-align: center;
+}
+.right-side {
+  text-align: center;
+}
+.requirements {
+  height: 90%;
+  background-color: gainsboro;
+  text-align: center;
+}
+
+.input-grid {
+  display: grid;
+  grid-template-columns: auto auto 33.33%;
+  grid-template-rows: 100% 90%;
+  column-gap: 15px;
+  row-gap: 15px;
+}
+
+.input-grid-item {
+  text-align: center;
+  height: 100%;
+}
+
+.courseDropdowns {
+  text-align: center;
+  width: 100%;
+  float: left;
 }
