@@ -3,3 +3,6 @@ npm install
 
 For dropdown menu change:
 npm install react-select
+
+For semesters tables:
+npm install react-table
