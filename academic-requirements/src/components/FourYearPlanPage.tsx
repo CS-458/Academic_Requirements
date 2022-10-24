@@ -1,6 +1,5 @@
 import React from "react";
-// @ts-ignore
-//import Table from "./Table.tsx";
+
 
 const FourYearPlanPage = (props: { showing: boolean }) => {
   return (

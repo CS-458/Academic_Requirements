@@ -115,8 +115,8 @@ const InputPage = (props: {
             <h1>Academic Planner</h1>
           </header>
           <div className="screen">
-            <div className="row">
-              <div className="column">
+            <div className="input-grid">
+              <div className="input-grid-item">
                 <SearchableDropdown
                   options={majors}
                   label="Major"
@@ -125,7 +125,7 @@ const InputPage = (props: {
                   thin={false}
                 />
               </div>
-              <div className="column">
+              <div className="input-grid-item">
                 <SearchableDropdown
                   options={concentrations}
                   label="Concentration"
@@ -134,30 +134,29 @@ const InputPage = (props: {
                   thin={false}
                 />
               </div>
-              <div className="courseInput">
-                <SearchableDropdown
-                  options={courseSubjectAcronym}
-                  label="Course Subject"
-                  onSelectOption={selectedCourseSubjectAcronym}
-                  showDropdown={true}
-                  thin={true}
-                />
-                <SearchableDropdown
-                  options={courseNumber}
-                  label="Course Number"
-                  onSelectOption={selectedCourseNumber}
-                  showDropdown={true}
-                  thin={true}
-                />
+              <div className="input-grid-item">
+                <div className="courseDropdowns">
+                  <SearchableDropdown
+                    options={courseSubjectAcronym}
+                    label="Course Subject"
+                    onSelectOption={selectedCourseSubjectAcronym}
+                    showDropdown={true}
+                    thin={true}
+                  />
+                  <SearchableDropdown
+                    options={courseNumber}
+                    label="Course Number"
+                    onSelectOption={selectedCourseNumber}
+                    showDropdown={true}
+                    thin={true}
+                  />
+                </div>
+                <button onClick={processCompletedCourse}>Add Course</button>
               </div>
-            </div>
-          </div>
-          <div className="row2">
-            <button onClick={processCompletedCourse}>Add Course</button>
-            <div className="column2">
+            <div className="input-grid-item">
               <button>Import Schedule</button>
             </div>
-            <div className="column2">
+            <div className="input-grid-item">
               <button
                 onClick={() =>
                   props.onClickGenerate(major, concentration, coursesTaken)
@@ -166,7 +165,7 @@ const InputPage = (props: {
                 Generate My Schedule
               </button>
             </div>
-            <div className="column2">
+            <div className="input-grid-item">
               <div className="completedCourses">
                 <h2>Completed Courses</h2>
                 <table id="completedCourseTable" ref={tableRef}>
@@ -176,6 +175,7 @@ const InputPage = (props: {
             </div>
           </div>
         </div>
+      </div>
       )}
     </div>
   );
