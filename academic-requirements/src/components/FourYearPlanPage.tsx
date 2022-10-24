@@ -1,16 +1,15 @@
 import React from "react";
 
-
 const FourYearPlanPage = (props: { showing: boolean }) => {
   return (
     <div>
-      {props.showing && 
-      <div className="screen">
-        <div className="four-year-plan">
-          <h1>Academic Planner</h1>
-        </div>
-        <div className= "grid-container">
-          <div className="semesters-container">
+      {props.showing && (
+        <div className="screen">
+          <div className="four-year-plan">
+            <h1>Academic Planner</h1>
+          </div>
+          <div className="grid-container">
+            <div className="semesters-container">
               <div className="grid-item">Semester 1</div>
               <div className="grid-item">Semester 2</div>
               <div className="grid-item">Semester 3</div>
@@ -20,15 +19,14 @@ const FourYearPlanPage = (props: { showing: boolean }) => {
               <div className="grid-item">Semester 7</div>
               <div className="grid-item">Semester 8</div>
             </div>
-          <div className="class-dropdown">Class dropdown</div>
-          <div className="right-side">
-            <div className="requirements">
-              Requirements
-            </div>            
+            <div className="class-dropdown">Class dropdown</div>
+            <div className="right-side">
+              <div className="requirements">Requirements</div>
               <button>Export Schedule</button>
+            </div>
           </div>
         </div>
-      </div>}
+      )}
     </div>
   );
 };

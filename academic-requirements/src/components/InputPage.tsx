@@ -153,29 +153,29 @@ const InputPage = (props: {
                 </div>
                 <button onClick={processCompletedCourse}>Add Course</button>
               </div>
-            <div className="input-grid-item">
-              <button>Import Schedule</button>
-            </div>
-            <div className="input-grid-item">
-              <button
-                onClick={() =>
-                  props.onClickGenerate(major, concentration, coursesTaken)
-                }
-              >
-                Generate My Schedule
-              </button>
-            </div>
-            <div className="input-grid-item">
-              <div className="completedCourses">
-                <h2>Completed Courses</h2>
-                <table id="completedCourseTable" ref={tableRef}>
-                  <tbody></tbody>
-                </table>
+              <div className="input-grid-item">
+                <button>Import Schedule</button>
+              </div>
+              <div className="input-grid-item">
+                <button
+                  onClick={() =>
+                    props.onClickGenerate(major, concentration, coursesTaken)
+                  }
+                >
+                  Generate My Schedule
+                </button>
+              </div>
+              <div className="input-grid-item">
+                <div className="completedCourses">
+                  <h2>Completed Courses</h2>
+                  <table id="completedCourseTable" ref={tableRef}>
+                    <tbody></tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
       )}
     </div>
   );
