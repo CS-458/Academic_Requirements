@@ -134,44 +134,44 @@ const InputPage = (props: {
                   thin={false}
                 />
               </div>
-              <div className="courseInput">
-                <SearchableDropdown
-                  options={courseSubjectAcronym}
-                  label="Course Subject"
-                  onSelectOption={selectedCourseSubjectAcronym}
-                  showDropdown={true}
-                  thin={true}
-                />
-                <SearchableDropdown
-                  options={courseNumber}
-                  label="Course Number"
-                  onSelectOption={selectedCourseNumber}
-                  showDropdown={true}
-                  thin={true}
-                />
+              <div className="input-grid-item">
+                <div className="courseDropdowns">
+                  <SearchableDropdown
+                    options={courseSubjectAcronym}
+                    label="Course Subject"
+                    onSelectOption={selectedCourseSubjectAcronym}
+                    showDropdown={true}
+                    thin={true}
+                  />
+                  <SearchableDropdown
+                    options={courseNumber}
+                    label="Course Number"
+                    onSelectOption={selectedCourseNumber}
+                    showDropdown={true}
+                    thin={true}
+                  />
+                </div>
+                <button onClick={processCompletedCourse}>Add Course</button>
               </div>
-            </div>
-          </div>
-          <div className="row2">
-            <button onClick={processCompletedCourse}>Add Course</button>
-            <div className="column2">
-              <button>Import Schedule</button>
-            </div>
-            <div className="column2">
-              <button
-                onClick={() =>
-                  props.onClickGenerate(major, concentration, coursesTaken)
-                }
-              >
-                Generate My Schedule
-              </button>
-            </div>
-            <div className="column2">
-              <div className="completedCourses">
-                <h2>Completed Courses</h2>
-                <table id="completedCourseTable" ref={tableRef}>
-                  <tbody></tbody>
-                </table>
+              <div className="input-grid-item">
+                <button>Import Schedule</button>
+              </div>
+              <div className="input-grid-item">
+                <button
+                  onClick={() =>
+                    props.onClickGenerate(major, concentration, coursesTaken)
+                  }
+                >
+                  Generate My Schedule
+                </button>
+              </div>
+              <div className="input-grid-item">
+                <div className="completedCourses">
+                  <h2>Completed Courses</h2>
+                  <table id="completedCourseTable" ref={tableRef}>
+                    <tbody></tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
