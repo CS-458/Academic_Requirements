@@ -4,5 +4,5 @@ npm install
 For dropdown menu change:
 npm install react-select
 
-For semesters tables:
-npm install react-table
+For error popups:
+npm install prop-types
