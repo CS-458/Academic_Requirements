@@ -17,7 +17,7 @@ const ErrorPopup = (props) => {
     <div
       style={{
         visibility: show ? "visible" : "hidden",
-        opacity: show ? "1" : "0"
+        opacity: show ? "1" : "0",
       }}
       className={popupStyles.overlay}
     >
@@ -36,7 +36,7 @@ ErrorPopup.propTypes = {
   title: PropTypes.string.isRequired,
   show: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  error: PropTypes.string.isRequired
+  error: PropTypes.string.isRequired,
 };
 
 export default ErrorPopup;
