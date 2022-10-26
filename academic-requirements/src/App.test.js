@@ -1,8 +1,17 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render } from "@testing-library/react";
+import { hasUncaughtExceptionCaptureCallback } from "node:process";
+import React from 'react';
 import App from "./App";
+import InputPage from "./components/InputPage.tsx";
 
-test("renders learn react link", () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
-});
+describe('Test for App',()=>{
+  test('Test Rendering',()=>{
+    const {getByTestId}=render(<App/>)
+    expect(getByTestId('content')).toBeInTheDocument()
+    const button = getByTestId('GenerateSchedule')
+    expect(button.textContent).toBe("Generate My Schedule")
+    fireEvent.click(button)
+    expect(getByTestId('popup')).toBeInTheDocument()
+  })
+})
+

@@ -20,6 +20,7 @@ const ErrorPopup = (props) => {
         opacity: show ? "1" : "0",
       }}
       className={popupStyles.overlay}
+      data-testid="popup"
     >
       <div className={popupStyles.popup}>
         <h2>{props.title}</h2>

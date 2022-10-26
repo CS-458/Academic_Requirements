@@ -105,7 +105,6 @@ const InputPage = (props: {
         throwError("This course has already been added");
       }
     } else {
-      // TODO alert the user that they need to enter a complete, valid, course
       if (selectedNumber == null) {
         throwError(
           "No course number has been selected, please select a course number."
@@ -129,7 +128,7 @@ const InputPage = (props: {
   return (
     <div className="App">
       {props.showing && (
-        <div>
+        <div data-testid="content">
           <header className="Four-Year-Plan">
             <h1>Academic Planner</h1>
           </header>
@@ -186,6 +185,7 @@ const InputPage = (props: {
                   onClick={() =>
                     props.onClickGenerate(major, concentration, coursesTaken)
                   }
+                  data-testid="GenerateSchedule"
                 >
                   Generate My Schedule
                 </button>
