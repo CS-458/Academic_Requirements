@@ -1,7 +1,9 @@
 // The @ts-ignore rejects the error from having the .tsx file extension on import
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useMemo } from "react";
 // @ts-ignore
 import SearchableDropdown from "./SearchableDropdown.tsx";
+// @ts-ignore
+import DeleteableInput from "./DeleteableInput.tsx";
 
 // Temporary imports until we get the real data (can be deleted later)
 // @ts-ignore
@@ -13,6 +15,7 @@ import courseSubjectAcronym from "../mockDataLists/courseSubjectAcronym.tsx";
 // @ts-ignore
 import courseNumber from "../mockDataLists/courseNumber.tsx";
 
+
 // Input page is the page where the user inputs all of their information
 const InputPage = (props: {
   showing: boolean;
@@ -23,7 +26,8 @@ const InputPage = (props: {
   ): void;
 }) => {
   //TODO make sure all of this information being passed is filled in and valid
-  /*
+
+/*
   General variables
 */
   const [major, setMajor] = useState(""); // major that is selected
@@ -35,7 +39,7 @@ const InputPage = (props: {
   const [coursesTaken, setCoursesTaken] = useState<Array<string>>([]); // courses taken list of strings
   const tableRef = useRef<HTMLTableElement>(null);
 
-  /* 
+/* 
   Methods that assign major, minor, or concentration when picking option from a dropdown
 */
   function selectedMajor(_major) {
@@ -76,11 +80,10 @@ const InputPage = (props: {
       //TODO Check that the course is a valid course in the database
       if (!coursesTaken.includes(selectedAcronym + "-" + selectedNumber)) {
         //Add the course to the completed course list
-        var arrayLength = coursesTaken.push(
-          selectedAcronym + "-" + selectedNumber
-        );
+        console.log("Adding course " + selectedAcronym + "-" + selectedNumber);
+        setCoursesTaken(coursesTaken.concat(selectedAcronym + "-" + selectedNumber));
         //Output the course into the completed course list
-        if (tableRef.current != null) {
+        /*if (tableRef.current != null) {
           if (arrayLength > 10) {
             var location = (arrayLength % 10) - 1;
             if (location == -1) {
@@ -94,11 +97,25 @@ const InputPage = (props: {
         }
       } else {
         //TODO alert the user that they need to enter a complete, valid course
-      }
+      }*/
     } else {
       // TODO alert the user that they need to enter a complete, valid, course
     }
   }
+}
+
+// Removes the course from the coursesTaken list
+function removeCourse(course: string) {
+  // Splice method did not work, so here's a replacement:
+  let arr = new Array();
+  let index = coursesTaken.findIndex(x => x === course);
+  coursesTaken.forEach((x, y) => {
+    if (y !== index) {
+      arr.push(x);
+    }
+  })
+  setCoursesTaken(arr);
+}
 
   function importSchedule() {
     //TODO check if the imported file is a valid format (jsonschema)
@@ -169,7 +186,15 @@ const InputPage = (props: {
                 <div className="completedCourses">
                   <h2>Completed Courses</h2>
                   <table id="completedCourseTable" ref={tableRef}>
-                    <tbody></tbody>
+                    <tbody>
+                    {coursesTaken.map((course) => {
+                      return (
+                        <div key={course} onClick={() => removeCourse(course)}>
+                          <DeleteableInput text={course} onClick={() => removeCourse(course)} />
+                        </div>
+                      )
+                    })}    
+                    </tbody>
                   </table>
                 </div>
               </div>
