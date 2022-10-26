@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import ErrorPopup from "./ErrorPopup";
 const FourYearPlanPage = (props: { showing: boolean }) => {
+
   //Functions and variables for controlling an error popup
   const [visibility, setVisibility] = useState(false);
   const popupCloseHandler = () => {
