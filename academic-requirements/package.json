@@ -30,5 +30,6 @@
     "start": "react-scripts start",
     "test": "react-scripts test"
   },
+  "proxy": "http://localhost:5000",
   "version": "0.1.0"
 }
