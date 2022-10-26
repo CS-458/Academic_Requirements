@@ -16,6 +16,12 @@ import courseNumber from "../mockDataLists/courseNumber.tsx";
 // Input page is the page where the user inputs all of their information
 const InputPage = (props: {
   showing: boolean;
+  majorList: [];
+  majorDisplayList: [];
+  concentrationList: [];
+  concentrationDisplayList: [];
+  onClickMajor(major: string): void;
+  onClickConcentration(concentration: string): void;
   onClickGenerate(
     major: string,
     concentration: string,
@@ -41,7 +47,7 @@ const InputPage = (props: {
   function selectedMajor(_major) {
     setMajor(_major);
     setShowConcentration(true);
-
+    props.onClickMajor(_major);
     // TODO run a query to update the concentrations when major is selected?
     setConcentrationOptions(concentrations);
   }
@@ -50,6 +56,7 @@ const InputPage = (props: {
 
   function selectedConcentration(_concentration) {
     setConcentration(_concentration);
+    props.onClickConcentration(_concentration);
   }
 
   /*
@@ -118,7 +125,7 @@ const InputPage = (props: {
             <div className="input-grid">
               <div className="input-grid-item">
                 <SearchableDropdown
-                  options={majors}
+                  options={props.majorDisplayList}
                   label="Major"
                   onSelectOption={selectedMajor}
                   showDropdown={true}
@@ -127,7 +134,7 @@ const InputPage = (props: {
               </div>
               <div className="input-grid-item">
                 <SearchableDropdown
-                  options={concentrations}
+                  options={props.concentrationDisplayList}
                   label="Concentration"
                   onSelectOption={selectedConcentration}
                   showDropdown={showConcentration}

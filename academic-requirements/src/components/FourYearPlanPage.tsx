@@ -1,6 +1,22 @@
 import React from "react";
 
-const FourYearPlanPage = (props: { showing: boolean }) => {
+const FourYearPlanPage = (props: {
+  showing: boolean;
+  majorCourseList: {
+    credits: number;
+    name: string;
+    number: number;
+    semesters: string;
+    subject: string;
+  }[];
+  concentrationCourseList: {
+    credits: number;
+    name: string;
+    number: number;
+    semesters: string;
+    subject: string;
+  }[];
+}) => {
   return (
     <div>
       {props.showing && (
@@ -19,7 +35,14 @@ const FourYearPlanPage = (props: { showing: boolean }) => {
               <div className="grid-item">Semester 7</div>
               <div className="grid-item">Semester 8</div>
             </div>
-            <div className="class-dropdown">Class dropdown</div>
+            <div className="class-dropdown">
+              {props.majorCourseList.map((course, index) => {
+                return <div key={index}>{course.name}</div>;
+              })}
+              {props.concentrationCourseList.map((course, index) => {
+                return <div key={index}>{course.name}</div>;
+              })}
+            </div>
             <div className="right-side">
               <div className="requirements">Requirements</div>
               <button>Export Schedule</button>
