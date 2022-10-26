@@ -173,7 +173,6 @@ function App() {
         concentrationCourseList={concentrationCourseData}
         majorCourseList={majorCourseData}
       />
-      <FourYearPlanPage showing={clickedGenerate} />
       <ErrorPopup
         onClose={popupCloseHandler}
         show={visibility}
