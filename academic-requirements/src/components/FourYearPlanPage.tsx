@@ -17,6 +17,19 @@ const FourYearPlanPage = (props: {
     subject: string;
   }[];
 }) => {
+import React, { useState } from "react";
+import ErrorPopup from "./ErrorPopup";
+const FourYearPlanPage = (props: { showing: boolean }) => {
+  //Functions and variables for controlling an error popup
+  const [visibility, setVisibility] = useState(false);
+  const popupCloseHandler = () => {
+    setVisibility(false);
+  };
+  const [error, setError] = useState("");
+  function throwError(error) {
+    setVisibility(true);
+    setError(error);
+  }
   return (
     <div>
       {props.showing && (
@@ -24,6 +37,12 @@ const FourYearPlanPage = (props: {
           <div className="four-year-plan">
             <h1>Academic Planner</h1>
           </div>
+          <ErrorPopup
+            onClose={popupCloseHandler}
+            show={visibility}
+            title="Error"
+            error={error}
+          />
           <div className="grid-container">
             <div className="semesters-container">
               <div className="grid-item">Semester 1</div>
