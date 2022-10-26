@@ -2,7 +2,7 @@
 import React, { useState, useRef } from "react";
 // @ts-ignore
 import SearchableDropdown from "./SearchableDropdown.tsx";
-
+import ErrorPopup from "./ErrorPopup";
 // Temporary imports until we get the real data (can be deleted later)
 // @ts-ignore
 import majors from "../mockDataLists/majors.tsx";
@@ -69,6 +69,15 @@ const InputPage = (props: {
     //TODO Check that a selected number is reset to null when you select a new course
   }
 
+  const [visibility, setVisibility] = useState(false);
+  const popupCloseHandler = () => {
+    setVisibility(false);
+  };
+  const [error, setError] = useState("");
+  function throwError(error) {
+    setVisibility(true);
+    setError(error);
+  }
   // This method handles adding a new taken course to the table
   function processCompletedCourse() {
     //Check that both dropdowns are filled out
@@ -93,16 +102,26 @@ const InputPage = (props: {
           row.insertCell().innerHTML = selectedAcronym + "-" + selectedNumber;
         }
       } else {
-        //TODO alert the user that they need to enter a complete, valid course
+        throwError("This course has already been added");
       }
     } else {
       // TODO alert the user that they need to enter a complete, valid, course
+      if (selectedNumber == null) {
+        throwError(
+          "No course number has been selected, please select a course number."
+        );
+      } else {
+        throwError(
+          "No course type has been selected, please select a course type before adding a course."
+        );
+      }
     }
   }
 
   function importSchedule() {
     //TODO check if the imported file is a valid format (jsonschema)
     //TODO throw error if the input is not of correct format
+    throwError("Import file is not in a valid format");
     /*TODO either update existing variables on screen
    or bypass checking of those variables based on valid import*/
   }
@@ -114,6 +133,12 @@ const InputPage = (props: {
           <header className="Four-Year-Plan">
             <h1>Academic Planner</h1>
           </header>
+          <ErrorPopup
+            onClose={popupCloseHandler}
+            show={visibility}
+            title="Error"
+            error={error}
+          />
           <div className="screen">
             <div className="input-grid">
               <div className="input-grid-item">
