@@ -120,7 +120,7 @@ function removeCourse(course: string) {
           </header>
           <div className="screen">
             <div className="input-grid">
-              <div className="input-grid-item">
+              <div className="input-grid-dropdown">
                 <SearchableDropdown
                   options={majors}
                   label="Major"
@@ -129,7 +129,7 @@ function removeCourse(course: string) {
                   thin={false}
                 />
               </div>
-              <div className="input-grid-item">
+              <div className="input-grid-dropdown">
                 <SearchableDropdown
                   options={concentrations}
                   label="Concentration"

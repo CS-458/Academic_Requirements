@@ -10,11 +10,6 @@
   width: 100%;
 }
 
-.courseInput {
-  display: flex;
-  flex-flow: row nowrap;
-}
-
 .completedCourses {
   height: 300px;
 }
@@ -91,6 +86,13 @@ body {
 .input-grid-item {
   text-align: center;
   height: 100%;
+}
+
+.input-grid-dropdown {
+  text-align: center;
+  height: 100%;
+  display: flex;
+  flex-flow: column nowrap;
 }
 
 .input-grid-item-courses {

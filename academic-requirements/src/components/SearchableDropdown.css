@@ -1,8 +1,5 @@
 .container,
 .thinContainer {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   padding-left: 15px;
   padding-right: 15px;
 }
@@ -11,6 +8,10 @@
   width: 150px;
   padding-left: 50px;
   float: left;
+}
+
+.container {
+  width: 200px;
 }
 
 .label {
