@@ -212,12 +212,12 @@ const InputPage = (props: {
               <div className="input-grid-item-courses">
                 <div className="completedCourses">
                   <h2>Completed Courses</h2>
-                  <div 
+                  <div
                     className="courseList"
                     style={{
                       gridTemplateColumns: `repeat(${
                         (coursesTaken.length - 1) / 10 + 1
-                      }, 1fr)`
+                      }, 1fr)`,
                     }}
                   >
                     {coursesTaken.map((course) => {
