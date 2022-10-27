@@ -15,6 +15,6 @@ const DeleteableInput = (props: { text: string; thinWidth: boolean }) => {
       {props.text}
     </div>
   );
-}
+};
 
 export default DeleteableInput;
