@@ -1,5 +1,5 @@
 // The @ts-ignore rejects the error from having the .tsx file extension on import
-import React, { useState, useRef, useMemo } from "react";
+import React, { useState, useRef, useMemo, useEffect } from "react";
 // @ts-ignore
 import SearchableDropdown from "./SearchableDropdown.tsx";
 // @ts-ignore
@@ -15,10 +15,10 @@ import courseSubjectAcronym from "../mockDataLists/courseSubjectAcronym.tsx";
 // @ts-ignore
 import courseNumber from "../mockDataLists/courseNumber.tsx";
 
-
 // Input page is the page where the user inputs all of their information
 const InputPage = (props: {
   showing: boolean;
+
   onClickGenerate(
     major: string,
     concentration: string,
@@ -82,31 +82,17 @@ const InputPage = (props: {
         //Add the course to the completed course list
         console.log("Adding course " + selectedAcronym + "-" + selectedNumber);
         setCoursesTaken(coursesTaken.concat(selectedAcronym + "-" + selectedNumber));
-        //Output the course into the completed course list
-        /*if (tableRef.current != null) {
-          if (arrayLength > 10) {
-            var location = (arrayLength % 10) - 1;
-            if (location == -1) {
-              location = 9;
-            }
-            var row = tableRef.current.rows[location];
-          } else {
-            var row = tableRef.current.insertRow();
-          }
-          row.insertCell().innerHTML = selectedAcronym + "-" + selectedNumber;
-        }
       } else {
         //TODO alert the user that they need to enter a complete, valid course
-      }*/
+      }
     } else {
       // TODO alert the user that they need to enter a complete, valid, course
     }
   }
-}
 
 // Removes the course from the coursesTaken list
 function removeCourse(course: string) {
-  // Splice method did not work, so here's a replacement:
+  // Slice method did not work, so here's a replacement:
   let arr = new Array();
   let index = coursesTaken.findIndex(x => x === course);
   coursesTaken.forEach((x, y) => {
@@ -115,6 +101,7 @@ function removeCourse(course: string) {
     }
   })
   setCoursesTaken(arr);
+  console.log('Deleted course: ' + course);
 }
 
   function importSchedule() {
@@ -168,7 +155,7 @@ function removeCourse(course: string) {
                     thin={true}
                   />
                 </div>
-                <button onClick={processCompletedCourse}>Add Course</button>
+                <button onClick={processCompletedCourse} className="addCourseButton">Add Course</button>
               </div>
               <div className="input-grid-item">
                 <button>Import Schedule</button>
@@ -182,20 +169,18 @@ function removeCourse(course: string) {
                   Generate My Schedule
                 </button>
               </div>
-              <div className="input-grid-item">
+              <div className="input-grid-item-courses">
                 <div className="completedCourses">
                   <h2>Completed Courses</h2>
-                  <table id="completedCourseTable" ref={tableRef}>
-                    <tbody>
+                  <div className="courseList" style={{ gridTemplateColumns: `repeat(${(coursesTaken.length - 1) / 10 + 1}, 1fr)` }}>
                     {coursesTaken.map((course) => {
                       return (
                         <div key={course} onClick={() => removeCourse(course)}>
-                          <DeleteableInput text={course} onClick={() => removeCourse(course)} />
+                          <DeleteableInput text={course} thinWidth={coursesTaken.length >= 21}/>
                         </div>
                       )
-                    })}    
-                    </tbody>
-                  </table>
+                    })} 
+                  </div>   
                 </div>
               </div>
             </div>

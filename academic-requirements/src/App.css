@@ -1,7 +1,6 @@
 .App {
   text-align: center;
   height: 100%;
-  overflow-y: nowrap;
   margin-right: 10px;
   margin-left: 10px;
 }
@@ -11,29 +10,18 @@
   width: 100%;
 }
 
-#completedCourseTable {
-  margin-top: 20px;
-}
-
 .courseInput {
   display: flex;
   flex-flow: row nowrap;
 }
 
-/* Clear floats after the columns */
-.row:after {
-  content: "";
-  display: table;
-  clear: both;
+.completedCourses {
+  height: 300px;
 }
 
-.completedCourses {
-  background-color: #004990;
-  color: white;
+.courseList {
+  display: grid;
   border-radius: 15px;
-  margin-bottom: 10px;
-  height: 100px;
-  margin-top: 5px;
 }
 
 button {
@@ -43,18 +31,11 @@ button {
   font-size: 24px;
   padding: 10px;
   border-radius: 15px;
-  margin-top: 15px;
-  margin-bottom: 15px;
 }
 
-table {
-  background-color: #004990;
-  color: white;
-  border-radius: 5%;
-  padding-left: 5%;
-  padding-right: 5%;
-  padding-bottom: 5%;
-  width: 100%;
+.addCourseButton {
+  margin-top: 40px;
+  margin-bottom: -40px;
 }
 
 body {
@@ -76,18 +57,22 @@ body {
   column-gap: 10px;
   row-gap: 100px;
 }
+
 .grid-item {
   background-color: gainsboro;
   height: 200px;
   text-align: center;
 }
+
 .class-dropdown {
   background-color: gainsboro;
   text-align: center;
 }
+
 .right-side {
   text-align: center;
 }
+
 .requirements {
   height: 90%;
   background-color: gainsboro;
@@ -99,12 +84,24 @@ body {
   grid-template-columns: auto auto 33.33%;
   grid-template-rows: 50% 45%;
   column-gap: 15px;
-  row-gap: 15px;
+  row-gap: 0px;
+  justify-items: center;
 }
 
 .input-grid-item {
   text-align: center;
   height: 100%;
+}
+
+.input-grid-item-courses {
+  height: 150%;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  background-color: #004990;
+  color: white;
+  border-radius: 15px;
+  width: 100%;
 }
 
 .courseDropdowns {
