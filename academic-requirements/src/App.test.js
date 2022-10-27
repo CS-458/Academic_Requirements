@@ -12,6 +12,6 @@ describe("Test for App", () => {
     expect(button.textContent).toBe("Generate My Schedule");
     fireEvent.click(button);
     //Check still on input page (no major selected so can't switch page)
-    expect(getByTestId("content2")).toBeInTheDocument();
+    expect(getByTestId("content")).toBeInTheDocument();
   });
 });
