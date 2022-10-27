@@ -10,3 +10,4 @@
 # Running Automated Unit Tests
 
 * Navigate to the inner academic-requirements folder, run the `npm test` command to launch the tests.
+* These tests are also automatically run when a pull request is created and a merge into main will not be possible until they pass.
