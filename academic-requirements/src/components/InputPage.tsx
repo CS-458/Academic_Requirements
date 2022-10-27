@@ -209,7 +209,7 @@ function removeCourse(course: string) {
                     {coursesTaken.map((course) => {
                       return (
                         <div key={course} onClick={() => removeCourse(course)}>
-                          <DeleteableInput text={course} thinWidth={coursesTaken.length >= 21}/>
+                          <DeleteableInput text={course} thinWidth={coursesTaken.length >= 20}/>
                         </div>
                       )
                     })} 
