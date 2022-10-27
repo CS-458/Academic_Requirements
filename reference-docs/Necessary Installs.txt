@@ -7,7 +7,9 @@ npm install react-select
 For semesters tables:
 npm install react-table
 
+For error popups:
+npm install prop-types
+
 For using conditional classNames
 npm install clsx
 (may need to also run the following: "npm install --save react react-dom @types/react @types/react-dom")
-
