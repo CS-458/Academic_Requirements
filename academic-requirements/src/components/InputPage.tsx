@@ -48,7 +48,6 @@ const InputPage = (props: {
     setMajor(_major);
     setShowConcentration(true);
     props.onClickMajor(_major);
-    // TODO run a query to update the concentrations when major is selected?
     setConcentrationOptions(concentrations);
   }
 
@@ -72,7 +71,6 @@ const InputPage = (props: {
 
   function selectedCourseNumber(_selectedNumber) {
     setSelectedNumber(_selectedNumber);
-    // TODO update list of courses based on the selected course acronym and number
     //TODO Check that a selected number is reset to null when you select a new course
   }
 
@@ -147,14 +145,13 @@ const InputPage = (props: {
           />
           <div className="screen">
             <div className="input-grid">
-              <div className="input-grid-item">
+              <div className="input-grid-item" >
                 <SearchableDropdown
                   options={props.majorDisplayList}
                   label="Major"
                   onSelectOption={selectedMajor}
                   showDropdown={true}
                   thin={false}
-                  aria-label="Major"
                 />
               </div>
               <div className="input-grid-item">
