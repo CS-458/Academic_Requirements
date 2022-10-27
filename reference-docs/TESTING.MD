@@ -1,6 +1,6 @@
-# Tests to Run Before Pull Requests
+# Tests to Run Before Pull Requests #
 
-# Input Page UI Tests
+# Input Page UI Tests ##
 
 * Upon selection of a major the concentration list appears and is populated with accurate concentrations
 * A course can be added and removed from the completed course list and this list is reflected in the console after clicking "generate schedule" (Removed courses should not be in this list).
@@ -9,4 +9,4 @@
 
 # Running Automated Unit Tests
 
-* Navigate to the inner academic-requirements folder, run the 'npm test' command to launch the tests.
+* Navigate to the inner academic-requirements folder, run the `npm test` command to launch the tests.
