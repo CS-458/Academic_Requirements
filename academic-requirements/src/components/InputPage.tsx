@@ -34,9 +34,9 @@ const InputPage = (props: {
 }) => {
   //TODO make sure all of this information being passed is filled in and valid
 
-/*
+  /*
   General variables
-*/
+  */
   const [major, setMajor] = useState(""); // major that is selected
   const [concentration, setConcentration] = useState(""); // concentration that is selected
   const [showConcentration, setShowConcentration] = useState(false); // concentration dropdown menu is shown
@@ -98,7 +98,9 @@ const InputPage = (props: {
       if (!coursesTaken.includes(selectedAcronym + "-" + selectedNumber)) {
         //Add the course to the completed course list
         console.log("Adding course " + selectedAcronym + "-" + selectedNumber);
-        setCoursesTaken(coursesTaken.concat(selectedAcronym + "-" + selectedNumber));
+        setCoursesTaken(
+          coursesTaken.concat(selectedAcronym + "-" + selectedNumber)
+        );
       } else {
         throwError("This course has already been added");
       }
@@ -116,19 +118,19 @@ const InputPage = (props: {
     }
   }
 
-// Removes the course from the coursesTaken list
-function removeCourse(course: string) {
-  // Slice method did not work, so here's a replacement:
-  let arr = new Array();
-  let index = coursesTaken.findIndex(x => x === course);
-  coursesTaken.forEach((x, y) => {
-    if (y !== index) {
-      arr.push(x);
-    }
-  })
-  setCoursesTaken(arr);
-  console.log('Deleted course: ' + course);
-}
+  // Removes the course from the coursesTaken list
+  function removeCourse(course: string) {
+    // Slice method did not work, so here's a replacement:
+    let arr = new Array();
+    let index = coursesTaken.findIndex(x => x === course);
+    coursesTaken.forEach((x, y) => {
+      if (y !== index) {
+        arr.push(x);
+      }
+    })
+    setCoursesTaken(arr);
+    console.log('Deleted course: ' + course);
+  }
 
   function importSchedule() {
     //TODO check if the imported file is a valid format (jsonschema)
@@ -188,7 +190,12 @@ function removeCourse(course: string) {
                     thin={true}
                   />
                 </div>
-                <button onClick={processCompletedCourse} className="addCourseButton">Add Course</button>
+                <button 
+                  onClick={processCompletedCourse} 
+                  className="addCourseButton"
+                >
+                  Add Course
+                </button>
               </div>
               <div className="input-grid-item">
                 <button>Import Schedule</button>
@@ -205,13 +212,22 @@ function removeCourse(course: string) {
               <div className="input-grid-item-courses">
                 <div className="completedCourses">
                   <h2>Completed Courses</h2>
-                  <div className="courseList" style={{ gridTemplateColumns: `repeat(${(coursesTaken.length - 1) / 10 + 1}, 1fr)` }}>
+                  <div 
+                    className="courseList" 
+                    style={{ gridTemplateColumns: `repeat(${
+                      (coursesTaken.length - 1) / 10 + 1
+                    }, 1fr)` 
+                    }}
+                  >
                     {coursesTaken.map((course) => {
                       return (
                         <div key={course} onClick={() => removeCourse(course)}>
-                          <DeleteableInput text={course} thinWidth={coursesTaken.length >= 20}/>
+                          <DeleteableInput 
+                            text={course} 
+                            thinWidth={coursesTaken.length >= 20}
+                          />
                         </div>
-                      )
+                      );
                     })} 
                   </div>   
                 </div>
