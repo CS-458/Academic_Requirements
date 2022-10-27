@@ -1,11 +1,11 @@
 import React from "react";
 // @ts-ignore
-import {ReactComponent as XSymbol} from "../images/xSymbol.svg";
+import { ReactComponent as XSymbol } from "../images/xSymbol.svg";
 import clsx from "clsx";
 
 import "./DeleteableInput.css";
 
-const InputPage = (props: { text: string, thinWidth: boolean }) => {
+const DeleteableInput = (props: { text: string, thinWidth: boolean }) => {
   return (
     <div 
       className={clsx("container", props.thinWidth && "thin")}  
@@ -17,4 +17,4 @@ const InputPage = (props: { text: string, thinWidth: boolean }) => {
     );
   }
 
-export default InputPage;
+export default DeleteableInput;

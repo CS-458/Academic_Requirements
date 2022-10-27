@@ -46,7 +46,7 @@ const InputPage = (props: {
   const [coursesTaken, setCoursesTaken] = useState<Array<string>>([]); // courses taken list of strings
   const tableRef = useRef<HTMLTableElement>(null);
 
-/* 
+  /* 
   Methods that assign major, minor, or concentration when picking option from a dropdown
 */
   function selectedMajor(_major) {
@@ -122,14 +122,14 @@ const InputPage = (props: {
   function removeCourse(course: string) {
     // Slice method did not work, so here's a replacement:
     let arr = new Array();
-    let index = coursesTaken.findIndex(x => x === course);
+    let index = coursesTaken.findIndex((x) => x === course);
     coursesTaken.forEach((x, y) => {
       if (y !== index) {
         arr.push(x);
       }
-    })
+    });
     setCoursesTaken(arr);
-    console.log('Deleted course: ' + course);
+    console.log("Deleted course: " + course);
   }
 
   function importSchedule() {
@@ -190,7 +190,7 @@ const InputPage = (props: {
                     thin={true}
                   />
                 </div>
-                <button 
+                <button
                   onClick={processCompletedCourse} 
                   className="addCourseButton"
                 >
@@ -214,21 +214,22 @@ const InputPage = (props: {
                   <h2>Completed Courses</h2>
                   <div 
                     className="courseList" 
-                    style={{ gridTemplateColumns: `repeat(${
-                      (coursesTaken.length - 1) / 10 + 1
-                    }, 1fr)` 
+                    style={{ 
+                      gridTemplateColumns: `repeat(${
+                        (coursesTaken.length - 1) / 10 + 1
+                      }, 1fr)` 
                     }}
                   >
                     {coursesTaken.map((course) => {
                       return (
                         <div key={course} onClick={() => removeCourse(course)}>
-                          <DeleteableInput 
+                          <DeleteableInput
                             text={course} 
                             thinWidth={coursesTaken.length >= 20}
                           />
                         </div>
-                      );
-                    })} 
+                      )
+                    })}
                   </div>   
                 </div>
               </div>
