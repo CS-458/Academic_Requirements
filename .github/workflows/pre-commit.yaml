@@ -17,6 +17,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v1
-      - run: cd academic-requirements
-      - run: npm install
-      - run: npm test
+      - name: run-tests
+        run: |
+          cd academic-requirements
+          npm install
+          npm test
