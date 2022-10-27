@@ -147,6 +147,7 @@ const InputPage = (props: {
                   onSelectOption={selectedMajor}
                   showDropdown={true}
                   thin={false}
+                  aria-label="Major"
                 />
               </div>
               <div className="input-grid-item">
