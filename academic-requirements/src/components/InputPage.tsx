@@ -191,7 +191,7 @@ const InputPage = (props: {
                   />
                 </div>
                 <button
-                  onClick={processCompletedCourse} 
+                  onClick={processCompletedCourse}
                   className="addCourseButton"
                 >
                   Add Course
@@ -213,24 +213,24 @@ const InputPage = (props: {
                 <div className="completedCourses">
                   <h2>Completed Courses</h2>
                   <div 
-                    className="courseList" 
-                    style={{ 
+                    className="courseList"
+                    style={{
                       gridTemplateColumns: `repeat(${
                         (coursesTaken.length - 1) / 10 + 1
-                      }, 1fr)` 
+                      }, 1fr)`
                     }}
                   >
                     {coursesTaken.map((course) => {
                       return (
                         <div key={course} onClick={() => removeCourse(course)}>
                           <DeleteableInput
-                            text={course} 
+                            text={course}
                             thinWidth={coursesTaken.length >= 20}
                           />
                         </div>
-                      )
+                      );
                     })}
-                  </div>   
+                  </div>
                 </div>
               </div>
             </div>
