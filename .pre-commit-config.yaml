@@ -5,6 +5,7 @@ repos:
       - id: check-json
       - id: check-added-large-files
       - id: end-of-file-fixer
+        exclude: reference-docs/*
       - id: pretty-format-json
         args: [--autofix]
         exclude: package-lock.json
@@ -16,3 +17,4 @@ repos:
     rev: v2.7.1
     hooks:
       - id: prettier
+        exclude: reference-docs/*
