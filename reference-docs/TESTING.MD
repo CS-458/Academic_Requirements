@@ -1,6 +1,7 @@
 # Tests to Run Before Pull Requests
 
 # Input Page UI Tests
+
 ### Dropdown Menu:
 
 1. Clicking the dropdown shows all available options. The user can then select one specific option.
@@ -11,7 +12,7 @@
 
 4. There are four dropdown menus: major, concentration, class acronym, and class number
 
-###  Major Input:
+### Major Input:
 
 1. The major input is a dropdown menu, that was tested above.
 
