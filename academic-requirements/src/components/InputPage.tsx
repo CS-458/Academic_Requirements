@@ -53,7 +53,6 @@ const InputPage = (props: {
     setMajor(_major);
     setShowConcentration(true);
     props.onClickMajor(_major);
-    // TODO run a query to update the concentrations when major is selected?
     setConcentrationOptions(concentrations);
   }
 
@@ -77,7 +76,6 @@ const InputPage = (props: {
 
   function selectedCourseNumber(_selectedNumber) {
     setSelectedNumber(_selectedNumber);
-    // TODO update list of courses based on the selected course acronym and number
     //TODO Check that a selected number is reset to null when you select a new course
   }
 
@@ -105,7 +103,6 @@ const InputPage = (props: {
         throwError("This course has already been added");
       }
     } else {
-      // TODO alert the user that they need to enter a complete, valid, course
       if (selectedNumber == null) {
         throwError(
           "No course number has been selected, please select a course number."
@@ -143,7 +140,7 @@ const InputPage = (props: {
   return (
     <div className="App">
       {props.showing && (
-        <div>
+        <div data-testid="content">
           <header className="Four-Year-Plan">
             <h1>Academic Planner</h1>
           </header>
@@ -205,6 +202,7 @@ const InputPage = (props: {
                   onClick={() =>
                     props.onClickGenerate(major, concentration, coursesTaken)
                   }
+                  data-testid="GenerateSchedule"
                 >
                   Generate My Schedule
                 </button>
