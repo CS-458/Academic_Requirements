@@ -1,8 +1,12 @@
 // The @ts-ignore rejects the error from having the .tsx file extension on import
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useMemo, useEffect } from "react";
 // @ts-ignore
 import SearchableDropdown from "./SearchableDropdown.tsx";
+// @ts-ignore
+import DeleteableInput from "./DeleteableInput.tsx";
+
 import ErrorPopup from "./ErrorPopup";
+
 // Temporary imports until we get the real data (can be deleted later)
 // @ts-ignore
 import majors from "../mockDataLists/majors.tsx";
@@ -29,9 +33,10 @@ const InputPage = (props: {
   ): void;
 }) => {
   //TODO make sure all of this information being passed is filled in and valid
+
   /*
   General variables
-*/
+  */
   const [major, setMajor] = useState(""); // major that is selected
   const [concentration, setConcentration] = useState(""); // concentration that is selected
   const [showConcentration, setShowConcentration] = useState(false); // concentration dropdown menu is shown
@@ -92,22 +97,10 @@ const InputPage = (props: {
       //TODO Check that the course is a valid course in the database
       if (!coursesTaken.includes(selectedAcronym + "-" + selectedNumber)) {
         //Add the course to the completed course list
-        var arrayLength = coursesTaken.push(
-          selectedAcronym + "-" + selectedNumber
+        console.log("Adding course " + selectedAcronym + "-" + selectedNumber);
+        setCoursesTaken(
+          coursesTaken.concat(selectedAcronym + "-" + selectedNumber)
         );
-        //Output the course into the completed course list
-        if (tableRef.current != null) {
-          if (arrayLength > 10) {
-            var location = (arrayLength % 10) - 1;
-            if (location == -1) {
-              location = 9;
-            }
-            var row = tableRef.current.rows[location];
-          } else {
-            var row = tableRef.current.insertRow();
-          }
-          row.insertCell().innerHTML = selectedAcronym + "-" + selectedNumber;
-        }
       } else {
         throwError("This course has already been added");
       }
@@ -123,6 +116,20 @@ const InputPage = (props: {
         );
       }
     }
+  }
+
+  // Removes the course from the coursesTaken list
+  function removeCourse(course: string) {
+    // Slice method did not work, so here's a replacement:
+    let arr = new Array();
+    let index = coursesTaken.findIndex((x) => x === course);
+    coursesTaken.forEach((x, y) => {
+      if (y !== index) {
+        arr.push(x);
+      }
+    });
+    setCoursesTaken(arr);
+    console.log("Deleted course: " + course);
   }
 
   function importSchedule() {
@@ -148,7 +155,7 @@ const InputPage = (props: {
           />
           <div className="screen">
             <div className="input-grid">
-              <div className="input-grid-item">
+              <div className="input-grid-dropdown">
                 <SearchableDropdown
                   options={props.majorDisplayList}
                   label="Major"
@@ -157,7 +164,7 @@ const InputPage = (props: {
                   thin={false}
                 />
               </div>
-              <div className="input-grid-item">
+              <div className="input-grid-dropdown">
                 <SearchableDropdown
                   options={props.concentrationDisplayList}
                   label="Concentration"
@@ -183,7 +190,12 @@ const InputPage = (props: {
                     thin={true}
                   />
                 </div>
-                <button onClick={processCompletedCourse}>Add Course</button>
+                <button
+                  onClick={processCompletedCourse}
+                  className="addCourseButton"
+                >
+                  Add Course
+                </button>
               </div>
               <div className="input-grid-item">
                 <button>Import Schedule</button>
@@ -197,12 +209,28 @@ const InputPage = (props: {
                   Generate My Schedule
                 </button>
               </div>
-              <div className="input-grid-item">
+              <div className="input-grid-item-courses">
                 <div className="completedCourses">
                   <h2>Completed Courses</h2>
-                  <table id="completedCourseTable" ref={tableRef}>
-                    <tbody></tbody>
-                  </table>
+                  <div
+                    className="courseList"
+                    style={{
+                      gridTemplateColumns: `repeat(${
+                        (coursesTaken.length - 1) / 10 + 1
+                      }, 1fr)`,
+                    }}
+                  >
+                    {coursesTaken.map((course) => {
+                      return (
+                        <div key={course} onClick={() => removeCourse(course)}>
+                          <DeleteableInput
+                            text={course}
+                            thinWidth={coursesTaken.length >= 20}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             </div>

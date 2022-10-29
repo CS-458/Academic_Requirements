@@ -1,10 +1,8 @@
 .App {
   text-align: center;
   height: 100%;
-}
-
-.four-year-plan {
-  text-align: center;
+  margin-right: 10px;
+  margin-left: 10px;
 }
 
 .screen {
@@ -12,52 +10,13 @@
   width: 100%;
 }
 
-.column {
-  float: left;
-  width: 33.33%;
-}
-
-.row {
-  margin-bottom: 20px;
-  float: center;
-  margin-left: 90px;
-}
-
-.row2 {
-  height: 50%;
-  position: absolute;
-  bottom: 0px;
-  width: 100%;
-}
-
-.column2 {
-  float: left;
-  width: 33.33%;
-  align-items: center;
-  height: 100%;
-}
-
-#completedCourseTable {
-  margin-top: 20px;
-}
-
-.courseInput {
-  display: flex;
-  flex-flow: row nowrap;
-}
-
-/* Clear floats after the columns */
-.row:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-
 .completedCourses {
-  background-color: #004990;
-  color: white;
+  height: 300px;
+}
+
+.courseList {
+  display: grid;
   border-radius: 15px;
-  height: 60%;
 }
 
 button {
@@ -69,15 +28,9 @@ button {
   border-radius: 15px;
 }
 
-table {
-  background-color: #004990;
-  color: white;
-  border-radius: 5px;
-  padding-left: 20%;
-  padding-right: 20%;
-  padding-bottom: 20%;
-  height: 60%;
-  width: 100%;
+.addCourseButton {
+  margin-top: 40px;
+  margin-bottom: -40px;
 }
 
 body {
@@ -99,18 +52,22 @@ body {
   column-gap: 10px;
   row-gap: 100px;
 }
+
 .grid-item {
   background-color: gainsboro;
   height: 200px;
   text-align: center;
 }
+
 .class-dropdown {
   background-color: gainsboro;
   text-align: center;
 }
+
 .right-side {
   text-align: center;
 }
+
 .requirements {
   height: 90%;
   background-color: gainsboro;
@@ -120,14 +77,33 @@ body {
 .input-grid {
   display: grid;
   grid-template-columns: auto auto 33.33%;
-  grid-template-rows: 100% 90%;
+  grid-template-rows: 50% 45%;
   column-gap: 15px;
-  row-gap: 15px;
+  row-gap: 0px;
+  justify-items: center;
 }
 
 .input-grid-item {
   text-align: center;
   height: 100%;
+}
+
+.input-grid-dropdown {
+  text-align: center;
+  height: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.input-grid-item-courses {
+  height: 150%;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  background-color: #004990;
+  color: white;
+  border-radius: 15px;
+  width: 100%;
 }
 
 .courseDropdowns {

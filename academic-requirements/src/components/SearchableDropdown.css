@@ -1,8 +1,5 @@
 .container,
 .thinContainer {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   padding-left: 15px;
   padding-right: 15px;
 }
