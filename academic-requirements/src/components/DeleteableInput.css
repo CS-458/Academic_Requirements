@@ -1,0 +1,18 @@
+.container {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+.x {
+  width: 13px;
+  height: 13px;
+  margin-top: 4px;
+  margin-right: 5px;
+}
+
+.thin {
+  width: 130px;
+}

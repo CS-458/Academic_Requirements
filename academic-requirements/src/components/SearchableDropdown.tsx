@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Select, { SingleValue } from "react-select";
 import "./SearchableDropdown.css";
 
