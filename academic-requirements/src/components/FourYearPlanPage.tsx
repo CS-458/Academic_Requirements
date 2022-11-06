@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import ErrorPopup from "./ErrorPopup";
+//@ts-ignore
+import DraggableCourse from "./DraggableCourse.tsx"
+
 const FourYearPlanPage = (props: {
   showing: boolean;
   majorCourseList: {
@@ -61,6 +64,11 @@ const FourYearPlanPage = (props: {
             </div>
             <div className="right-side">
               <div className="requirements">Requirements</div>
+              <DraggableCourse 
+              CourseAcronym="CS"
+              CourseNumber="141"
+              CourseName="Intro to Computer Science with lots of extra text for testing"
+              />
               <button>Export Schedule</button>
             </div>
           </div>
