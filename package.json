@@ -1,6 +1,29 @@
 {
   "dependencies": {
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
     "express": "^4.18.2",
-    "mysql": "^2.18.1"
-  }
+    "mysql": "^2.18.1",
+    "supertest": "^6.3.1"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test": "jest server.test.js"
+  },
+  "name": "academic_requirements",
+  "description": "- Start the server from the terminal by running `node ./server.js` from the outer academic_requirements folder (the base repo folder)\r - Open a new terminal and start the app by running `npm start` from the inner academic-requirements folder ('cd academic-requirements')",
+  "version": "1.0.0",
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CS-458/Academic_Requirements.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CS-458/Academic_Requirements/issues"
+  },
+  "homepage": "https://github.com/CS-458/Academic_Requirements#readme"
 }
