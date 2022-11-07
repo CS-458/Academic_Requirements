@@ -1,5 +1,9 @@
 import React, { useState } from "react";
 import ErrorPopup from "./ErrorPopup";
+//@ts-ignore
+import SearchableDropdown from "./SearchableDropdown.tsx";
+//@ts-ignore
+import categories from "../mockDataLists/Categories.tsx";
 const FourYearPlanPage = (props: {
   showing: boolean;
   majorCourseList: {
@@ -16,7 +20,12 @@ const FourYearPlanPage = (props: {
     semesters: string;
     subject: string;
   }[];
+  onClickCategory(category: string): void; //Hovland 7Nov22
+  
 }) => {
+  //Stuff for category dropdown. Hovland 7Nov22
+  const [category, setCategory] = useState(""); //category that is selected
+
   //Functions and variables for controlling an error popup
   const [visibility, setVisibility] = useState(false);
   const popupCloseHandler = () => {
@@ -27,12 +36,25 @@ const FourYearPlanPage = (props: {
     setVisibility(true);
     setError(error);
   }
+    //SelectedCategory function. Hovland7Nov22
+  function selectedCategory(_selectedCategory) {
+    setSelectedCategory(_selectedCategory);
+    //TODO Check that a selected number is reset to null when you select a new course
+  }
+    //setSelectedCategory function. Hovland 7Nov22
+  function setSelectedCategory(category) {
+    setCategory(category);
+    //setShowConcentration(true);
+    props.onClickCategory(category);
+    //setConcentrationOptions(concentrations);
+  }
+
   return (
     <div>
       {props.showing && (
         <div className="screen">
           <div className="four-year-plan" data-testid="scheduleContent">
-            <h1>Academic Planner</h1>
+          <h1>Academic Planner</h1>
           </div>
           <ErrorPopup
             onClose={popupCloseHandler}
@@ -40,6 +62,7 @@ const FourYearPlanPage = (props: {
             title="Error"
             error={error}
           />
+          
           <div className="grid-container">
             <div className="semesters-container">
               <div className="grid-item">Semester 1</div>
@@ -64,7 +87,17 @@ const FourYearPlanPage = (props: {
               <button>Export Schedule</button>
             </div>
           </div>
+          <div className="courseDropdowns">
+            <SearchableDropdown
+                    options={categories} 
+                    label="Category"
+                    onSelectOption={selectedCategory}
+                    showDropdown={true}
+                    thin={true}
+                  />
+                  </div>
         </div>
+        
       )}
     </div>
   );

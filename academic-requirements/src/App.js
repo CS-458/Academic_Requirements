@@ -8,6 +8,7 @@ function App() {
   const [clickedGenerate, setClickedGenerate] = useState();
   const [previouslyTakenCourses, setPreviouslyTakenCourses] = useState();
 
+ 
   //majorData is an array of major objects returned from the database
   const [majorData, setMajorData] = useState([]);
   //majorDisplayData is an array of the 'name' of the major objects for display purposes
