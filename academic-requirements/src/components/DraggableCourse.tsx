@@ -1,42 +1,27 @@
-import Draggable from 'react-draggable';
 import React from "react";
+import {useDrag} from "react-dnd";
+import ItemTypes from './Constants'
 import "./DraggableCourse.css";
+function DraggableCourse(props: {
+  courseNumber: string,
+  courseAcronym: string,
+  courseName: string,
+  isDragging,
+}){
 
-const DraggableCourse = (props: {
-  CourseAcronym: string;
-  CourseNumber: string;
-  CourseName: string;
-}) => {
-    var eventLogger = (e: MouseEvent, data: Object) => {
-        console.log('Event: ', e);
-        console.log('Data: ', data);
-      };
-
-      function handleStart(){
-        console.log("grabbed");
-        //TODO check if moving FROM a semester
-      }
-      function handleDrag(event){
-        console.log("dragging");
-        //event.dataTransfer.setData()
-      }
-      function handleStop(){
-        console.log("dropped");
-        //TODO check if it has been placed in a semester
-      }
-
-    return(
-            <Draggable
-            axis="both"
-            scale={1}
-            onStart={handleStart}
-            onDrag={handleDrag}
-            onStop={handleStop}
-            >
-                <div className="CourseText">
-                    {props.CourseAcronym }-{props.CourseNumber}<br/>{props.CourseName}
-                </div>
-            </Draggable>
-    );
+  const [{ opacity }, dragRef] = useDrag(
+    () => ({
+      type: ItemTypes.COURSE,
+      item: props.courseName,
+      collect: (monitor) => ({
+      opacity: monitor.isDragging() ? 0.5 : 1
+      })
+    }))
+  return(
+    <div ref={dragRef} style={{ opacity }} className="CourseText">
+      {props.courseAcronym}-{props.courseNumber}<br/>
+      {props.courseName}
+    </div>
+  )
 };
 export default DraggableCourse;

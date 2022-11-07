@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import InputPage from "./components/InputPage.tsx";
 import FourYearPlanPage from "./components/FourYearPlanPage.tsx";
 import ErrorPopup from "./components/ErrorPopup";
@@ -157,29 +159,31 @@ function App() {
   }, [concentration]);
 
   return (
-    <div>
-      <InputPage
-        showing={!clickedGenerate}
-        onClickGenerate={generateSchedule}
-        onClickMajor={selectMajor}
-        onClickConcentration={selectConcentration}
-        concentrationList={concentrationData}
-        majorList={majorData}
-        majorDisplayList={majorDisplayData}
-        concentrationDisplayList={concentrationDisplayData}
-      />
-      <FourYearPlanPage
-        showing={clickedGenerate}
-        concentrationCourseList={concentrationCourseData}
-        majorCourseList={majorCourseData}
-      />
-      <ErrorPopup
-        onClose={popupCloseHandler}
-        show={visibility}
-        title="Error"
-        error={error}
-      />
-    </div>
+    <DndProvider backend={HTML5Backend}>
+      <div>
+        <InputPage
+          showing={!clickedGenerate}
+          onClickGenerate={generateSchedule}
+          onClickMajor={selectMajor}
+          onClickConcentration={selectConcentration}
+          concentrationList={concentrationData}
+          majorList={majorData}
+          majorDisplayList={majorDisplayData}
+          concentrationDisplayList={concentrationDisplayData}
+        />
+        <FourYearPlanPage
+          showing={clickedGenerate}
+          concentrationCourseList={concentrationCourseData}
+          majorCourseList={majorCourseData}
+        />
+        <ErrorPopup
+          onClose={popupCloseHandler}
+          show={visibility}
+          title="Error"
+          error={error}
+        />
+      </div>
+    </DndProvider>
   );
 }
 
