@@ -20,14 +20,14 @@ afterEach(async () => {
 //These comments pertain to every test written
 //Defining the test
 it("test /major endpoint", async () => {
-    //supertest(app).get is going to the route that is inside the get and retreiving data
+  //supertest(app).get is going to the route that is inside the get and retreiving data
   await supertest(app)
     .get("/major")
     //expect 200 means that we successfully got our data
     .expect(200)
     //if we got our data, then we take it and check a few things
     .then((response) => {
-        //check if the response is an array
+      //check if the response is an array
       expect(Array.isArray(response.body)).toBeTruthy();
       //check if the response is not an empty array
       expect(response.body.length).toBeGreaterThan(0);
