@@ -1,27 +1,75 @@
 import React from "react";
-import {useDrag} from "react-dnd";
-import ItemTypes from './Constants'
+import ItemTypes from './Constants';
 import "./DraggableCourse.css";
-function DraggableCourse(props: {
-  courseNumber: string,
+import type { CSSProperties, FC } from 'react';
+import { memo } from 'react';
+import { useDrag, useDrop } from 'react-dnd';
+
+const style: CSSProperties = {
+  border: '1px dashed gray',
+  padding: '0.5rem 1rem',
+  marginBottom: '.5rem',
+  backgroundColor: 'white',
+  cursor: 'move',
+}
+export interface DraggableCourse {
+  id: string,
+  courseNumber: number,
   courseAcronym: string,
   courseName: string,
-  isDragging,
-}){
+  moveCourse: (id: string, to: number) => void
+  findCourse: (id: string) => { index: number }
+}
 
-  const [{ opacity }, dragRef] = useDrag(
+interface Item {
+  id: string
+  originalIndex: number
+}
+
+export const Course: FC<DraggableCourse> = memo(function Course({
+  id,
+  courseNumber,
+  courseAcronym,
+  courseName,
+  moveCourse,
+  findCourse,
+}) {
+  const originalIndex = findCourse(id).index
+  const [{ isDragging }, drag] = useDrag(
     () => ({
       type: ItemTypes.COURSE,
-      item: props.courseName,
+      item: { id, originalIndex },
       collect: (monitor) => ({
-      opacity: monitor.isDragging() ? 0.5 : 1
-      })
-    }))
-  return(
-    <div ref={dragRef} style={{ opacity }} className="CourseText">
-      {props.courseAcronym}-{props.courseNumber}<br/>
-      {props.courseName}
+        isDragging: monitor.isDragging(),
+      }),
+      end: (item, monitor) => {
+        const { id: droppedId, originalIndex } = item
+        const didDrop = monitor.didDrop()
+        if (!didDrop) {
+          moveCourse(droppedId, originalIndex)
+        }
+      },
+    }),
+    [id, originalIndex, moveCourse],
+  )
+
+  const [, drop] = useDrop(
+    () => ({
+      accept: ItemTypes.COURSE,
+      hover({ id: draggedId }: Item) {
+        if (draggedId !== id) {
+          const { index: overIndex } = findCourse(id)
+          moveCourse(draggedId, overIndex)
+        }
+      },
+    }),
+    [findCourse, moveCourse],
+  )
+
+  const opacity = isDragging ? 0 : 1
+  return (
+    <div ref={(node) => drag(drop(node))} style={{ ...style, opacity }}>
+      {courseAcronym}-{courseNumber}
     </div>
   )
-};
-export default DraggableCourse;
+})
