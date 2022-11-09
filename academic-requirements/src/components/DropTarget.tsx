@@ -5,7 +5,7 @@ import { memo, useCallback, useState } from 'react';
 import { useDrop } from 'react-dnd'
 //@ts-ignore
 import { Course } from './DraggableCourse.tsx';
-import ItemTypes from './Constants.js';
+import {ItemTypes} from './Constants.js';
 
 const style = {
   width: 400,

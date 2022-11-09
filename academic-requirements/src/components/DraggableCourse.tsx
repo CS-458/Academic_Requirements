@@ -1,5 +1,5 @@
 import React from "react";
-import ItemTypes from './Constants';
+import {ItemTypes} from './Constants';
 import "./DraggableCourse.css";
 import type { CSSProperties, FC } from 'react';
 import { memo } from 'react';
@@ -28,9 +28,9 @@ interface Item {
 
 export const Course: FC<DraggableCourse> = memo(function Course({
   id,
+  courseName,
   courseNumber,
   courseAcronym,
-  courseName,
   moveCourse,
   findCourse,
 }) {
@@ -69,7 +69,7 @@ export const Course: FC<DraggableCourse> = memo(function Course({
   const opacity = isDragging ? 0 : 1
   return (
     <div ref={(node) => drag(drop(node))} style={{ ...style, opacity }}>
-      {courseAcronym}-{courseNumber}
+      {courseAcronym}-{courseNumber}<br/>{courseName}
     </div>
   )
 })
