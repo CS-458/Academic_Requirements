@@ -22,3 +22,11 @@ jobs:
           cd academic-requirements
           npm install
           npm test
+  api-unit-tests:
+    runs-on: self-hosted #This is Kassidy's Laptop
+    steps:
+      - uses: actions/checkout@v3
+      - name: run-tests
+        run: |
+          npm install
+          npm test -- --force-exit
