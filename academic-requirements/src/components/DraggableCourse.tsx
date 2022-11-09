@@ -4,14 +4,7 @@ import { useDrag, useDrop } from 'react-dnd'
 import React from 'react'
 //@ts-ignore
 import { ItemTypes } from './Constants.js'
-
-const style: CSSProperties = {
-  border: '1px dashed gray',
-  padding: '0.5rem 1rem',
-  marginBottom: '.5rem',
-  backgroundColor: 'white',
-  cursor: 'move',
-}
+import "./DraggableCourse.css"
 
 export interface CourseProps {
   id: string
@@ -27,7 +20,7 @@ interface Item {
   originalIndex: number
 }
 
-export const Course: FC<CourseProps> = memo(function Course({
+export const Course: FC<CourseProps> = memo(function C({
   id,
   courseName,
   courseNumber,
@@ -68,8 +61,9 @@ export const Course: FC<CourseProps> = memo(function Course({
   )
 
   const opacity = isDragging ? 0 : 1
+  const cursor = isDragging ? "point" : "grab"
   return (
-    <div ref={(node) => drag(drop(node))} style={{ ...style, opacity }}>
+    <div ref={(node) => drag(drop(node))} style={{ opacity, cursor }} className="CourseText">
       {courseAcronym}-{courseNumber}<br/>{courseName}
     </div>
   )

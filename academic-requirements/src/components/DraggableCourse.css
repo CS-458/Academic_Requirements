@@ -1,6 +1,6 @@
 .CourseText{
     font-size:9pt;
-    text-align: left;
+    text-align: center;
     overflow:hidden;
     width:75%;
     /*display: -webkit-box;*/
@@ -11,6 +11,8 @@
     outline-style: auto;
     background-color: gainsboro;
     border-radius: 5px;
+    padding: '5rem 1rem';
+    margin: 5px;
 }
 .CourseText:first-line {
     font-size: 11pt;

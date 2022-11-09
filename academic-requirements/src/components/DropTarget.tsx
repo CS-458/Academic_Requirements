@@ -9,7 +9,7 @@ import { Course } from './DraggableCourse.tsx'
 import { ItemTypes } from './Constants.js'
 
 const style = {
-  width: 400,
+  width: 200,
 }
 
 export interface ContainerState {
