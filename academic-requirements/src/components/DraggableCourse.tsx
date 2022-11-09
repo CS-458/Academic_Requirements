@@ -1,9 +1,9 @@
-import React from "react";
-import {ItemTypes} from './Constants';
-import "./DraggableCourse.css";
-import type { CSSProperties, FC } from 'react';
-import { memo } from 'react';
-import { useDrag, useDrop } from 'react-dnd';
+import type { CSSProperties, FC } from 'react'
+import { memo } from 'react'
+import { useDrag, useDrop } from 'react-dnd'
+import React from 'react'
+//@ts-ignore
+import { ItemTypes } from './Constants.js'
 
 const style: CSSProperties = {
   border: '1px dashed gray',
@@ -12,13 +12,14 @@ const style: CSSProperties = {
   backgroundColor: 'white',
   cursor: 'move',
 }
-export interface DraggableCourse {
-  id: string,
-  courseNumber: number,
-  courseAcronym: string,
-  courseName: string,
-  moveCourse: (id: string, to: number) => void
-  findCourse: (id: string) => { index: number }
+
+export interface CourseProps {
+  id: string
+  courseName: string
+  courseNumber:number
+  courseAcronym: string
+  moveCard: (id: string, to: number) => void
+  findCard: (id: string) => { index: number }
 }
 
 interface Item {
@@ -26,18 +27,18 @@ interface Item {
   originalIndex: number
 }
 
-export const Course: FC<DraggableCourse> = memo(function Course({
+export const Card: FC<CourseProps> = memo(function Card({
   id,
   courseName,
   courseNumber,
   courseAcronym,
-  moveCourse,
-  findCourse,
+  moveCard,
+  findCard,
 }) {
-  const originalIndex = findCourse(id).index
+  const originalIndex = findCard(id).index
   const [{ isDragging }, drag] = useDrag(
     () => ({
-      type: ItemTypes.COURSE,
+      type: ItemTypes.CARD,
       item: { id, originalIndex },
       collect: (monitor) => ({
         isDragging: monitor.isDragging(),
@@ -46,24 +47,24 @@ export const Course: FC<DraggableCourse> = memo(function Course({
         const { id: droppedId, originalIndex } = item
         const didDrop = monitor.didDrop()
         if (!didDrop) {
-          moveCourse(droppedId, originalIndex)
+          moveCard(droppedId, originalIndex)
         }
       },
     }),
-    [id, originalIndex, moveCourse],
+    [id, originalIndex, moveCard],
   )
 
   const [, drop] = useDrop(
     () => ({
-      accept: ItemTypes.COURSE,
+      accept: ItemTypes.CARD,
       hover({ id: draggedId }: Item) {
         if (draggedId !== id) {
-          const { index: overIndex } = findCourse(id)
-          moveCourse(draggedId, overIndex)
+          const { index: overIndex } = findCard(id)
+          moveCard(draggedId, overIndex)
         }
       },
     }),
-    [findCourse, moveCourse],
+    [findCard, moveCard],
   )
 
   const opacity = isDragging ? 0 : 1

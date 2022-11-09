@@ -1,111 +1,112 @@
-import update from 'immutability-helper';
-import React from "react";
-import type { FC } from 'react';
-import { memo, useCallback, useState } from 'react';
+import update from 'immutability-helper'
+import type { FC } from 'react'
+import { memo, useCallback, useState } from 'react'
 import { useDrop } from 'react-dnd'
+import React from 'react'
 //@ts-ignore
-import { Course } from './DraggableCourse.tsx';
-import {ItemTypes} from './Constants.js';
+import { Card } from './DraggableCourse.tsx'
+//@ts-ignore
+import { ItemTypes } from './Constants.js'
 
 const style = {
   width: 400,
 }
 
 export interface ContainerState {
-  courses: any[]
+  cards: any[]
 }
 
 const ITEMS = [
-  {
-    id: 1,
-    courseName: 'Write a cool JS library',
-    courseNumber: 141,
-    courseAcronym: "CS",
-  },
-  {
-    id: 2,
-    courseName: 'Write a cool JS library',
-    courseNumber: 204,
-    courseAcronym: "CS",
-  },
-  {
-    id: 3,
-    courseName: 'Write README',
-    courseNumber: 205,
-    courseAcronym: "AHH",
-  },
-  {
-    id: 4,
-    courseName: 'Create some examples',
-    courseNumber: 214,
-    courseAcronym: "AMCS",
-  },
-  {
-    id: 5,
-    courseName: 'Spam in Twitter and IRC to promote it',
-    courseNumber: 244,
-    courseAcronym: "Pysc",
-  },
-  {
-    id: 6,
-    courseName: '???',
-    courseNumber: 304,
-    courseAcronym: "Math",
-  },
-  {
-    id: 7,
-    courseName: 'PROFIT',
-    courseNumber: 574,
-    courseAcronym: "Help",
-  },
-]
+    {
+      id: 1,
+      courseName: 'Write a cool JS library',
+      courseNumber: 141,
+      courseAcronym: "CS",
+    },
+    {
+      id: 2,
+      courseName: 'Write a cool JS library',
+      courseNumber: 204,
+      courseAcronym: "CS",
+    },
+    {
+      id: 3,
+      courseName: 'Write README',
+      courseNumber: 205,
+      courseAcronym: "AHH",
+    },
+    {
+      id: 4,
+      courseName: 'Create some examples',
+      courseNumber: 214,
+      courseAcronym: "AMCS",
+    },
+    {
+      id: 5,
+      courseName: 'Spam in Twitter and IRC to promote it',
+      courseNumber: 244,
+      courseAcronym: "Pysc",
+    },
+    {
+      id: 6,
+      courseName: '???',
+      courseNumber: 304,
+      courseAcronym: "Math",
+    },
+    {
+      id: 7,
+      courseName: 'PROFIT',
+      courseNumber: 574,
+      courseAcronym: "Help",
+    },
+  ]
 
 export const Container: FC = memo(function Container() {
-  const [courses, setCourses] = useState(ITEMS)
+  const [cards, setCards] = useState(ITEMS)
 
-  const findCourse = useCallback(
+  const findCard = useCallback(
     (id: string) => {
-      const course = courses.filter((c) => `${c.id}` === id)[0] as {
+      const card = cards.filter((c) => `${c.id}` === id)[0] as {
         id: number
-        courseName: string
         courseNumber: number
+        courseName: string
         courseAcronym: string
       }
       return {
-        course,
-        index: courses.indexOf(course),
+        card,
+        index: cards.indexOf(card),
       }
     },
-    [courses],
+    [cards],
   )
 
-  const moveCourse = useCallback(
+  const moveCard = useCallback(
     (id: string, atIndex: number) => {
-      const { course, index } = findCourse(id)
-      setCourses(
-        update(courses, {
+      const { card, index } = findCard(id)
+      setCards(
+        update(cards, {
           $splice: [
             [index, 1],
-            [atIndex, 0, course],
+            [atIndex, 0, card],
           ],
         }),
       )
     },
-    [findCourse, courses, setCourses],
+    [findCard, cards, setCards],
   )
 
-  const [, drop] = useDrop(() => ({ accept: ItemTypes.COURSE }))
+  const [, drop] = useDrop(() => ({ accept: ItemTypes.CARD }))
   return (
     <div ref={drop} style={style}>
-      {courses.map((course) => (
-        <Course
-          key= {course.id}
-          id={'${course.id}'}
-          courseNumber={course.courseNumber}
-          courseName={course.courseName}
-          courseAcronym={course.courseAcronym}
-          moveCourse={moveCourse}
-          findCourse={findCourse}
+      {cards.map((card) => (
+        <Card
+          key={card.id}
+          id={`${card.id}`}
+          courseName={card.courseName}
+          courseNumber={card.courseNumber}
+          courseAcronym={card.courseAcronym}
+          moveCard={moveCard}
+          findCard={findCard}
         />
       ))}
     </div>
