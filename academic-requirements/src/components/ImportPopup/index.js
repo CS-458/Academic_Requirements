@@ -27,30 +27,29 @@ const ImportPopup = (props) => {
   TODO: Process info in user uploaded .json file
   */
   const processUpload = () => {
-
     // HTML of the uploaded file
-    var filenameElement = document.getElementById('fileName');
+    var filenameElement = document.getElementById("fileName");
     // if file has been selected
-    if(filenameElement.files.length > 0) {
+    if (filenameElement.files.length > 0) {
       //store file name in fileName
       var fileName = filenameElement.files.item(0).name;
     }
     // if file has NOT been selected
-    else{
+    else {
       //Close uploader popup and throw error
-      closeHandler()
-      throwError("No file selected")
-      return
+      closeHandler();
+      throwError("No file selected");
+      return;
     }
     // if uploaded file is not a json -> throws error
     if (fileName.split(".").pop().toLowerCase() !== "json") {
-      closeHandler()
-      throwError("Not a JSON File") 
+      closeHandler();
+      throwError("Not a JSON File");
     }
     // if it is file "uploads" (really justs closes the the pop up)
-    else{
-      console.log("upload")
-      closeHandler()
+    else {
+      console.log("upload");
+      closeHandler();
     }
   };
 
@@ -61,29 +60,31 @@ const ImportPopup = (props) => {
   return (
     <div data-testid="errorPagePopup">
       <ErrorPopup
-            onClose={popupCloseHandler}
-            show={visibility}
-            title="Error"
-            error={error}
-          />
-    <div
-      style={{
-        visibility: show ? "visible" : "hidden",
-        opacity: show ? "1" : "0",
-      }}
-      className={popupStyles.overlay}
-      data-testid="uploaderPage"
-    >
-      <div className={popupStyles.popup} data-testid="pie">
-        <h2>{props.title}</h2>
-        <input type="file" id="fileName" data-testid="chooseFile"/>
-        <button onClick={processUpload} data-testid="uploadButton">Upload</button>
-        <span className={popupStyles.close} onClick={closeHandler}>
-          &times;
-        </span>
-        <div className={popupStyles.content}>{props.import}</div>
+        onClose={popupCloseHandler}
+        show={visibility}
+        title="Error"
+        error={error}
+      />
+      <div
+        style={{
+          visibility: show ? "visible" : "hidden",
+          opacity: show ? "1" : "0",
+        }}
+        className={popupStyles.overlay}
+        data-testid="uploaderPage"
+      >
+        <div className={popupStyles.popup} data-testid="pie">
+          <h2>{props.title}</h2>
+          <input type="file" id="fileName" data-testid="chooseFile" />
+          <button onClick={processUpload} data-testid="uploadButton">
+            Upload
+          </button>
+          <span className={popupStyles.close} onClick={closeHandler}>
+            &times;
+          </span>
+          <div className={popupStyles.content}>{props.import}</div>
+        </div>
       </div>
-    </div>
     </div>
   );
 };
@@ -94,4 +95,4 @@ ImportPopup.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
-export default ImportPopup
+export default ImportPopup;

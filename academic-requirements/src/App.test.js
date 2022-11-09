@@ -1,5 +1,5 @@
 import { fireEvent, render } from "@testing-library/react";
-import userEvent from '@testing-library/user-event'
+import userEvent from "@testing-library/user-event";
 import exp from "constants";
 import React from "react";
 import App from "./App";
@@ -89,5 +89,4 @@ describe("Test for App", () => {
     fireEvent.click(uploadButton);
     expect(getByTestId("uploaderPage")).not.toBeVisible();
   });
-
 });

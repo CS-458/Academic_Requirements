@@ -91,7 +91,7 @@ const InputPage = (props: {
     setError(error);
   }
 
-  // closes the uploader popup 
+  // closes the uploader popup
   const [uploaderVisibility, setUploaderVisibility] = useState(false);
   const popupCloseHandlerUp = () => {
     setUploaderVisibility(false);
@@ -169,7 +169,7 @@ const InputPage = (props: {
             title="Upload"
             show={uploaderVisibility}
             onClose={popupCloseHandlerUp}
-          /> 
+          />
           <div className="screen">
             <div className="input-grid">
               <div className="input-grid-dropdown">
@@ -215,10 +215,7 @@ const InputPage = (props: {
                 </button>
               </div>
               <div className="input-grid-item">
-                <button 
-                  onClick={setupUploader}
-                  data-testid="Import"
-                >
+                <button onClick={setupUploader} data-testid="Import">
                   Import Schedule
                 </button>
               </div>
