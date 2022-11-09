@@ -8,6 +8,7 @@ const dbconfig = {
   password: "mergeSort45!",
   database: "academicrequirements",
 };
+
 let connection = mysql.createConnection(dbconfig);
 
 function checkConnection() {
@@ -17,7 +18,6 @@ function checkConnection() {
       connectDatabase();
       return;
     }
-    console.log("Database is connected");
   });
 }
 
@@ -94,3 +94,5 @@ app.get("/courses/concentration", (req, res) => {
     }
   );
 });
+
+module.exports = app;
