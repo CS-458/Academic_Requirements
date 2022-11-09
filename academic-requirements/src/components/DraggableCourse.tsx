@@ -18,8 +18,8 @@ export interface CourseProps {
   courseName: string
   courseNumber:number
   courseAcronym: string
-  moveCard: (id: string, to: number) => void
-  findCard: (id: string) => { index: number }
+  moveCourse: (id: string, to: number) => void
+  findCourse: (id: string) => { index: number }
 }
 
 interface Item {
@@ -27,18 +27,18 @@ interface Item {
   originalIndex: number
 }
 
-export const Card: FC<CourseProps> = memo(function Card({
+export const Course: FC<CourseProps> = memo(function Course({
   id,
   courseName,
   courseNumber,
   courseAcronym,
-  moveCard,
-  findCard,
+  moveCourse,
+  findCourse,
 }) {
-  const originalIndex = findCard(id).index
+  const originalIndex = findCourse(id).index
   const [{ isDragging }, drag] = useDrag(
     () => ({
-      type: ItemTypes.CARD,
+      type: ItemTypes.COURSE,
       item: { id, originalIndex },
       collect: (monitor) => ({
         isDragging: monitor.isDragging(),
@@ -47,24 +47,24 @@ export const Card: FC<CourseProps> = memo(function Card({
         const { id: droppedId, originalIndex } = item
         const didDrop = monitor.didDrop()
         if (!didDrop) {
-          moveCard(droppedId, originalIndex)
+          moveCourse(droppedId, originalIndex)
         }
       },
     }),
-    [id, originalIndex, moveCard],
+    [id, originalIndex, moveCourse],
   )
 
   const [, drop] = useDrop(
     () => ({
-      accept: ItemTypes.CARD,
+      accept: ItemTypes.COURSE,
       hover({ id: draggedId }: Item) {
         if (draggedId !== id) {
-          const { index: overIndex } = findCard(id)
-          moveCard(draggedId, overIndex)
+          const { index: overIndex } = findCourse(id)
+          moveCourse(draggedId, overIndex)
         }
       },
     }),
-    [findCard, moveCard],
+    [findCourse, moveCourse],
   )
 
   const opacity = isDragging ? 0 : 1

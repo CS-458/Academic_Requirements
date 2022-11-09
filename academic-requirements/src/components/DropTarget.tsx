@@ -4,7 +4,7 @@ import { memo, useCallback, useState } from 'react'
 import { useDrop } from 'react-dnd'
 import React from 'react'
 //@ts-ignore
-import { Card } from './DraggableCourse.tsx'
+import { Course } from './DraggableCourse.tsx'
 //@ts-ignore
 import { ItemTypes } from './Constants.js'
 
@@ -13,7 +13,7 @@ const style = {
 }
 
 export interface ContainerState {
-  cards: any[]
+  courses: any[]
 }
 
 const ITEMS = [
@@ -62,51 +62,51 @@ const ITEMS = [
   ]
 
 export const Container: FC = memo(function Container() {
-  const [cards, setCards] = useState(ITEMS)
+  const [courses, setCourses] = useState(ITEMS)
 
-  const findCard = useCallback(
+  const findCourse = useCallback(
     (id: string) => {
-      const card = cards.filter((c) => `${c.id}` === id)[0] as {
+      const course = courses.filter((c) => `${c.id}` === id)[0] as {
         id: number
         courseNumber: number
         courseName: string
         courseAcronym: string
       }
       return {
-        card,
-        index: cards.indexOf(card),
+        course,
+        index: courses.indexOf(course),
       }
     },
-    [cards],
+    [courses],
   )
 
-  const moveCard = useCallback(
+  const moveCourse = useCallback(
     (id: string, atIndex: number) => {
-      const { card, index } = findCard(id)
-      setCards(
-        update(cards, {
+      const { course, index } = findCourse(id)
+      setCourses(
+        update(courses, {
           $splice: [
             [index, 1],
-            [atIndex, 0, card],
+            [atIndex, 0, course],
           ],
         }),
       )
     },
-    [findCard, cards, setCards],
+    [findCourse, courses, setCourses],
   )
 
-  const [, drop] = useDrop(() => ({ accept: ItemTypes.CARD }))
+  const [, drop] = useDrop(() => ({ accept: ItemTypes.COURSE }))
   return (
     <div ref={drop} style={style}>
-      {cards.map((card) => (
-        <Card
-          key={card.id}
-          id={`${card.id}`}
-          courseName={card.courseName}
-          courseNumber={card.courseNumber}
-          courseAcronym={card.courseAcronym}
-          moveCard={moveCard}
-          findCard={findCard}
+      {courses.map((course) => (
+        <Course
+          key={course.id}
+          id={`${course.id}`}
+          courseName={course.courseName}
+          courseNumber={course.courseNumber}
+          courseAcronym={course.courseAcronym}
+          moveCourse={moveCourse}
+          findCourse={findCourse}
         />
       ))}
     </div>
