@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 //@ts-ignore
-import Example from "./example.ts"
 import ErrorPopup from "./ErrorPopup";
+//@ts-ignore
+import Example from './example.ts'
 //@ts-ignore
 //import DraggableCourse from "./DraggableCourse.tsx"
 //@ts-ignore
 //import DropTarget from "./DropTarget.tsx"
+
 const FourYearPlanPage = (props: {
   showing: boolean;
   majorCourseList: {
@@ -49,13 +51,6 @@ const FourYearPlanPage = (props: {
           <div className="grid-container">
             <div className="semesters-container">
               <div className="grid-item"><Example/></div>
-              <div className="grid-item"><Example/></div>
-              <div className="grid-item">Semester 3</div>
-              <div className="grid-item">Semester 4</div>
-              <div className="grid-item">Semester 5</div>
-              <div className="grid-item">Semester 6</div>
-              <div className="grid-item">Semester 7</div>
-              <div className="grid-item">Semester 8</div>
             </div>
             <div className="class-dropdown">
               {props.majorCourseList.map((course, index) => {
@@ -67,11 +62,6 @@ const FourYearPlanPage = (props: {
             </div>
             <div className="right-side">
               <div className="requirements">Requirements</div>
-              {/* <DraggableCourse 
-              courseAcronym="CS"
-              courseNumber= {141}
-              courseName="Intro to Computer Science with lots of extra text for testing"
-              /> */}
               <button>Export Schedule</button>
             </div>
           </div>

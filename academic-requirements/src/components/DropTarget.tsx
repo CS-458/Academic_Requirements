@@ -1,114 +1,110 @@
 import update from 'immutability-helper'
 import type { FC } from 'react'
 import { memo, useCallback, useState } from 'react'
-import { useDrop } from 'react-dnd'
-import React from 'react'
 //@ts-ignore
 import { Course } from './DraggableCourse.tsx'
 //@ts-ignore
-import { ItemTypes } from './Constants.js'
+import { Semester } from './Semester.tsx'
+import { ItemTypes } from './Constants'
+import FourYearPlanPage from './FourYearPlanPage'
+import React from 'react'
 
-const style = {
-  width: 200,
+interface SemesterState {
+  accepts: string[]
+  lastDroppedItem: any
 }
 
+interface CourseState {
+  name: string
+  acronym: string
+  number: number
+  type: string
+}
+
+export interface SemesterSpec {
+  accepts: string[]
+  lastDroppedItem: any
+}
+export interface CourseSpec {
+  name: string
+  acronym: string
+  number: number
+  type: string
+}
 export interface ContainerState {
-  courses: any[]
+  droppedCourseNames: string[]
+  semesters: SemesterSpec[]
+  courses: CourseSpec[]
 }
-
-const ITEMS = [
-    {
-      id: 1,
-      courseName: 'Write a cool JS library',
-      courseNumber: 141,
-      courseAcronym: "CS",
-    },
-    {
-      id: 2,
-      courseName: 'Write a cool JS library',
-      courseNumber: 204,
-      courseAcronym: "CS",
-    },
-    {
-      id: 3,
-      courseName: 'Write README',
-      courseNumber: 205,
-      courseAcronym: "AHH",
-    },
-    {
-      id: 4,
-      courseName: 'Create some examples',
-      courseNumber: 214,
-      courseAcronym: "AMCS",
-    },
-    {
-      id: 5,
-      courseName: 'Spam in Twitter and IRC to promote it',
-      courseNumber: 244,
-      courseAcronym: "Pysc",
-    },
-    {
-      id: 6,
-      courseName: '???',
-      courseNumber: 304,
-      courseAcronym: "Math",
-    },
-    {
-      id: 7,
-      courseName: 'PROFIT',
-      courseNumber: 574,
-      courseAcronym: "Help",
-    },
-  ]
 
 export const Container: FC = memo(function Container() {
-  const [courses, setCourses] = useState(ITEMS)
+  const [semesters, setSemesters] = useState<SemesterState[]>([
+    { accepts: [ItemTypes.COURSE], lastDroppedItem: null },
+    { accepts: [ItemTypes.COURSE], lastDroppedItem: null },
+    { accepts: [ItemTypes.COURSE], lastDroppedItem: null },
+    { accepts: [ItemTypes.COURSE], lastDroppedItem: null },
+    { accepts: [ItemTypes.COURSE], lastDroppedItem: null },
+    { accepts: [ItemTypes.COURSE], lastDroppedItem: null },
+    { accepts: [ItemTypes.COURSE], lastDroppedItem: null },
+    { accepts: [ItemTypes.COURSE], lastDroppedItem: null },
+  ])
 
-  const findCourse = useCallback(
-    (id: string) => {
-      const course = courses.filter((c) => `${c.id}` === id)[0] as {
-        id: number
-        courseNumber: number
-        courseName: string
-        courseAcronym: string
-      }
-      return {
-        course,
-        index: courses.indexOf(course),
-      }
-    },
-    [courses],
-  )
+  const [courses] = useState<CourseState[]>([
+    { name: 'COURSE 1', acronym: "CS", number: 141, type: ItemTypes.COURSE },
+    { name: 'COURSE 2', acronym: "CS", number: 144, type: ItemTypes.COURSE },
+    { name: 'COURSE 3', acronym: "AMCS", number: 244, type: ItemTypes.COURSE },
+  ])
 
-  const moveCourse = useCallback(
-    (id: string, atIndex: number) => {
-      const { course, index } = findCourse(id)
-      setCourses(
-        update(courses, {
-          $splice: [
-            [index, 1],
-            [atIndex, 0, course],
-          ],
+  const [droppedCourseNames, setDroppedCourseNames] = useState<string[]>([])
+
+  function isDropped(courseName: string) {
+    return droppedCourseNames.indexOf(courseName) > -1
+  }
+
+  const handleDrop = useCallback(
+    (index: number, item: { name: string }) => {
+      const { name } = item
+      setDroppedCourseNames(
+        update(droppedCourseNames, name ? { $push: [name] } : { $push: [] }),
+      )
+      setSemesters(
+        update(semesters, {
+          [index]: {
+            lastDroppedItem: {
+              $set: item,
+            },
+          },
         }),
       )
     },
-    [findCourse, courses, setCourses],
+    [droppedCourseNames, semesters],
   )
 
-  const [, drop] = useDrop(() => ({ accept: ItemTypes.COURSE }))
   return (
-    <div ref={drop} style={style}>
-      {courses.map((course) => (
-        <Course
-          key={course.id}
-          id={`${course.id}`}
-          courseName={course.courseName}
-          courseNumber={course.courseNumber}
-          courseAcronym={course.courseAcronym}
-          moveCourse={moveCourse}
-          findCourse={findCourse}
-        />
-      ))}
+    <div>
+      <div style={{ overflow: 'hidden', clear: 'both' }}>
+        {semesters.map(({ accepts, lastDroppedItem }, index) => (
+          <Semester
+            accept={accepts}
+            lastDroppedItem={lastDroppedItem}
+            onDrop={(item) => handleDrop(index, item)}
+            key={index}
+          />
+        ))}
+      </div>
+
+      <div style={{ overflow: 'hidden', clear: 'both' }}>
+        {courses.map(({ name, acronym, number, type }, index) => (
+          <Course
+            name={name}
+            acronym={acronym}
+            number={number}
+            type={type}
+            isDropped={isDropped(name)}
+            key={index}
+          />
+        ))}
+      </div>
     </div>
   )
 })
