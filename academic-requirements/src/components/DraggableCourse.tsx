@@ -28,7 +28,7 @@ export const Course: FC<CourseProps> = memo(function Course({ name, acronym, num
 
   return (
     <div ref={drag} style={{opacity }} data-testid="course" className="CourseText">
-      {isDropped ? <s>{name}</s> : name} 
+      {/* {isDropped ? <s>{name}</s> : name}  */}
       {acronym}-{number}<br/>{name}
     </div>
   )

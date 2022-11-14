@@ -114,7 +114,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
         ))}
       </div> 
        <div style={{ overflow: 'hidden', clear: 'both' }} className="class-dropdown">
-        <p>{majorCourseList["name"]}</p>
         {courses.map(({ name, subject, number }, index) => (
           <Course
             name={name}
