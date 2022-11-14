@@ -48,18 +48,16 @@ const FourYearPlanPage = (props: {
             title="Error"
             error={error}
           />
-          <div className="grid-container">
-            <div className="semesters-container">
-              <div className="grid-item"><Example/></div>
-            </div>
-            <div className="class-dropdown">
+          <div className="page">
+           <Example/>
+            {/* <div className="class-dropdown">
               {props.majorCourseList.map((course, index) => {
                 return <div key={index}>{course.name}</div>;
               })}
               {props.concentrationCourseList.map((course, index) => {
                 return <div key={index}>{course.name}</div>;
               })}
-            </div>
+            </div> */}
             <div className="right-side">
               <div className="requirements">Requirements</div>
               <button>Export Schedule</button>

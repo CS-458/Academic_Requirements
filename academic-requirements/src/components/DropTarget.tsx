@@ -12,6 +12,7 @@ import React from 'react'
 interface SemesterState {
   accepts: string[]
   lastDroppedItem: any
+  number:number
 }
 
 interface CourseState {
@@ -24,6 +25,7 @@ interface CourseState {
 export interface SemesterSpec {
   accepts: string[]
   lastDroppedItem: any
+  number: number
 }
 export interface CourseSpec {
   name: string
@@ -39,14 +41,14 @@ export interface ContainerState {
 
 export const Container: FC = memo(function Container() {
   const [semesters, setSemesters] = useState<SemesterState[]>([
-    { accepts: [ItemTypes.COURSE], lastDroppedItem: null },
-    { accepts: [ItemTypes.COURSE], lastDroppedItem: null },
-    { accepts: [ItemTypes.COURSE], lastDroppedItem: null },
-    { accepts: [ItemTypes.COURSE], lastDroppedItem: null },
-    { accepts: [ItemTypes.COURSE], lastDroppedItem: null },
-    { accepts: [ItemTypes.COURSE], lastDroppedItem: null },
-    { accepts: [ItemTypes.COURSE], lastDroppedItem: null },
-    { accepts: [ItemTypes.COURSE], lastDroppedItem: null },
+    { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 1 },
+    { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 2 },
+    { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 3 },
+    { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 4 },
+    { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 5 },
+    { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 6},
+    { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 7},
+    { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 8 },
   ])
 
   const [courses] = useState<CourseState[]>([
@@ -82,18 +84,19 @@ export const Container: FC = memo(function Container() {
 
   return (
     <div>
+      <div className="drag-drop">
       <div style={{ overflow: 'hidden', clear: 'both' }}>
-        {semesters.map(({ accepts, lastDroppedItem }, index) => (
+        {semesters.map(({ accepts, lastDroppedItem, number }, index) => (
           <Semester
             accept={accepts}
             lastDroppedItem={lastDroppedItem}
             onDrop={(item) => handleDrop(index, item)}
             key={index}
+            number={number}
           />
         ))}
       </div>
-
-      <div style={{ overflow: 'hidden', clear: 'both' }}>
+      <div style={{ overflow: 'hidden', clear: 'both' }} className="class-dropdown">
         {courses.map(({ name, acronym, number, type }, index) => (
           <Course
             name={name}
@@ -104,6 +107,7 @@ export const Container: FC = memo(function Container() {
             key={index}
           />
         ))}
+        </div>
       </div>
     </div>
   )

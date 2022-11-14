@@ -6,9 +6,9 @@ import React from 'react'
 import Course from './DraggableCourse.tsx'
 const style: CSSProperties = {
   height: '12rem',
-  width: '12rem',
-  marginRight: '1.5rem',
-  marginBottom: '1.5rem',
+  width: '20%',
+  marginRight: '.5rem',
+  marginBottom: '.5rem',
   color: 'white',
   padding: '1rem',
   textAlign: 'center',
@@ -21,12 +21,14 @@ export interface SemesterProps {
   accept: Course
   lastDroppedItem?: any
   onDrop: (item: any) => void
+  number: number
 }
 
 export const Semester: FC<SemesterProps> = memo(function Semester({
   accept,
   lastDroppedItem,
   onDrop,
+  number,
 }) {
   const [{ isOver, canDrop }, drop] = useDrop({
     accept,
@@ -49,7 +51,7 @@ export const Semester: FC<SemesterProps> = memo(function Semester({
     <div ref={drop} style={{ ...style, backgroundColor }} data-testid="semester">
       {isActive
         ? 'Release to drop'
-        : `This semester accepts: ${accept.join(', ')}`}
+        : `Semester ${number}`}
 
       {lastDroppedItem && (
         <p>Last dropped: {lastDroppedItem["name"]}</p>
