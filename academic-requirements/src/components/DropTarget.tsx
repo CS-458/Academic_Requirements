@@ -16,10 +16,11 @@ interface SemesterState {
 }
 
 interface CourseState {
+  credits: number
   name: string
-  acronym: string
   number: number
-  type: string
+  semesters: string
+  subject: string
 }
 
 export interface SemesterSpec {
@@ -28,34 +29,50 @@ export interface SemesterSpec {
   number: number
 }
 export interface CourseSpec {
+  credits: number
   name: string
-  acronym: string
   number: number
-  type: string
+  semesters: string
+  subject: string
 }
+
 export interface ContainerState {
   droppedCourseNames: string[]
   semesters: SemesterSpec[]
   courses: CourseSpec[]
 }
 
-export const Container: FC = memo(function Container() {
+export interface ContainerProps {
+  majorCourseList:{
+  credits: number
+  name: string
+  number: number
+  semesters: string
+  subject: string
+}[]
+};
+
+export const Container: FC<ContainerProps> = memo(function Container({
+  majorCourseList
+})  {
   const [semesters, setSemesters] = useState<SemesterState[]>([
     { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 1 },
     { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 2 },
     { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 3 },
     { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 4 },
     { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 5 },
-    { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 6},
-    { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 7},
+    { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 6 },
+    { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 7 },
     { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 8 },
   ])
 
-  const [courses] = useState<CourseState[]>([
-    { name: 'COURSE 1', acronym: "CS", number: 141, type: ItemTypes.COURSE },
-    { name: 'COURSE 2', acronym: "CS", number: 144, type: ItemTypes.COURSE },
-    { name: 'COURSE 3', acronym: "AMCS", number: 244, type: ItemTypes.COURSE },
-  ])
+  
+
+   const [courses] = useState<CourseState[]>(majorCourseList)//[
+  //   { name: 'COURSE 1', subject: "CS", number: 141, type: ItemTypes.COURSE, credits: 3, semesters: "none" },
+  //   { name: 'COURSE 2', subject: "CS", number: 144, type: ItemTypes.COURSE, credits: 3, semesters: "fall" },
+  //   { name: 'COURSE 3', subject: "AMCS", number: 244, type: ItemTypes.COURSE, credits:3, semesters: "none" },
+  // ])
 
   const [droppedCourseNames, setDroppedCourseNames] = useState<string[]>([])
 
@@ -95,18 +112,19 @@ export const Container: FC = memo(function Container() {
             number={number}
           />
         ))}
-      </div>
-      <div style={{ overflow: 'hidden', clear: 'both' }} className="class-dropdown">
-        {courses.map(({ name, acronym, number, type }, index) => (
+      </div> 
+       <div style={{ overflow: 'hidden', clear: 'both' }} className="class-dropdown">
+        <p>{majorCourseList["name"]}</p>
+        {courses.map(({ name, subject, number }, index) => (
           <Course
             name={name}
-            acronym={acronym}
+            acronym={subject}
             number={number}
-            type={type}
+            type= {ItemTypes.COURSE}
             isDropped={isDropped(name)}
             key={index}
-          />
-        ))}
+          />  
+        ))}  
         </div>
       </div>
     </div>

@@ -6,6 +6,7 @@ import InputPage from "./components/InputPage.tsx";
 //import Example from "./example.ts"
 import FourYearPlanPage from "./components/FourYearPlanPage.tsx";
 import ErrorPopup from "./components/ErrorPopup";
+
 function App() {
   /* Variables to store necessary info */
   const [clickedGenerate, setClickedGenerate] = useState();
