@@ -1,7 +1,5 @@
-import { countReset } from "console";
 import React, { useState } from "react";
 import ErrorPopup from "./ErrorPopup";
-import InputPage from "./InputPage";
 const FourYearPlanPage = (props: {
   showing: boolean;
   majorCourseList: {

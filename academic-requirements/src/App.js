@@ -171,7 +171,7 @@ function App() {
         concentrationDisplayList={concentrationDisplayData}
         takenCourses={coursesTaken}
         setTakenCourses={setCoursesTaken}
-      />
+      /> 
       <FourYearPlanPage
         data-testid="FourYearPage"
         showing={clickedGenerate}
