@@ -1,6 +1,6 @@
 import update from 'immutability-helper'
 import type { FC } from 'react'
-import { memo, useCallback, useState } from 'react'
+import { memo, useCallback, useState, useContext } from 'react'
 //@ts-ignore
 import { Course } from './DraggableCourse.tsx'
 //@ts-ignore
@@ -51,8 +51,6 @@ export interface ContainerProps {
 }[]
 };
 
-
-
 export const Container: FC<ContainerProps> = memo(function Container({
   CourseList
 })  {
@@ -67,20 +65,12 @@ export const Container: FC<ContainerProps> = memo(function Container({
     { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 8 },
   ])
   const [courses, setCourses] = useState<CourseState[]>(CourseList)
-  // const MoveBackToList = useCallback(
-  //   (index: number, item: { course: Course }) => {
-  //     const { course } = item
-  //     console.log(item)
-  //     setCourses(
-  //       update(courses, course ? { $push: [course] } : { $push: [] }),
-  //     )
-  //     // setSemesters(
-  //     //   update(semesters, ),
-  //     // )
-  //     console.log("Made it")
-  //   },
-  //   [courses, semesters],
-  // )
+  function SendBackToList(course: string) {
+    console.log(course)
+    console.log("here")
+    //setCourses(courses.push(course))
+
+   }
 
   const [droppedCourseNames, setDroppedCourseNames] = useState<string[]>([])
 
@@ -131,7 +121,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
             subject={subject}
             number={number}
             type= {ItemTypes.COURSE}
-            //sendBack={(item) => MoveBackToList(index, item)}
+            SendBackToList={SendBackToList}
             key={index}
           />  
         ))}  

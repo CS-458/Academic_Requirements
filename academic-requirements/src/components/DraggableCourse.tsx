@@ -4,6 +4,8 @@ import { useDrag } from 'react-dnd'
 import React from 'react'
 //@ts-ignore
 import "./DraggableCourse.css"
+//@ts-ignore
+//import { SendBackToList } from './DropTarget.tsx'
 
 export interface CourseProps {
   credits: number
@@ -12,14 +14,16 @@ export interface CourseProps {
   number: number
   semesters: string
   type: string
- // sendBack: (item: any) => void
+  SendBackToList(
+    course: string
+  ): void;
 }
 
-export const Course: FC<CourseProps> = memo(function Course({ name, subject, number, type, credits, semesters }) {
+export const Course: FC<CourseProps> = memo(function Course({ name, subject, number, type, credits, semesters, SendBackToList }) {
   const [{ opacity}, drag] = useDrag(
     () => ({
       type,
-      item: { name, subject, number, type, credits, semesters },
+      item: { name, subject, number, type, credits, semesters, SendBackToList },
       collect: (monitor) => ({
         opacity: monitor.isDragging() ? 0.4 : 1,
       }),
@@ -27,7 +31,8 @@ export const Course: FC<CourseProps> = memo(function Course({ name, subject, num
         const didDrop = monitor.didDrop()
         if(!didDrop) {
             console.log("is this what i want?")
-          // sendBack
+            //update course list
+            //SendBackToList("name")
         }
       }
     }),
