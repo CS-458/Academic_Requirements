@@ -4,8 +4,6 @@ import InputPage from "./components/InputPage.tsx";
 import FourYearPlanPage from "./components/FourYearPlanPage.tsx";
 import ErrorPopup from "./components/ErrorPopup";
 
-import StringProcessing from "./stringProcessing/StringProcessing.tsx";
-
 function App() {
   /* Variables to store necessary info */
   const [clickedGenerate, setClickedGenerate] = useState();
@@ -158,15 +156,6 @@ function App() {
       }
     }
   }, [concentration]);
-
-  useEffect(() => {
-
-    let stringProcess = new StringProcessing();
-    // true -> checking for dash and underline difference in concurrent courses
-   if (stringProcess.courseInListCheck('!CS-144&CS-130',['CS-130','CS-180'],['CS_144']) !== true) {
-    console.log('error');
-   }
-  },[])
 
   return (
     <div>

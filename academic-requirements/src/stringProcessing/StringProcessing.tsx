@@ -1,5 +1,3 @@
-import { string } from "prop-types";
-
 /* 
     Class responsible for all prerequisite and requirement checking
 */
