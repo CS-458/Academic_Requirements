@@ -1,5 +1,7 @@
+import { countReset } from "console";
 import React, { useState } from "react";
 import ErrorPopup from "./ErrorPopup";
+import InputPage from "./InputPage";
 const FourYearPlanPage = (props: {
   showing: boolean;
   majorCourseList: {
@@ -16,6 +18,11 @@ const FourYearPlanPage = (props: {
     semesters: string;
     subject: string;
   }[];
+  TakenCourses: {
+    Course: string[];
+  }[];
+  MajorData: string;
+  ConcentrationData: string;
 }) => {
   //Functions and variables for controlling an error popup
   const [visibility, setVisibility] = useState(false);
@@ -27,6 +34,26 @@ const FourYearPlanPage = (props: {
     setVisibility(true);
     setError(error);
   }
+
+  // JSON Data for the Courses
+  let info = {
+    Major: props.MajorData,
+    Concentration: props.ConcentrationData,
+    "Completed Courses": props.TakenCourses,
+  };
+
+  // Creates the File and downloads it to user PC
+  function exportSchedule() {
+    console.log("export");
+    const fileData = JSON.stringify(info);
+    const blob = new Blob([fileData], { type: "json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.download = "schedule.json";
+    link.href = url;
+    link.click();
+  }
+
   return (
     <div>
       {props.showing && (
@@ -61,7 +88,9 @@ const FourYearPlanPage = (props: {
             </div>
             <div className="right-side">
               <div className="requirements">Requirements</div>
-              <button>Export Schedule</button>
+              <button data-testid="ExportButton" onClick={exportSchedule}>
+                Export Schedule
+              </button>
             </div>
           </div>
         </div>
