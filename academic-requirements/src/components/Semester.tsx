@@ -3,7 +3,7 @@ import { memo } from 'react'
 import { useDrop } from 'react-dnd'
 import React from 'react'
 //@ts-ignore
-import Course from './DraggableCourse.tsx'
+import {Course} from './DraggableCourse.tsx'
 const style: CSSProperties = {
   height: '12rem',
   width: '20%',
@@ -30,21 +30,18 @@ export const Semester: FC<SemesterProps> = memo(function Semester({
   onDrop,
   number,
 }) {
-  const [{ isOver, canDrop }, drop] = useDrop({
+  const [{ isOver }, drop] = useDrop({
     accept,
     drop: onDrop,
     collect: (monitor) => ({
       isOver: monitor.isOver(),
-      canDrop: monitor.canDrop(),
     }),
   })
 
-  const isActive = isOver && canDrop
+  const isActive = isOver
   let backgroundColor = '#222'
   if (isActive) {
     backgroundColor = 'darkgreen'
-  } else if (canDrop) {
-    backgroundColor = 'darkkhaki'
   }
 
   return (
@@ -54,14 +51,15 @@ export const Semester: FC<SemesterProps> = memo(function Semester({
         : `Semester ${number}`}
 
       {lastDroppedItem && (
-        <p>Last dropped: {lastDroppedItem["name"]}</p>
+        <Course
+            name={lastDroppedItem["name"]}
+            subject={lastDroppedItem["subject"]}
+            number={lastDroppedItem["number"]}
+            type= {lastDroppedItem["type"]}
+            key={lastDroppedItem["index"]}
+        />
       )}
-        {/* <Course
-            name={name}
-            type={type}
-            isDropped={isDropped(name)}
-            key={index}
-        /> */}
+  
     </div>
   )
 })

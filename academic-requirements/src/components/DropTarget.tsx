@@ -6,7 +6,6 @@ import { Course } from './DraggableCourse.tsx'
 //@ts-ignore
 import { Semester } from './Semester.tsx'
 import { ItemTypes } from './Constants'
-import FourYearPlanPage from './FourYearPlanPage'
 import React from 'react'
 
 interface SemesterState {
@@ -37,13 +36,13 @@ export interface CourseSpec {
 }
 
 export interface ContainerState {
-  droppedCourseNames: string[]
+  droppedCourses: Course[]
   semesters: SemesterSpec[]
   courses: CourseSpec[]
 }
 
 export interface ContainerProps {
-  majorCourseList:{
+  CourseList:{
   credits: number
   name: string
   number: number
@@ -52,8 +51,10 @@ export interface ContainerProps {
 }[]
 };
 
+
+
 export const Container: FC<ContainerProps> = memo(function Container({
-  majorCourseList
+  CourseList
 })  {
   const [semesters, setSemesters] = useState<SemesterState[]>([
     { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 1 },
@@ -65,21 +66,30 @@ export const Container: FC<ContainerProps> = memo(function Container({
     { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 7 },
     { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 8 },
   ])
-
-  
-
-   const [courses] = useState<CourseState[]>(majorCourseList)//[
-  //   { name: 'COURSE 1', subject: "CS", number: 141, type: ItemTypes.COURSE, credits: 3, semesters: "none" },
-  //   { name: 'COURSE 2', subject: "CS", number: 144, type: ItemTypes.COURSE, credits: 3, semesters: "fall" },
-  //   { name: 'COURSE 3', subject: "AMCS", number: 244, type: ItemTypes.COURSE, credits:3, semesters: "none" },
-  // ])
+  const [courses, setCourses] = useState<CourseState[]>(CourseList)
+  // const MoveBackToList = useCallback(
+  //   (index: number, item: { course: Course }) => {
+  //     const { course } = item
+  //     console.log(item)
+  //     setCourses(
+  //       update(courses, course ? { $push: [course] } : { $push: [] }),
+  //     )
+  //     // setSemesters(
+  //     //   update(semesters, ),
+  //     // )
+  //     console.log("Made it")
+  //   },
+  //   [courses, semesters],
+  // )
 
   const [droppedCourseNames, setDroppedCourseNames] = useState<string[]>([])
 
   function isDropped(courseName: string) {
     return droppedCourseNames.indexOf(courseName) > -1
   }
-
+  const handleRemoveItem = (e) => {
+    setCourses(courses.filter(item => item.name !== e));
+  }
   const handleDrop = useCallback(
     (index: number, item: { name: string }) => {
       const { name } = item
@@ -90,11 +100,12 @@ export const Container: FC<ContainerProps> = memo(function Container({
         update(semesters, {
           [index]: {
             lastDroppedItem: {
-              $set: item,
+              $set: item
             },
           },
         }),
       )
+      handleRemoveItem(name)
     },
     [droppedCourseNames, semesters],
   )
@@ -117,10 +128,10 @@ export const Container: FC<ContainerProps> = memo(function Container({
         {courses.map(({ name, subject, number }, index) => (
           <Course
             name={name}
-            acronym={subject}
+            subject={subject}
             number={number}
             type= {ItemTypes.COURSE}
-            isDropped={isDropped(name)}
+            //sendBack={(item) => MoveBackToList(index, item)}
             key={index}
           />  
         ))}  
