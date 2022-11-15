@@ -21,6 +21,8 @@ describe("Test for App", () => {
 
    const stringProcess = new StringProcessing();
 
+   // Base & Edge Cases Testing:
+
    // true -> string compare is blank, so always true
    expect(stringProcess.courseInListCheck('',['CS-144'])).toBe(true);
    
@@ -134,6 +136,9 @@ describe("Test for App", () => {
 
    // false -> duplicate entry means course above minimum is false
    expect(stringProcess.courseInListCheck('CS-101,>CS100',['CS-101','CS-101','CS-101'])).toBe(false);
+
+   // false -> duplicate entry means course above minimum is false (with an &)
+   expect(stringProcess.courseInListCheck('CS-101&>CS100',['CS-101','CS-101','CS-101'])).toBe(false);
 
    //REAL EXAMPLES:
 
