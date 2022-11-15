@@ -18,11 +18,11 @@ const FourYearPlanPage = (props: {
     semesters: string;
     subject: string;
   }[];
-  TakenCourses: {
+  completedCourses: {
     Course: string[];
   }[];
-  MajorData: string;
-  ConcentrationData: string;
+  selectedMajor: string;
+  selectedConcentration: string;
 }) => {
   //Functions and variables for controlling an error popup
   const [visibility, setVisibility] = useState(false);
@@ -37,9 +37,9 @@ const FourYearPlanPage = (props: {
 
   // JSON Data for the Courses
   let info = {
-    Major: props.MajorData,
-    Concentration: props.ConcentrationData,
-    "Completed Courses": props.TakenCourses,
+    Major: props.selectedMajor,
+    Concentration: props.selectedConcentration,
+    "Completed Courses": props.completedCourses,
   };
 
   // Creates the File and downloads it to user PC

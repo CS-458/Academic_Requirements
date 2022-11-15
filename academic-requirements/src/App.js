@@ -158,10 +158,6 @@ function App() {
     }
   }, [concentration]);
 
-  useEffect(() => {
-    console.log(coursesTaken);
-  }, [coursesTaken]);
-
   return (
     <div>
       <InputPage
@@ -181,9 +177,9 @@ function App() {
         showing={clickedGenerate}
         concentrationCourseList={concentrationCourseData}
         majorCourseList={majorCourseData}
-        MajorData={major}
-        ConcentrationData={concentration}
-        TakenCourses={coursesTaken}
+        selectMajor={major}
+        selectedConcentration={concentration}
+        completedCourses={coursesTaken}
       />
       <ErrorPopup
         onClose={popupCloseHandler}
