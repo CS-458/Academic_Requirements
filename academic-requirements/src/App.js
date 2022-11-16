@@ -3,6 +3,8 @@ import "./App.css";
 import InputPage from "./components/InputPage.tsx";
 import FourYearPlanPage from "./components/FourYearPlanPage.tsx";
 import ErrorPopup from "./components/ErrorPopup";
+import {DndProvider } from "react-dnd";
+import {HTML5Backend } from "react-dnd-html5-backend";
 function App() {
   /* Variables to store necessary info */
   const [clickedGenerate, setClickedGenerate] = useState();
@@ -109,9 +111,9 @@ function App() {
           temp.push(x.name);
         });
         // Sets concentrationDisplayData to the 'name' of the concentrations
-        setConcentrationDisplayData(temp);
+        setConcentrationDisplayData(temp); 
       });
-  }, [majorCode]);
+  }, [majorCode]); // gets called whenever major is updated
 
   // Gets the courses related to the 'idMajor' of the selected major
   // Runs when majorCode is updated
@@ -158,7 +160,7 @@ function App() {
   }, [concentration]);
 
   return (
-   
+   <DndProvider backend={HTML5Backend}>
     <div className="App">
       <InputPage
         showing={!clickedGenerate}
@@ -170,9 +172,9 @@ function App() {
         majorDisplayList={majorDisplayData}
         concentrationDisplayList={concentrationDisplayData}
       />
-      <FourYearPlanPage
-        showing={clickedGenerate}
-        concentrationCourseList={concentrationCourseData}
+      <FourYearPlanPage 
+        showing={clickedGenerate} 
+        concentrationCourseList={concentrationCourseData} //accessed with react props.
         majorCourseList={majorCourseData}
       />
       <ErrorPopup
@@ -182,7 +184,7 @@ function App() {
         error={error}
       />
     </div>
-   
+    </DndProvider>
   );
 }
 

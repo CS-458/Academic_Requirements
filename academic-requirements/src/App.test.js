@@ -1,10 +1,22 @@
 import { fireEvent, render } from "@testing-library/react";
 import React from "react";
-import App from "./App";
-
+//import App from "./App";
+//@ts-ignore
+import InputPage from "./components/InputPage.tsx"
 describe("Test for App", () => {
   test("Test Rendering", () => {
-    const { getByTestId } = render(<App />);
+    const { getByTestId } = render(
+      <InputPage
+      showing={true}
+      onClickGenerate={jest.fn()}
+      onClickMajor={jest.fn()}
+      onClickConcentration={jest.fn()}
+      concentrationList={[]}
+      majorList={[]}
+      majorDisplayList={[]}
+      concentrationDisplayList={[]}
+       />);
+
     //Check that input page is displaying
     expect(getByTestId("content")).toBeInTheDocument();
     //Check that a button can be pressed

@@ -8,7 +8,7 @@ import "./SearchableDropdown.css";
  //majorDisplayData is an array of the 'name' of the major objects for display purposes
  //const [majorDisplayData, setMajorDisplayData] = useState([]);
 
-
+//Note: drop down often key-value pair behind scenes.
 const SearchableDropdown = (props: {
   options: Array<string>;
   label: string;

@@ -5,6 +5,8 @@ import SearchableDropdown from "./SearchableDropdown.tsx";
 //@ts-ignore
 //import categories from "../mockDataLists/Categories.tsx";
 import { monitorEventLoopDelay } from "perf_hooks";
+//@ts-ignore
+import Example from './example.ts'
 const FourYearPlanPage = (props: {
   showing: boolean;
   majorCourseList: {
@@ -101,28 +103,7 @@ const FourYearPlanPage = (props: {
         <div className="screen">
           <div className="four-year-plan" data-testid="scheduleContent">
             <h1>Academic Planner</h1>
-          </div>
-          <ErrorPopup
-            onClose={popupCloseHandler}
-            show={visibility}
-            title="Error"
-            error={error}
-          />
-
-          <div className="grid-container">
-            <div className="semesters-container">
-              <div className="grid-item">Semester 1</div>
-              <div className="grid-item">Semester 2</div>
-              <div className="grid-item">Semester 3</div>
-              <div className="grid-item">Semester 4</div>
-              <div className="grid-item">Semester 5</div>
-              <div className="grid-item">Semester 6</div>
-              <div className="grid-item">Semester 7</div>
-              <div className="grid-item">Semester 8</div>
-            </div>
-            <div className="class-dropdown">
-
-              <div className="courseDropdowns">
+            { <div className="courseDropdowns">
 
                 <SearchableDropdown
                   options={categories}
@@ -131,16 +112,37 @@ const FourYearPlanPage = (props: {
                   showDropdown={true}
                   thin={true}
                 />
-              </div>
+              </div> } 
 
+          </div>
+          <ErrorPopup
+            onClose={popupCloseHandler}
+            show={visibility}
+            title="Error"
+            error={error}
+          />
 
-            </div>
+          
+               {/* { <div className="courseDropdowns">
+
+                <SearchableDropdown
+                  options={categories}
+                  label="Category"
+                  onSelectOption={selectedCategory} //If option chosen, selected Category activated.
+                  showDropdown={true}
+                  thin={true}
+                />
+              </div> }  */}
+
+          <div className="page">
+           <Example
+            PassedCourseList = {props.majorCourseList}
+           /> 
             <div className="right-side">
               <div className="requirements">Requirements</div>
               <button>Export Schedule</button>
             </div>
           </div>
-
         </div>
       )}
     </div>

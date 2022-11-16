@@ -48,7 +48,7 @@ body {
 .semesters-container {
   height: 100%;
   display: grid;
-  grid-template-columns: auto auto auto auto;
+  grid-template-columns: 100%;
   column-gap: 10px;
   row-gap: 100px;
 }
@@ -68,6 +68,19 @@ body {
   text-align: center;
 }
 
+.drag-drop {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 65% 35%;
+  column-gap: 10px;
+}
+
+.page{
+  height: 100%;
+  display: grid;
+  grid-template-columns: auto auto;
+  column-gap: 10px;
+}
 .requirements {
   height: 90%;
   background-color: gainsboro;
