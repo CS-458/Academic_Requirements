@@ -24,11 +24,11 @@ const FourYearPlanPage = (props: {
     category: string;
   }[];
   onClickCategory(category: string): void; //Hovland 7Nov22
-  
+
 }) => {
   //Stuff for category dropdown. Hovland 7Nov22
   const [category, setCategory] = useState(""); //category that is selected
-  const [categories,setCategories] = useState<string[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
   //Functions and variables for controlling an error popup
   const [visibility, setVisibility] = useState(false);
   const popupCloseHandler = () => {
@@ -45,39 +45,35 @@ const FourYearPlanPage = (props: {
     setVisibility(true);
     setError(error);
   }
-    //SelectedCategory function. Hovland7Nov22
-    //Goal: find 
+  //SelectedCategory function. Hovland7Nov7
   function selectedCategory(_category) {
     setCategory(_category);
     //New string array created.
     let set = new Array<string>();
-    //let set = ["text","more text"];
-    //Iterate through course list. If the index matches the category, push the course name of the index to array.
-    props.majorCourseList.map((course, index) => {if(course.category.valueOf()==_category){set.push(course.name)}})
-    props.concentrationCourseList.map((course, index) => {if(course.category.valueOf()==_category){set.push(course.name)}})
+    //Iterate through major course list. If the index matches the category, push the course name of the index to array.
+    props.majorCourseList.map((course, index) => { if (course.category.valueOf() == _category) { set.push(course.name) } })
+    //Iterate through concentration course list. If the index matches the category, push the course name of the index to array. 
+    //Note: investigate more.
+    props.concentrationCourseList.map((course, index) => { if (course.category.valueOf() == _category) { set.push(course.name) } })
     //Display the array contents in log
     console.log(set);
-    //Display on screen
-   
-    //TODO Check that a selected number is reset to null when you select a new course
+    //Find way to display this on the screen.
   }
-    //setSelectedCategory function. Hovland 7Nov22
+  //setSelectedCategory function. Hovland 7Nov22
   function setSelectedCategory(_category) {
     setCategory(category);
-    //setShowConcentration(true);
+    //setShowConcentration(true); May be able to delete this line.
     props.onClickCategory(category);
-    //setConcentrationOptions(concentrations);
+    //setConcentrationOptions(concentrations); May be able to delete this line.
   }
 
+  // RemoveDuplicates function.
   function RemoveDuplicates(strings: string[]): string[] {
-    
     //Push all strings to a set(which disallows duplicates)
     let set = new Set<string>();
     strings.forEach((x) => {
       set.add(x);
     });
-    
-
     //Reassign all strings in the set to an array.
     let arr = new Array<string>;
     set.forEach((x) => {
@@ -86,23 +82,25 @@ const FourYearPlanPage = (props: {
     //Return the array.
     return arr;
   }
-function extractCategories()
-{
-  let i = new Array<string>();
-  //map is what loops over the list
-  //map calls arrow function, runs whats between curly braces.
-  props.majorCourseList.map((course, index) => {i.push(course.category)})
-  props.concentrationCourseList.map((course, index) => {i.push(course.category)})
-  setCategories(RemoveDuplicates(i))
-  //return RemoveDuplicates(i);
-}
+  //extractCategories function.
+  function extractCategories() {
+    //Initialize new array.
+    let i = new Array<string>();
+    //map is what loops over the list
+    //map calls arrow function, runs whats between curly braces.
+    //Push course categories from major and concentration course lists to array.
+    props.majorCourseList.map((course, index) => { i.push(course.category) })
+    props.concentrationCourseList.map((course, index) => { i.push(course.category) })
+    //Remove duplicate categories from the array.
+    setCategories(RemoveDuplicates(i))
+  }
 
   return (
     <div>
       {props.showing && (
         <div className="screen">
           <div className="four-year-plan" data-testid="scheduleContent">
-          <h1>Academic Planner</h1>
+            <h1>Academic Planner</h1>
           </div>
           <ErrorPopup
             onClose={popupCloseHandler}
@@ -110,7 +108,7 @@ function extractCategories()
             title="Error"
             error={error}
           />
-          
+
           <div className="grid-container">
             <div className="semesters-container">
               <div className="grid-item">Semester 1</div>
@@ -123,26 +121,26 @@ function extractCategories()
               <div className="grid-item">Semester 8</div>
             </div>
             <div className="class-dropdown">
-              
-            <div className="courseDropdowns">
-             
-            <SearchableDropdown
-                    options = {categories}
-                    label="Category"
-                    onSelectOption={selectedCategory} //If option chosen, selected Category activated.
-                    showDropdown={true}
-                    thin={true}
-                  />
-                  </div>
 
-            
+              <div className="courseDropdowns">
+
+                <SearchableDropdown
+                  options={categories}
+                  label="Category"
+                  onSelectOption={selectedCategory} //If option chosen, selected Category activated.
+                  showDropdown={true}
+                  thin={true}
+                />
+              </div>
+
+
             </div>
             <div className="right-side">
               <div className="requirements">Requirements</div>
               <button>Export Schedule</button>
             </div>
           </div>
-         
+
         </div>
       )}
     </div>
