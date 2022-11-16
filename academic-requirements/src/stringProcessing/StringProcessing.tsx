@@ -179,6 +179,7 @@ class StringProcessing {
     return found;
   }
 
+  // Checks if the courses fit the prereq/requirement compareString
   checkCourses(compareString: string, courses: Array<string>, concurrentCourses: Array<string>): boolean {
     // If the course can be taken concurrently...
     if (compareString.search(/!/) === 0) {

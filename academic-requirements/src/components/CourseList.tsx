@@ -50,7 +50,7 @@ export const CourseList: FC<CourseListProps> = memo(function CourseList({
       {isActive
         ? 'Release to drop'
         : `CourseList`}
-      {courses.map(({ name, subject, number, semesters, credits }, index) => (
+      {courses.map(({ name, subject, number, semesters, credits, preReq }, index) => (
           <Course
             name={name}
             subject={subject}
@@ -59,6 +59,7 @@ export const CourseList: FC<CourseListProps> = memo(function CourseList({
             credits={credits}
             type= {ItemTypes.COURSE}
             key={index}
+            preReq={preReq}
           />  
         ))} 
   

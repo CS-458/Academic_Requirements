@@ -15,6 +15,7 @@ const FourYearPlanPage = (props: {
     number: number;
     semesters: string;
     subject: string;
+    preReq: string;
   }[];
   concentrationCourseList: {
     credits: number;
@@ -22,6 +23,7 @@ const FourYearPlanPage = (props: {
     number: number;
     semesters: string;
     subject: string;
+    preReq: string;
   }[];
 }) => {
   //Functions and variables for controlling an error popup
@@ -34,6 +36,7 @@ const FourYearPlanPage = (props: {
     setVisibility(true);
     setError(error);
   }
+  
   return (
     <div>
       {props.showing && (
@@ -47,11 +50,12 @@ const FourYearPlanPage = (props: {
             title="Error"
             error={error}
           />
+          
           <div className="page">
            <Example
            PassedCourseList = {props.majorCourseList}
            />
-            {/* <div className="class-dropdown">
+            {/* <div className="class-dropdown"> 
               {props.majorCourseList.map((course, index) => {
                 return <div key={index}>{course.name}</div>;
               })}

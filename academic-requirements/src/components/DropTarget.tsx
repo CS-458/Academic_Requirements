@@ -1,5 +1,5 @@
 import update from 'immutability-helper'
-import type { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { memo, useCallback, useState } from 'react'
 //@ts-ignore
 import { Course } from './DraggableCourse.tsx'
@@ -7,6 +7,8 @@ import { Course } from './DraggableCourse.tsx'
 import { Semester } from './Semester.tsx'
 //@ts-ignore
 import {CourseList} from "./CourseList.tsx"
+//@ts-ignore
+import StringProcessing from '../stringProcessing/StringProcessing.tsx';
 import { ItemTypes } from './Constants'
 import React from 'react'
 
@@ -14,6 +16,7 @@ interface SemesterState {
   accepts: string[]
   lastDroppedItem: any
   number:number
+  courses: CourseState[]
 }
 
 interface CourseState {
@@ -22,6 +25,7 @@ interface CourseState {
   number: number
   semesters: string
   subject: string
+  preReq: string
 }
 
 interface CourseListState {
@@ -40,6 +44,7 @@ export interface CourseSpec {
   number: number
   semesters: string
   subject: string
+  preReq: string
 }
 
 export interface CourseListSpec {
@@ -60,6 +65,7 @@ export interface ContainerProps {
   number: number
   semesters: string
   subject: string
+  preReq: string
 }[]
 };
 
@@ -67,14 +73,14 @@ export const Container: FC<ContainerProps> = memo(function Container({
   PassedCourseList
 })  {
   const [semesters, setSemesters] = useState<SemesterState[]>([
-    { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 1 },
-    { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 2 },
-    { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 3 },
-    { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 4 },
-    { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 5 },
-    { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 6 },
-    { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 7 },
-    { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 8 },
+    { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 1, courses: [] },
+    { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 2, courses: [] },
+    { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 3, courses: [] },
+    { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 4, courses: [] },
+    { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 5, courses: [] },
+    { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 6, courses: [] },
+    { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 7, courses: [] },
+    { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 8, courses: [] },
   ])
 
   const [courses, setCourses] = useState<CourseState[]>(PassedCourseList)
@@ -88,6 +94,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
   const handleRemoveItem = (e) => {
     setCourses(courses.filter(item => item.name !== e));
   }
+
   const handleDrop = useCallback(
     (index: number, item: { name: string }) => {
       const { name } = item
@@ -95,19 +102,62 @@ export const Container: FC<ContainerProps> = memo(function Container({
        setDroppedCourses(
          update(droppedCourses, course ? { $push: [course] } : { $push: [] }),
        )
-      setSemesters(
-        update(semesters, {
-          [index]: {
-            lastDroppedItem: {
-              $set: item
-            },
-          },
-        }),
-      )
-      handleRemoveItem(name)
+      
+      let itemArr = new Array<CourseState>();
+      if (course) {
+        itemArr.push(course);
+      }
+
+      // prereqCheck will be used to check prerequisites
+      const prereqCheck = new StringProcessing();
+
+      // Get all courses in previous semesters
+      const previousCourses = new Array<string>();
+      semesters.forEach((currSemester) => {
+        if (currSemester.number - 1 < index) {
+          currSemester.courses.forEach((x) => {
+            previousCourses.push(x.subject + '-' + x.number);
+          })
+        }
+      })
+
+      // Get all courses in current semester (excluding the course to be added)
+      const currentCourses = new Array<string>();
+      semesters[index].courses.forEach((x) => {
+        currentCourses.push(x.subject + '-' + x.number);
+      })
+
+      console.log('Courses in previous semesters: ' + previousCourses);
+      console.log('Courses in current semester: ' + currentCourses);
+
+      // Run the prerequisite check on the course
+      if (course) {
+        console.log('prereq string is: ' + course.preReq);
+        if (prereqCheck.courseInListCheck(course.preReq, previousCourses, currentCourses)) {
+          // prereqCheck returned true, so add the course to the semester
+          setSemesters(
+            update(semesters, {
+              [index]: {
+                lastDroppedItem: {
+                  $set: item
+                },
+                courses: {
+                  $push: itemArr
+                }
+              },
+            }),
+          )
+          handleRemoveItem(name);
+        }
+        else {
+          // fails to satisfy prerequisites
+          console.log('CANNOT ADD COURSE! FAILS PREREQUISITES');
+        }
+      }
     },
     [semesters],
   )
+
   const handleReturnDrop = useCallback(
     (item:{name:string}) =>{
       const {name}=item
