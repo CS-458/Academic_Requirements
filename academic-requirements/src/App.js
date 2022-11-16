@@ -80,7 +80,7 @@ function App() {
 
   // Gets the majors from the database, runs on start-up
   useEffect(() => {
-    fetch("/major")
+    fetch("/major") // create similar
       .then((res) => res.json())
       .then((result) => {
         // Sets majorData to result from database query
@@ -158,7 +158,8 @@ function App() {
   }, [concentration]);
 
   return (
-    <div>
+   
+    <div className="App">
       <InputPage
         showing={!clickedGenerate}
         onClickGenerate={generateSchedule}
@@ -181,6 +182,7 @@ function App() {
         error={error}
       />
     </div>
+   
   );
 }
 

@@ -52,11 +52,11 @@ app.get("/concentration", (req, res) => {
     }
   );
 });
-
+//Note to self: look at this as framework for categories dropdown
 app.get("/courses/major", (req, res) => {
   checkConnection();
   connection.query(
-    `SELECT co.subject, co.number, co.name, co.credits
+    `SELECT co.subject, co.number, co.name, co.credits, c.name AS 'category'
 	FROM major m
 	JOIN majorcategory mc ON m.idMajor = mc.majorId
 	JOIN category c ON mc.categoryId = c.idCategory
@@ -77,7 +77,7 @@ app.get("/courses/major", (req, res) => {
 app.get("/courses/concentration", (req, res) => {
   checkConnection();
   connection.query(
-    `SELECT co.subject, co.number, co.credits, co.semesters, co.name
+    `SELECT co.subject, co.number, co.credits, co.semesters, co.name, ca.name AS 'category' 
 	FROM concentration c
 	JOIN concentrationcategory cc ON c.idConcentration = cc.concentrationId
 	JOIN category ca ON cc.categoryId = ca.idCategory

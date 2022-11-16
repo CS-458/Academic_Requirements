@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ErrorPopup from "./ErrorPopup";
 //@ts-ignore
 import SearchableDropdown from "./SearchableDropdown.tsx";
 //@ts-ignore
-import categories from "../mockDataLists/Categories.tsx";
+//import categories from "../mockDataLists/Categories.tsx";
+import { monitorEventLoopDelay } from "perf_hooks";
 const FourYearPlanPage = (props: {
   showing: boolean;
   majorCourseList: {
@@ -12,6 +13,7 @@ const FourYearPlanPage = (props: {
     number: number;
     semesters: string;
     subject: string;
+    category: string;
   }[];
   concentrationCourseList: {
     credits: number;
@@ -19,35 +21,81 @@ const FourYearPlanPage = (props: {
     number: number;
     semesters: string;
     subject: string;
+    category: string;
   }[];
   onClickCategory(category: string): void; //Hovland 7Nov22
   
 }) => {
   //Stuff for category dropdown. Hovland 7Nov22
   const [category, setCategory] = useState(""); //category that is selected
-
+  const [categories,setCategories] = useState<string[]>([]);
   //Functions and variables for controlling an error popup
   const [visibility, setVisibility] = useState(false);
   const popupCloseHandler = () => {
     setVisibility(false);
   };
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    console.log("running")
+    extractCategories()
+  }, [props])
+
   function throwError(error) {
     setVisibility(true);
     setError(error);
   }
     //SelectedCategory function. Hovland7Nov22
-  function selectedCategory(_selectedCategory) {
-    setSelectedCategory(_selectedCategory);
+    //Goal: find 
+  function selectedCategory(_category) {
+    setCategory(_category);
+    //New string array created.
+    let set = new Array<string>();
+    //let set = ["text","more text"];
+    //Iterate through course list. If the index matches the category, push the course name of the index to array.
+    props.majorCourseList.map((course, index) => {if(course.category.valueOf()==_category){set.push(course.name)}})
+    props.concentrationCourseList.map((course, index) => {if(course.category.valueOf()==_category){set.push(course.name)}})
+    //Display the array contents in log
+    console.log(set);
+    //Display on screen
+   
     //TODO Check that a selected number is reset to null when you select a new course
   }
     //setSelectedCategory function. Hovland 7Nov22
-  function setSelectedCategory(category) {
+  function setSelectedCategory(_category) {
     setCategory(category);
     //setShowConcentration(true);
     props.onClickCategory(category);
     //setConcentrationOptions(concentrations);
   }
+
+  function RemoveDuplicates(strings: string[]): string[] {
+    
+    //Push all strings to a set(which disallows duplicates)
+    let set = new Set<string>();
+    strings.forEach((x) => {
+      set.add(x);
+    });
+    
+
+    //Reassign all strings in the set to an array.
+    let arr = new Array<string>;
+    set.forEach((x) => {
+      arr.push(x);
+    });
+    //Return the array.
+    return arr;
+  }
+function extractCategories()
+{
+  let i = new Array<string>();
+  //map is what loops over the list
+  //map calls arrow function, runs whats between curly braces.
+  props.majorCourseList.map((course, index) => {i.push(course.category)})
+  props.concentrationCourseList.map((course, index) => {i.push(course.category)})
+  setCategories(RemoveDuplicates(i))
+  //return RemoveDuplicates(i);
+}
 
   return (
     <div>
@@ -75,29 +123,27 @@ const FourYearPlanPage = (props: {
               <div className="grid-item">Semester 8</div>
             </div>
             <div className="class-dropdown">
-              {props.majorCourseList.map((course, index) => {
-                return <div key={index}>{course.name}</div>;
-              })}
-              {props.concentrationCourseList.map((course, index) => {
-                return <div key={index}>{course.name}</div>;
-              })}
+              
+            <div className="courseDropdowns">
+             
+            <SearchableDropdown
+                    options = {categories}
+                    label="Category"
+                    onSelectOption={selectedCategory} //If option chosen, selected Category activated.
+                    showDropdown={true}
+                    thin={true}
+                  />
+                  </div>
+
+            
             </div>
             <div className="right-side">
               <div className="requirements">Requirements</div>
               <button>Export Schedule</button>
             </div>
           </div>
-          <div className="courseDropdowns">
-            <SearchableDropdown
-                    options={categories} 
-                    label="Category"
-                    onSelectOption={selectedCategory}
-                    showDropdown={true}
-                    thin={true}
-                  />
-                  </div>
+         
         </div>
-        
       )}
     </div>
   );
