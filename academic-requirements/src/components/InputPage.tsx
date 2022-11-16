@@ -7,6 +7,8 @@ import DeleteableInput from "./DeleteableInput.tsx";
 
 import ErrorPopup from "./ErrorPopup";
 
+import ImportPopup from "./ImportPopup";
+
 // Temporary imports until we get the real data (can be deleted later)
 // @ts-ignore
 import majors from "../mockDataLists/majors.tsx";
@@ -88,6 +90,16 @@ const InputPage = (props: {
     setVisibility(true);
     setError(error);
   }
+
+  // closes the uploader popup
+  const [uploaderVisibility, setUploaderVisibility] = useState(false);
+  const popupCloseHandlerUp = () => {
+    setUploaderVisibility(false);
+  };
+  // Makes the uploader popup visible
+  function showUploader() {
+    setUploaderVisibility(true);
+  }
   // This method handles adding a new taken course to the table
   function processCompletedCourse() {
     //Check that both dropdowns are filled out
@@ -129,12 +141,15 @@ const InputPage = (props: {
     console.log("Deleted course: " + course);
   }
 
-  function importSchedule() {
-    //TODO check if the imported file is a valid format (jsonschema)
-    //TODO throw error if the input is not of correct format
-    throwError("Import file is not in a valid format");
-    /*TODO either update existing variables on screen
-   or bypass checking of those variables based on valid import*/
+  /*
+  This function calls the showUploader function 
+  it has the uploader popup appear where the user
+  can select and upload a chosen file.
+  Implementation of the Import Button and part of what it's suppose to do is in /ImportPopup/index.js
+  */
+  function setupUploader() {
+    // Makes the upload screen visible sort of redundant
+    showUploader();
   }
 
   return (
@@ -149,6 +164,11 @@ const InputPage = (props: {
             show={visibility}
             title="Error"
             error={error}
+          />
+          <ImportPopup
+            title="Upload"
+            show={uploaderVisibility}
+            onClose={popupCloseHandlerUp}
           />
           <div className="screen">
             <div className="input-grid">
@@ -195,7 +215,9 @@ const InputPage = (props: {
                 </button>
               </div>
               <div className="input-grid-item">
-                <button>Import Schedule</button>
+                <button onClick={setupUploader} data-testid="Import">
+                  Import Schedule
+                </button>
               </div>
               <div className="input-grid-item">
                 <button
