@@ -2,11 +2,12 @@ import type { CSSProperties, FC } from 'react'
 import { memo } from 'react'
 import { useDrop } from 'react-dnd'
 import React from 'react'
+import {ItemTypes} from "./Constants.js"
 //@ts-ignore
 import {Course} from './DraggableCourse.tsx'
 const style: CSSProperties = {
-  height: '12rem',
-  width: '20%',
+  height: '100%',
+  width: '100%',
   marginRight: '.5rem',
   marginBottom: '.5rem',
   color: 'white',
@@ -19,16 +20,16 @@ const style: CSSProperties = {
 
 export interface CourseListProps {
   accept: Course
-  lastDroppedItem?: any
+ // unDroppedItem?: any
   onDrop: (item: any) => void
-  number: number
+  courses: Course[]
 }
 
-export const CourseListElement: FC<CourseListProps> = memo(function CourseList({
+export const CourseList: FC<CourseListProps> = memo(function CourseList({
   accept,
-  lastDroppedItem,
+  //unDroppedItem,
   onDrop,
-  number,
+  courses,
 }) {
   const [{ isOver }, drop] = useDrop({
     accept,
@@ -48,18 +49,18 @@ export const CourseListElement: FC<CourseListProps> = memo(function CourseList({
     <div ref={drop} style={{ ...style, backgroundColor }}>
       {isActive
         ? 'Release to drop'
-        : `CourseList ${number}`}
-
-      {lastDroppedItem && (
-        <Course
-            name={lastDroppedItem["name"]}
-            subject={lastDroppedItem["subject"]}
-            number={lastDroppedItem["number"]}
-            type= {lastDroppedItem["type"]}
-            isDropped={lastDroppedItem["isDropped"]}
-            key={lastDroppedItem["index"]}
-        />
-      )}
+        : `CourseList`}
+      {courses.map(({ name, subject, number, semesters, credits }, index) => (
+          <Course
+            name={name}
+            subject={subject}
+            number={number}
+            semesters={semesters}
+            credits={credits}
+            type= {ItemTypes.COURSE}
+            key={index}
+          />  
+        ))} 
   
     </div>
   )

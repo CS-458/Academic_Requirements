@@ -3,7 +3,6 @@ import "./App.css";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import InputPage from "./components/InputPage.tsx";
-//import Example from "./example.ts"
 import FourYearPlanPage from "./components/FourYearPlanPage.tsx";
 import ErrorPopup from "./components/ErrorPopup";
 

@@ -1,10 +1,12 @@
 import update from 'immutability-helper'
 import type { FC } from 'react'
-import { memo, useCallback, useState, useContext } from 'react'
+import { memo, useCallback, useState } from 'react'
 //@ts-ignore
 import { Course } from './DraggableCourse.tsx'
 //@ts-ignore
 import { Semester } from './Semester.tsx'
+//@ts-ignore
+import {CourseList} from "./CourseList.tsx"
 import { ItemTypes } from './Constants'
 import React from 'react'
 
@@ -22,6 +24,11 @@ interface CourseState {
   subject: string
 }
 
+interface CourseListState {
+  accepts: string[]
+  unDroppedItem: any
+}
+
 export interface SemesterSpec {
   accepts: string[]
   lastDroppedItem: any
@@ -35,6 +42,11 @@ export interface CourseSpec {
   subject: string
 }
 
+export interface CourseListSpec {
+  accepts: string[]
+  unDroppedItem: any
+}
+
 export interface ContainerState {
   droppedCourses: Course[]
   semesters: SemesterSpec[]
@@ -42,7 +54,7 @@ export interface ContainerState {
 }
 
 export interface ContainerProps {
-  CourseList:{
+  PassedCourseList:{
   credits: number
   name: string
   number: number
@@ -52,7 +64,7 @@ export interface ContainerProps {
 };
 
 export const Container: FC<ContainerProps> = memo(function Container({
-  CourseList
+  PassedCourseList
 })  {
   const [semesters, setSemesters] = useState<SemesterState[]>([
     { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 1 },
@@ -64,28 +76,29 @@ export const Container: FC<ContainerProps> = memo(function Container({
     { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 7 },
     { accepts: [ItemTypes.COURSE], lastDroppedItem: null, number: 8 },
   ])
-  const [courses, setCourses] = useState<CourseState[]>(CourseList)
-  function SendBackToList(course: string) {
-    console.log(course)
-    console.log("here")
-    //setCourses(courses.push(course))
 
-   }
+  const [courses, setCourses] = useState<CourseState[]>(PassedCourseList)
 
-  const [droppedCourseNames, setDroppedCourseNames] = useState<string[]>([])
+  const [droppedCourses, setDroppedCourses] = useState<CourseState[]>([])
 
-  function isDropped(courseName: string) {
-    return droppedCourseNames.indexOf(courseName) > -1
-  }
+  const [courseListElem, setCourseListElem] = useState<CourseListState[]>([
+    {accepts: [ItemTypes.COURSE], unDroppedItem:null}
+  ])
+
   const handleRemoveItem = (e) => {
     setCourses(courses.filter(item => item.name !== e));
   }
   const handleDrop = useCallback(
     (index: number, item: { name: string }) => {
       const { name } = item
-      setDroppedCourseNames(
-        update(droppedCourseNames, name ? { $push: [name] } : { $push: [] }),
-      )
+      let course = courses.find(item => item.name === name)
+      // console.log(course)
+      // if (course!== undefined){
+      //   setDroppedCourses([course].concat(droppedCourses))
+      // }
+       setDroppedCourses(
+         update(droppedCourses, course ? { $push: [course] } : { $push: [] }),
+       )
       setSemesters(
         update(semesters, {
           [index]: {
@@ -97,7 +110,19 @@ export const Container: FC<ContainerProps> = memo(function Container({
       )
       handleRemoveItem(name)
     },
-    [droppedCourseNames, semesters],
+    [semesters],
+  )
+  const handleReturnDrop = useCallback(
+    (item:{name:string}) =>{
+      const {name}=item
+      //setDroppedCourses(courses.filter(item => item.name !== name));
+      const found = droppedCourses.find(course => course.name === name)
+      console.log(JSON.stringify(found))
+      setCourses(
+        update(courses, found ? { $push: [found] } : { $push: [] }),
+      )
+    },
+    [courses],
   )
 
   return (
@@ -109,22 +134,21 @@ export const Container: FC<ContainerProps> = memo(function Container({
             accept={accepts}
             lastDroppedItem={lastDroppedItem}
             onDrop={(item) => handleDrop(index, item)}
-            key={index}
             number={number}
+            key={index}
           />
         ))}
       </div> 
        <div style={{ overflow: 'hidden', clear: 'both' }} className="class-dropdown">
-        {courses.map(({ name, subject, number }, index) => (
-          <Course
-            name={name}
-            subject={subject}
-            number={number}
-            type= {ItemTypes.COURSE}
-            SendBackToList={SendBackToList}
+       {courseListElem.map(({ accepts}, index) => (
+          <CourseList
+            accept={accepts}
+            onDrop={(item) => handleReturnDrop(item)}
+            courses= {courses}
             key={index}
-          />  
-        ))}  
+          />
+        ))}
+ 
         </div>
       </div>
     </div>

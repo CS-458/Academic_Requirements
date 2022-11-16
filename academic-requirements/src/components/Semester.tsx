@@ -56,7 +56,7 @@ export const Semester: FC<SemesterProps> = memo(function Semester({
             subject={lastDroppedItem["subject"]}
             number={lastDroppedItem["number"]}
             type= {lastDroppedItem["type"]}
-            key={lastDroppedItem["index"]}
+            key={lastDroppedItem["key"]}
         />
       )}
   

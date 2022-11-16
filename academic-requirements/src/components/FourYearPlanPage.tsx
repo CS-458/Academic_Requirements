@@ -49,7 +49,7 @@ const FourYearPlanPage = (props: {
           />
           <div className="page">
            <Example
-           CourseList = {props.majorCourseList}
+           PassedCourseList = {props.majorCourseList}
            />
             {/* <div className="class-dropdown">
               {props.majorCourseList.map((course, index) => {
