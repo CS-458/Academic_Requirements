@@ -177,7 +177,7 @@ function App() {
         showing={clickedGenerate}
         concentrationCourseList={concentrationCourseData}
         majorCourseList={majorCourseData}
-        selectMajor={major}
+        selectdMajor={major}
         selectedConcentration={concentration}
         completedCourses={coursesTaken}
       />
