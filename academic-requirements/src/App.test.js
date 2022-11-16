@@ -30,7 +30,7 @@ describe("Test for App", () => {
         selectedConcentration={"concentration"}
         completedCourses={[]}
       />
-    ); 
+    );
     const link = { click: jest.fn() };
     // Creates a spy element to get info from the FourYearPlanPage
     jest.spyOn(document, "createElement").mockImplementation(() => link);
