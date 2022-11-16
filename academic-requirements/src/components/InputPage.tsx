@@ -26,6 +26,8 @@ const InputPage = (props: {
   majorDisplayList: [];
   concentrationList: [];
   concentrationDisplayList: [];
+  takenCourses: string[];
+  setTakenCourses(courses: string[]): void;
   onClickMajor(major: string): void;
   onClickConcentration(concentration: string): void;
   onClickGenerate(
@@ -45,7 +47,9 @@ const InputPage = (props: {
   const [concentrationOptions, setConcentrationOptions] =
     useState<Array<string>>(); // all available concentrations
 
-  const [coursesTaken, setCoursesTaken] = useState<Array<string>>([]); // courses taken list of strings
+  const [coursesTaken, setCoursesTaken] = useState<Array<string>>(
+    props.takenCourses
+  ); // courses taken list of strings
   const tableRef = useRef<HTMLTableElement>(null);
 
   /* 
@@ -111,6 +115,9 @@ const InputPage = (props: {
         setCoursesTaken(
           coursesTaken.concat(selectedAcronym + "-" + selectedNumber)
         );
+        props.setTakenCourses(
+          coursesTaken.concat(selectedAcronym + "-" + selectedNumber)
+        );
       } else {
         throwError("This course has already been added");
       }
@@ -138,6 +145,7 @@ const InputPage = (props: {
       }
     });
     setCoursesTaken(arr);
+    props.setTakenCourses(arr);
     console.log("Deleted course: " + course);
   }
 
@@ -172,7 +180,7 @@ const InputPage = (props: {
           />
           <div className="screen">
             <div className="input-grid">
-              <div className="input-grid-dropdown">
+              <div className="input-grid-dropdown" data-testid="MajorDropDown">
                 <SearchableDropdown
                   options={props.majorDisplayList}
                   label="Major"
