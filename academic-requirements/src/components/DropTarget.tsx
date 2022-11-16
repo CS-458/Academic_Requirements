@@ -92,10 +92,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
     (index: number, item: { name: string }) => {
       const { name } = item
       let course = courses.find(item => item.name === name)
-      // console.log(course)
-      // if (course!== undefined){
-      //   setDroppedCourses([course].concat(droppedCourses))
-      // }
        setDroppedCourses(
          update(droppedCourses, course ? { $push: [course] } : { $push: [] }),
        )
@@ -115,8 +111,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
   const handleReturnDrop = useCallback(
     (item:{name:string}) =>{
       const {name}=item
-      //setDroppedCourses(courses.filter(item => item.name !== name));
       const found = droppedCourses.find(course => course.name === name)
+      setDroppedCourses(courses.filter(item => item.name !== name));
       console.log(JSON.stringify(found))
       setCourses(
         update(courses, found ? { $push: [found] } : { $push: [] }),
