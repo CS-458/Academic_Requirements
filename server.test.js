@@ -73,3 +73,23 @@ it("test /requirements endpoint", async () => {
       expect(response.body.length).toBeGreaterThan(0);
     });
 });
+
+it("test /subjects endpoint", async () => {
+  await supertest(app)
+    .get("/subjects")
+    .expect(200)
+    .then((response) => {
+      expect(Array.isArray(response.body)).toBeTruthy();
+      expect(response.body.length).toBeGreaterThan(0);
+    });
+});
+
+it("test /subjects/numbers endpoint", async () => {
+  await supertest(app)
+    .get("/subjects/numbers?sub=CS")
+    .expect(200)
+    .then((response) => {
+      expect(Array.isArray(response.body)).toBeTruthy();
+      expect(response.body.length).toBeGreaterThan(0);
+    });
+});

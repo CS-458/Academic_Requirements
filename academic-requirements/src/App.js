@@ -30,6 +30,12 @@ function App() {
   const [major, setMajor] = useState("");
   const [concentration, setConcentration] = useState("");
 
+  //select the course Data for the completed course dropdown
+  const [courseSubjects, setCourseSubjects] = useState([]);
+  const [selectedCourseSubject, setSelectedCourseSubject] = useState("");
+  const [courseSubjectNumbers, setCourseSubjectNumbers] = useState([]);
+  const [selectedCourseSubjectNumber, setSelectedCourseSubjectNumber] =
+    useState("");
   const [coursesTaken, setCoursesTaken] = useState([]);
 
   //Functions and variables for controlling an error popup
@@ -94,7 +100,32 @@ function App() {
         // Sets majorDisplayData to the 'name' of the majors
         setMajorDisplayData(temp);
       });
+    fetch("/subjects")
+      .then((res) => res.json())
+      .then((result) => {
+        console.log(result);
+        let temp = [];
+        result.forEach((x) => {
+          temp.push(x.subject);
+        });
+        //get Course subject data, pass in the result
+        setCourseSubjects(temp);
+      });
   }, []);
+
+  // Runs whenever a course subject has been selected
+  // Gets the array of course number for that subject from the API
+  useEffect(() => {
+    fetch(`/subjects/numbers?sub=${selectedCourseSubject}`)
+      .then((res) => res.json())
+      .then((result) => {
+        let temp = [];
+        result.forEach((x) => {
+          temp.push(x.number);
+        });
+        setCourseSubjectNumbers(temp);
+      });
+  }, [selectedCourseSubject]);
 
   // Gets the concentrations from the database based on the 'idMajor' of the selected major
   // Runs when majorCode is updated
@@ -169,6 +200,9 @@ function App() {
         majorList={majorData}
         majorDisplayList={majorDisplayData}
         concentrationDisplayList={concentrationDisplayData}
+        courseSubjectAcronyms={courseSubjects}
+        setSelectedCourseSubject={setSelectedCourseSubject}
+        courseSubjectNumbers={courseSubjectNumbers}
         takenCourses={coursesTaken}
         setTakenCourses={setCoursesTaken}
       />
