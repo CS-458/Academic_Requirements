@@ -26,7 +26,6 @@ const InputPage = (props: {
   courseSubjectAcronyms: string[];
   setSelectedCourseSubject(subject: string): void;
   courseSubjectNumbers: string[];
-  selectedCourseSubjectNumber: string;
 
   takenCourses: string[];
   setTakenCourses(courses: string[]): void;

@@ -30,12 +30,14 @@ function App() {
   const [major, setMajor] = useState("");
   const [concentration, setConcentration] = useState("");
 
-  //select the course Data for the completed course dropdown
+  // courseSubjects the array of subject strings from the database
   const [courseSubjects, setCourseSubjects] = useState([]);
+  // selectedCourseSubject is the specific course subject selected
+  // On update, a useEffect is called to get the respective numbers
   const [selectedCourseSubject, setSelectedCourseSubject] = useState("");
+  // courseSubjectNumbers the array of number (as strings) from the database
   const [courseSubjectNumbers, setCourseSubjectNumbers] = useState([]);
-  const [selectedCourseSubjectNumber, setSelectedCourseSubjectNumber] =
-    useState("");
+
   const [coursesTaken, setCoursesTaken] = useState([]);
 
   //Functions and variables for controlling an error popup
