@@ -44,13 +44,13 @@ export const CourseList: FC<CourseListProps> = memo(function CourseList({
   if (isActive) {
     backgroundColor = 'darkgreen'
   }
-
+console.log(courses)
   return (
     <div ref={drop} style={{ ...style, backgroundColor }}>
       {isActive
         ? 'Release to drop'
         : `CourseList`}
-      {courses.map(({ name, subject, number, semesters, credits }, index) => (
+       {courses.map(({ name, subject, number, semesters, credits }, index) => (
           <Course
             name={name}
             subject={subject}
@@ -60,7 +60,7 @@ export const CourseList: FC<CourseListProps> = memo(function CourseList({
             type= {ItemTypes.COURSE}
             key={index}
           />  
-        ))} 
+        ))}  
   
     </div>
   )

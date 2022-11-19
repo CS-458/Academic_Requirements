@@ -65,7 +65,7 @@ const FourYearPlanPage = (props: {
   function setSelectedCategory(_category) {
     setCategory(category);
     //setShowConcentration(true); May be able to delete this line.
-    props.onClickCategory(category);
+    //props.onClickCategory(category);
     //setConcentrationOptions(concentrations); May be able to delete this line.
   }
 
@@ -103,16 +103,7 @@ const FourYearPlanPage = (props: {
         <div className="screen">
           <div className="four-year-plan" data-testid="scheduleContent">
             <h1>Academic Planner</h1>
-            { <div className="courseDropdowns">
 
-                <SearchableDropdown
-                  options={categories}
-                  label="Category"
-                  onSelectOption={selectedCategory} //If option chosen, selected Category activated.
-                  showDropdown={true}
-                  thin={true}
-                />
-              </div> } 
 
           </div>
           <ErrorPopup
@@ -123,7 +114,7 @@ const FourYearPlanPage = (props: {
           />
 
           
-               {/* { <div className="courseDropdowns">
+                {/* { <div className="courseDropdowns">
 
                 <SearchableDropdown
                   options={categories}
@@ -132,7 +123,7 @@ const FourYearPlanPage = (props: {
                   showDropdown={true}
                   thin={true}
                 />
-              </div> }  */}
+              </div> }   */}
 
           <div className="page">
            <Example
