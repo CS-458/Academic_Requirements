@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import ErrorPopup from "./ErrorPopup";
 //@ts-ignore
 import SearchableDropdown from "./SearchableDropdown.tsx";
-//@ts-ignore
-//import categories from "../mockDataLists/Categories.tsx";
 import { monitorEventLoopDelay } from "perf_hooks";
 //@ts-ignore
 import Example from './example.ts'
@@ -25,10 +23,10 @@ const FourYearPlanPage = (props: {
     subject: string;
     category: string;
   }[];
-  onClickCategory(category: string): void; //Hovland 7Nov22
+  onClickCategory(category: string): void; 
 
 }) => {
-  //Stuff for category dropdown. Hovland 7Nov22
+  //Stuff for category dropdown. 
   const [category, setCategory] = useState(""); //category that is selected
   const [categories, setCategories] = useState<string[]>([]);
   //Functions and variables for controlling an error popup
@@ -47,7 +45,7 @@ const FourYearPlanPage = (props: {
     setVisibility(true);
     setError(error);
   }
-  //SelectedCategory function. Hovland7Nov7
+  //SelectedCategory function. 
   function selectedCategory(_category) {
     setCategory(_category);
     //New string array created.
@@ -55,18 +53,13 @@ const FourYearPlanPage = (props: {
     //Iterate through major course list. If the index matches the category, push the course name of the index to array.
     props.majorCourseList.map((course, index) => { if (course.category.valueOf() == _category) { set.push(course.name) } })
     //Iterate through concentration course list. If the index matches the category, push the course name of the index to array. 
-    //Note: investigate more.
     props.concentrationCourseList.map((course, index) => { if (course.category.valueOf() == _category) { set.push(course.name) } })
     //Display the array contents in log
     console.log(set);
-    //Find way to display this on the screen.
   }
-  //setSelectedCategory function. Hovland 7Nov22
+  //setSelectedCategory function. 
   function setSelectedCategory(_category) {
     setCategory(category);
-    //setShowConcentration(true); May be able to delete this line.
-    //props.onClickCategory(category);
-    //setConcentrationOptions(concentrations); May be able to delete this line.
   }
 
   // RemoveDuplicates function.
@@ -113,22 +106,10 @@ const FourYearPlanPage = (props: {
             error={error}
           />
 
-          
-                {/* { <div className="courseDropdowns">
-
-                <SearchableDropdown
-                  options={categories}
-                  label="Category"
-                  onSelectOption={selectedCategory} //If option chosen, selected Category activated.
-                  showDropdown={true}
-                  thin={true}
-                />
-              </div> }   */}
-
           <div className="page">
-           <Example
+           { <Example
             PassedCourseList = {props.majorCourseList}
-           /> 
+           />  }
             <div className="right-side">
               <div className="requirements">Requirements</div>
               <button>Export Schedule</button>

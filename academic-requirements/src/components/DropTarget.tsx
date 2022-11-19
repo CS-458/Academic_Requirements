@@ -125,12 +125,12 @@ export const Container: FC<ContainerProps> = memo(function Container({
     },
     [courses],
   )
-   //Stuff for category dropdown. Hovland 7Nov22
+   //Stuff for category dropdown.
    const [category, setCategory] = useState(""); //category that is selected
    const [categories, setCategories] = useState<string[]>([]);
    const [coursesInCategory, setcoursesInCategory ]= useState<Course[]>([]); //category that is selected
 
-//SelectedCategory function. Hovland7Nov7
+//SelectedCategory function.
 function selectedCategory(_category) {
   setCategory(_category);
   //New string array created.
@@ -138,19 +138,14 @@ function selectedCategory(_category) {
   //Iterate through major course list. If the index matches the category, push the course name of the index to array.
   courses.map((course, index) => { if (course.category.valueOf() == _category) { set.push(course) } })
   //Iterate through concentration course list. If the index matches the category, push the course name of the index to array. 
-  //Note: investigate more.
   //Display the array contents in log
   setcoursesInCategory(set)
   console.log(set);
-  //Find way to display this on the screen.
 }
 
- //setSelectedCategory function. Hovland 7Nov22
+ //setSelectedCategory function. 
  function setSelectedCategory(_category) {
   setCategory(category);
-  //setShowConcentration(true); May be able to delete this line.
- // props.onClickCategory(category);
-  //setConcentrationOptions(concentrations); May be able to delete this line.
 }
 
  // RemoveDuplicates function.
@@ -221,27 +216,6 @@ function selectedCategory(_category) {
         ))}
  
         </div> } 
-      {/* { <div className="courseDropdowns">
-<div onClick={()=>extractCategories()}>
-<SearchableDropdown
-  options={categories}
-  label="Category"
-  onSelectOption={selectedCategory} //If option chosen, selected Category activated.
-  showDropdown={true}
-  thin={true}
-/>
-</div></div> }   */}
-       {/* <div style={{ overflow: 'hidden', clear: 'both' }} className="class-dropdown">
-       {courseListElem.map(({ accepts}, index) => (
-          <CourseList
-            accept={accepts}
-            onDrop={(item) => handleReturnDrop(item)}
-            courses= {courses}
-            key={index}
-          />
-        ))}
- 
-        </div> */}
       </div>
     </div>
   )
