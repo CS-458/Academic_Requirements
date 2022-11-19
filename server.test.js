@@ -63,3 +63,13 @@ it("test /courses/concentration endpoint", async () => {
       expect(response.body.length).toBeGreaterThan(0);
     });
 });
+
+it("test /requirements endpoint", async () => {
+  await supertest(app)
+    .get("/requirements?conid=10")
+    .expect(200)
+    .then((response) => {
+      expect(Array.isArray(response.body)).toBeTruthy();
+      expect(response.body.length).toBeGreaterThan(0);
+    });
+});
