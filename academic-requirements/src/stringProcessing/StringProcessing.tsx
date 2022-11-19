@@ -2,99 +2,108 @@
     Class responsible for all prerequisite and requirement checking
 */
 class StringProcessing {
-
   // Checks if a list of courses satisfies the necessary course requirements/prerequisites
 
   // param compareString -> the string that has requirements/prerequisites that must be satisfied
   // param coursesList -> the array of strings that have courses taken
   // optional param concurrentCoursesList -> array of strings that have courses taken concurrently
-  courseInListCheck(compareString: string, coursesList: string[], concurrentCoursesList: string[] | undefined) {
-
+  courseInListCheck(
+    compareString: string,
+    coursesList: string[],
+    concurrentCoursesList: string[] | undefined
+  ) {
     // Boundary Conditions
-    if (compareString === '' || compareString === null || compareString === undefined) {
+    if (
+      compareString === "" ||
+      compareString === null ||
+      compareString === undefined
+    ) {
       return true; // nothing to compare to, so it must be true (essentially means no prerequisites)
     }
-    if ((coursesList && coursesList.length === 0) || coursesList === null || coursesList === undefined) {
+    if (
+      (coursesList && coursesList.length === 0) ||
+      coursesList === null ||
+      coursesList === undefined
+    ) {
       // Since there exists at least one course to compare, if coursesList is empty,
       // then the course is not in the list
       return false;
     }
 
     // Force each string to have underscores instead of dashes and remove any duplicates
-    let courses = this.removeDuplicates(this.replaceDashesWithUnderscores(coursesList));
-    let concurrentCourses = this.removeDuplicates(this.replaceDashesWithUnderscores(concurrentCoursesList ?? []));
+    let courses = this.removeDuplicates(
+      this.replaceDashesWithUnderscores(coursesList)
+    );
+    let concurrentCourses = this.removeDuplicates(
+      this.replaceDashesWithUnderscores(concurrentCoursesList ?? [])
+    );
 
     // Step 1: split the string by commas (required courses)
     // Every string in splitStringAND must be true
-    let splitStringAND = compareString.replace(/-/g,'_').split(',');
+    let splitStringAND = compareString.replace(/-/g, "_").split(",");
     let returnValue = true;
 
-    splitStringAND.forEach(compareAND => {
+    splitStringAND.forEach((compareAND) => {
+      // If the string has a '|' or '&', it is not simplified...
+      if (compareAND.search(/&|\|/) > 0) {
+        // Step 2: split the string by vertical bars (this OR that courses)
+        // Only one of the strings in splitStringOR must be true
+        let orSatisfied = false;
+        let splitStringOR = compareAND.split("|");
+        splitStringOR.forEach((compareOR) => {
+          // Check every string in OR until one of the strings is true
+          if (!orSatisfied) {
+            // If the string has an '&', it is not simplified...
+            if (compareOR.search(/&/) > 0) {
+              // Step 3: split the string by ampersand symbols (& -> representing SUBAND)
+              let subandSatisfied = true;
+              let splitStringSUBAND = compareOR.split("&");
 
-        // If the string has a '|' or '&', it is not simplified...
-        if (compareAND.search(/&|\|/) > 0) {
-
-          // Step 2: split the string by vertical bars (this OR that courses)
-          // Only one of the strings in splitStringOR must be true
-          let orSatisfied = false;
-          let splitStringOR = compareAND.split('|');
-          splitStringOR.forEach(compareOR => {
-
-            // Check every string in OR until one of the strings is true
-            if (!orSatisfied) {
-
-              // If the string has an '&', it is not simplified...
-              if (compareOR.search(/&/) > 0) {
-
-                // Step 3: split the string by ampersand symbols (& -> representing SUBAND)
-                let subandSatisfied = true;
-                let splitStringSUBAND = compareOR.split('&');
-
-                // Check if any of the courses fail to satisfy the SUBAND
-                splitStringSUBAND.forEach(compareSUBAND => {
-                  if (!this.checkCourses(compareSUBAND, courses, concurrentCourses)) {
-                    subandSatisfied = false;
-                  }
-                })
-
-                // If none of the courses failed the SUBAND, then the OR is satisfied
-                if (subandSatisfied) {
-                  orSatisfied = true;
+              // Check if any of the courses fail to satisfy the SUBAND
+              splitStringSUBAND.forEach((compareSUBAND) => {
+                if (
+                  !this.checkCourses(compareSUBAND, courses, concurrentCourses)
+                ) {
+                  subandSatisfied = false;
                 }
+              });
+
+              // If none of the courses failed the SUBAND, then the OR is satisfied
+              if (subandSatisfied) {
+                orSatisfied = true;
               }
-              else {
-                // Check if any of the courses satisfy the OR
-                if (this.checkCourses(compareOR, courses, concurrentCourses)) {
-                  orSatisfied = true;
-                }
+            } else {
+              // Check if any of the courses satisfy the OR
+              if (this.checkCourses(compareOR, courses, concurrentCourses)) {
+                orSatisfied = true;
               }
             }
-          })
+          }
+        });
 
-          // If none of the courses were satisfied in the OR, then return false
-          if (!orSatisfied) {
-            returnValue = false;
-          }
+        // If none of the courses were satisfied in the OR, then return false
+        if (!orSatisfied) {
+          returnValue = false;
         }
-        else {
-          // Check if any of the courses fail to satisfy the AND
-          // If one course fails the AND, return false
-          if (!this.checkCourses(compareAND, courses, concurrentCourses)) {
-            returnValue = false;
-          }
+      } else {
+        // Check if any of the courses fail to satisfy the AND
+        // If one course fails the AND, return false
+        if (!this.checkCourses(compareAND, courses, concurrentCourses)) {
+          returnValue = false;
         }
-    })
- 
+      }
+    });
+
     return returnValue;
   }
 
   // Replaces the dashes in each string in strings with an underscore and returns the edited array of strings
   replaceDashesWithUnderscores(strings: string[]): string[] {
-    let arr = new Array<string>;
+    let arr = new Array<string>();
 
-    strings.forEach(x => {
-      arr.push(x.replace(/-/g,'_'));
-    })
+    strings.forEach((x) => {
+      arr.push(x.replace(/-/g, "_"));
+    });
 
     return arr;
   }
@@ -108,7 +117,7 @@ class StringProcessing {
   removeDuplicates(strings: string[]): string[] {
     return strings.filter((value, index, tempArr) => {
       return !tempArr.includes(value, index + 1);
-    })
+    });
   }
 
   // Removes an element from courseList if it matches compareString
@@ -119,7 +128,6 @@ class StringProcessing {
     // Compare each course
     courseList.forEach((course, index) => {
       if (course === compareString) {
-
         // Remove the course from strings if there's a match
         courseList.splice(index, 1);
         found = true;
@@ -127,7 +135,7 @@ class StringProcessing {
         // Exit loop
         return;
       }
-    })
+    });
 
     return found;
   }
@@ -137,13 +145,19 @@ class StringProcessing {
     ex2. compareString='!CS_100' courses=['CS_100'] concurrentCourses=['CS_120']  returns -> true 
     ex3. compareString='!CS_180' courses=['CS_101'] concurrentCourses=['CS_123'] returns -> false
   */
-  checkConcurrentCourse(compareString: string, courses: Array<string>, concurrentCourses: Array<string>): boolean {
-
+  checkConcurrentCourse(
+    compareString: string,
+    courses: Array<string>,
+    concurrentCourses: Array<string>
+  ): boolean {
     // Remove the exclamation point from the string
     let compare = this.removeFirstCharacter(compareString);
 
     // Returns if a match occurs between compare and course/concurrentCourses
-    return this.findMatch(compare, courses) || this.findMatch(compare, concurrentCourses);
+    return (
+      this.findMatch(compare, courses) ||
+      this.findMatch(compare, concurrentCourses)
+    );
   }
 
   /* Checks if one of the courses is greater than or equal to the compareString's course
@@ -152,17 +166,16 @@ class StringProcessing {
      ex3. compareString='>CS_180' courses=['CS_101','CS_130']  returns -> false
   */
   checkCourseOrGreater(compareString: string, courses: Array<string>): boolean {
-
     let found = false;
 
-    // Retrieve the course acronym and number from the string 
-    let compareAcronym = this.removeFirstCharacter(compareString.split('_')[0]);
-    let compareNumber = parseInt(compareString.split('_')[1]);
+    // Retrieve the course acronym and number from the string
+    let compareAcronym = this.removeFirstCharacter(compareString.split("_")[0]);
+    let compareNumber = parseInt(compareString.split("_")[1]);
 
     // Compare each course
     courses.forEach((x, index) => {
-      let acronym = x.split('_')[0];
-      let number = parseInt(x.split('_')[1]);
+      let acronym = x.split("_")[0];
+      let number = parseInt(x.split("_")[1]);
 
       // If the course acronyms are the same, return true if the course is greater
       if (acronym === compareAcronym) {
@@ -172,30 +185,38 @@ class StringProcessing {
 
           // Exits loop
           return;
-        };
+        }
       }
-    })
+    });
 
     return found;
   }
 
   // Checks if the courses fit the prereq/requirement compareString
-  checkCourses(compareString: string, courses: Array<string>, concurrentCourses: Array<string>): boolean {
+  checkCourses(
+    compareString: string,
+    courses: Array<string>,
+    concurrentCourses: Array<string>
+  ): boolean {
     // If the course can be taken concurrently...
     if (compareString.search(/!/) === 0) {
       // compare it to both courses and concurrent courses
-      return this.checkConcurrentCourse(compareString, courses, concurrentCourses);
+      return this.checkConcurrentCourse(
+        compareString,
+        courses,
+        concurrentCourses
+      );
     }
 
     // If the course number or above could be taken...
     if (compareString.search(/>/) === 0) {
       // compare the course numbers to see if a large enough course number is taken
-      return this.checkCourseOrGreater(compareString, courses) 
+      return this.checkCourseOrGreater(compareString, courses);
     }
 
     // Otherwise compare it to just the taken courses
-    return this.findMatch(compareString, courses)
+    return this.findMatch(compareString, courses);
   }
-};
+}
 
 export default StringProcessing;

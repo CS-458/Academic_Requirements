@@ -29,6 +29,13 @@
     "react-select": "^5.5.2",
     "web-vitals": "^2.1.4"
   },
+  "jest": {
+    "moduleNameMapper": {
+      "dnd-core": "dnd-core-cjs",
+      "react-dnd": "react-dnd-cjs",
+      "react-dnd-html5-backend": "react-dnd-html5-backend-cjs"
+    }
+  },
   "name": "academic-requirements",
   "private": true,
   "proxy": "http://localhost:5000",
@@ -38,12 +45,5 @@
     "start": "react-scripts start",
     "test": "react-scripts test"
   },
-  "version": "0.1.0",
-  "jest": {
-    "moduleNameMapper": {
-      "react-dnd": "react-dnd-cjs",
-      "react-dnd-html5-backend": "react-dnd-html5-backend-cjs",
-      "dnd-core": "dnd-core-cjs"
-    }
-  }
+  "version": "0.1.0"
 }

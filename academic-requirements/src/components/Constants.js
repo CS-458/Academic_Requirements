@@ -1,3 +1,3 @@
-export const ItemTypes= {
-    COURSE: "course"
-}
+export const ItemTypes = {
+  COURSE: "course",
+};

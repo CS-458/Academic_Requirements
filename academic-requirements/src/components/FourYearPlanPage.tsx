@@ -2,7 +2,7 @@ import React, { useState } from "react";
 //@ts-ignore
 import ErrorPopup from "./ErrorPopup";
 //@ts-ignore
-import Example from './example.ts'
+import Example from "./example.ts";
 
 //@ts-ignore
 //import DropTarget from "./DropTarget.tsx"
@@ -36,7 +36,7 @@ const FourYearPlanPage = (props: {
     setVisibility(true);
     setError(error);
   }
-  
+
   return (
     <div>
       {props.showing && (
@@ -50,11 +50,9 @@ const FourYearPlanPage = (props: {
             title="Error"
             error={error}
           />
-          
+
           <div className="page">
-           <Example
-           PassedCourseList = {props.majorCourseList}
-           />
+            <Example PassedCourseList={props.majorCourseList} />
             {/* <div className="class-dropdown"> 
               {props.majorCourseList.map((course, index) => {
                 return <div key={index}>{course.name}</div>;

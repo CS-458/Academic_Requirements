@@ -53,7 +53,6 @@ app.get("/concentration", (req, res) => {
   );
 });
 
-
 //TODO delete the UNION here!
 app.get("/courses/major", (req, res) => {
   checkConnection();
