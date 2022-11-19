@@ -33,6 +33,8 @@ function App() {
   const [major, setMajor] = useState("");
   const [concentration, setConcentration] = useState("");
 
+  const [coursesTaken, setCoursesTaken] = useState([]);
+
   //Functions and variables for controlling an error popup
   const [visibility, setVisibility] = useState(false);
   const popupCloseHandler = () => {
@@ -161,29 +163,33 @@ function App() {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div>
-        <InputPage
-          showing={!clickedGenerate}
-          onClickGenerate={generateSchedule}
-          onClickMajor={selectMajor}
-          onClickConcentration={selectConcentration}
-          concentrationList={concentrationData}
-          majorList={majorData}
-          majorDisplayList={majorDisplayData}
-          concentrationDisplayList={concentrationDisplayData}
-        />
-        <FourYearPlanPage
-          showing={clickedGenerate}
-          concentrationCourseList={concentrationCourseData}
-          majorCourseList={majorCourseData}
-        />
-        <ErrorPopup
-          onClose={popupCloseHandler}
-          show={visibility}
-          title="Error"
-          error={error}
-        />
-      </div>
+      <InputPage
+        showing={!clickedGenerate}
+        onClickGenerate={generateSchedule}
+        onClickMajor={selectMajor}
+        onClickConcentration={selectConcentration}
+        concentrationList={concentrationData}
+        majorList={majorData}
+        majorDisplayList={majorDisplayData}
+        concentrationDisplayList={concentrationDisplayData}
+        takenCourses={coursesTaken}
+        setTakenCourses={setCoursesTaken}
+      />
+      <FourYearPlanPage
+        data-testid="FourYearPage"
+        showing={clickedGenerate}
+        concentrationCourseList={concentrationCourseData}
+        majorCourseList={majorCourseData}
+        selectedMajor={major}
+        selectedConcentration={concentration}
+        completedCourses={coursesTaken}
+      />
+      <ErrorPopup
+        onClose={popupCloseHandler}
+        show={visibility}
+        title="Error"
+        error={error}
+      />
     </DndProvider>
   );
 }
