@@ -99,7 +99,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
   const handleDrop = useCallback(
     (index: number, item: { name: string }) => {
       const { name } = item
-      let course = courses.find(item => item.name === name)
+      let course = courses.find(item => item.name === name);
        setDroppedCourses(
          update(droppedCourses, course ? { $push: [course] } : { $push: [] }),
        )
@@ -144,6 +144,85 @@ export const Container: FC<ContainerProps> = memo(function Container({
           console.log('CANNOT ADD COURSE! FAILS PREREQUISITES');
         }
       }
+      // Course was not found in the courses list, which means it currently occupies a semester
+      else {
+        let course = courses.find(item => item.name === name);
+
+        //Find the course and its current residing index in the semesters list
+        let movedFromIndex = -1;
+        semesters.forEach((x, i) => {
+          x.courses.forEach((y) => {
+            if (y.name === item.name) {
+              course = y;
+              movedFromIndex = i;
+            }
+          })
+        })
+
+        let preReqsSatisfied = true;
+
+        if (course && movedFromIndex > -1) {
+          // Course was moved from later to earlier
+          if (movedFromIndex > index) {
+            // Only check the prerequisites for the course itself that is being moved earlier
+            preReqsSatisfied = prereqCheck.courseInListCheck(course.preReq, previousCourses, currentCourses);
+          }
+          // Course was moved from earlier to later
+          else {
+            // Check the prerequisites for all courses past (and including) the semester the course currently resides in
+            preReqsSatisfied = preReqCheckCoursesInSemesterAndBeyond(course, movedFromIndex);
+          }
+
+          // If the prereqs are satisfied, then move the course to the semester
+          if (preReqsSatisfied) {
+
+            // NOTE!!!
+            // The setSemesters is not updating correctly here. I will look at it at a later time.
+
+            // First update the semesters with the new course
+            let coursePush = new Array<CourseState>();
+            coursePush.push(course);
+
+            setSemesters(
+              update(semesters, {
+                [index]: {
+                  lastDroppedItem: {
+                    $set: item
+                  },
+                  courses: {
+                    $push: coursePush
+                  }
+                },
+              }),
+            )
+
+            // Then remove the course from its previous semester spot
+            let courseRemove = new Array<CourseState>();
+            semesters[movedFromIndex].courses.forEach((x) => {
+              if (x !== course) {
+                courseRemove.push(x);
+              }
+            })
+
+            setSemesters(
+              update(semesters, {
+                [index]: {
+                  courses: {
+                    $set: courseRemove
+                  }
+                },
+              }),
+            )
+
+            // Remove the course from the list, in case it did exist there too
+            handleRemoveItem(name);
+          }
+          else {
+            // fails to satisfy prerequisites
+            console.log('CANNOT ADD COURSE! FAILS PREREQUISITES');
+          }
+        }
+      }
     },
     [semesters],
   )
@@ -159,7 +238,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
       if (found) {
         semesters.forEach((sem, index) => {
           sem.courses.forEach((c) => {
-            if ('' + c.subject + c.number === '' + found.subject + found.number) {
+            if (c.name === found.name) {
               courseSemesterIndex = index;
             }
           })
@@ -172,7 +251,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
         )
 
         // Update semesters to have the course removed
-        // TODO TEST THIS TO MAKE SURE IT WORKS AS INTENDED
         let itemArr = new Array<CourseState>();
         if (found) {
           semesters[courseSemesterIndex].courses.forEach((x) => {
@@ -190,15 +268,16 @@ export const Container: FC<ContainerProps> = memo(function Container({
             },
           }),
         )
+
+        // Update the dropped courses to include the course that was moved out
+        setDroppedCourses(
+          update(droppedCourses, found ? { $push: [found] } : { $push: [] }),
+        )
       }
       else {
         // fails to satisfy prerequisites
         console.log('CANNOT MOVE COURSE! FAILS PREREQUISITES');
       }
-    }
-    else {
-      //fails to find course...for some reason
-      console.log(`this is bad and shouldn't happen`);
     }
     },
     [courses],
@@ -236,7 +315,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
         })
         
         // Update the current course lists to be for the next semester
-        if (index + 1 <= semesters.length) {
+        if (index + 1 < semesters.length && semesters[index + 1].courses !== undefined) {
           currentCourses = getSemesterCourses(index + 1);
           currentCoursesNames = getSemesterCoursesNames(index + 1);
         }
@@ -249,7 +328,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
   // Get all courses in previous semesters
   // param semesterIndex -> current semester index
   function getPreviousSemesterCourses(semesterIndex: number): Array<string> {
-    let previousCourses = new Array();
+    let previousCourses = new Array<string>();
     semesters.forEach((currSemester) => {
       if (currSemester.number - 1 < semesterIndex) {
         currSemester.courses.forEach((x) => {
@@ -264,10 +343,10 @@ export const Container: FC<ContainerProps> = memo(function Container({
   // Get all CourseState objects in current semester
   // param semesterIndex -> current semester index
   function getSemesterCourses(semesterIndex: number): Array<CourseState> {
-    let semCourses = new Array();
-    semesters[semesterIndex].courses.forEach((x) => {
-        semCourses.push(x);
-    })
+    let semCourses = new Array<CourseState>();
+      semesters[semesterIndex].courses.forEach((x) => {
+          semCourses.push(x);
+      })
 
     return semCourses;
   }
@@ -275,13 +354,27 @@ export const Container: FC<ContainerProps> = memo(function Container({
   // Get all courses (string) in current semester
   // param semesterIndex -> current semester index
   function getSemesterCoursesNames(semesterIndex: number): Array<string> {
-    let semCourses = new Array();
+    let semCourses = new Array<string>();
     semesters[semesterIndex].courses.forEach((x) => {
           semCourses.push(x.subject + '-' + x.number);
     })
 
     return semCourses;
   }
+
+  // Displays in console the courses in each semester upon update
+  // Feel free to comment this out to reduce spam in the console
+  useEffect(() => {
+    semesters.forEach((x) => {
+      console.log('Semester number:' + x.number);
+      if (x.courses) {
+      x.courses.forEach((y) => {
+        console.log('Course: ' + y.name);
+      })
+    }
+    })
+    console.log('--------------');
+  },[semesters]);
 
   return (
     <div>
