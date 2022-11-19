@@ -184,7 +184,7 @@ const InputPage = (props: {
                 <SearchableDropdown
                   options={props.majorDisplayList}
                   label="Major"
-                  onSelectOption={selectedMajor}    //reference
+                  onSelectOption={selectedMajor} //reference
                   showDropdown={true}
                   thin={false}
                 />

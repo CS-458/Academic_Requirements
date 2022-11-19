@@ -75,7 +75,7 @@ body {
   column-gap: 10px;
 }
 
-.page{
+.page {
   height: 100%;
   display: grid;
   grid-template-columns: auto auto;

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ErrorPopup from "./ErrorPopup";
 //@ts-ignore
-import Example from './example.ts';
+import Example from "./example.ts";
 const FourYearPlanPage = (props: {
   showing: boolean;
   majorCourseList: {
@@ -71,9 +71,7 @@ const FourYearPlanPage = (props: {
             error={error}
           />
           <div className="page">
-           <Example
-            PassedCourseList = {props.majorCourseList}
-           /> 
+            <Example PassedCourseList={props.majorCourseList} />
             <div className="right-side">
               <div className="requirements">Requirements</div>
               <button data-testid="ExportButton" onClick={exportSchedule}>

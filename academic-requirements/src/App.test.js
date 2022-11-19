@@ -2,9 +2,12 @@ import { fireEvent, render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React from "react";
 //@ts-ignore
-import InputPage from "./components/InputPage.tsx"
+import InputPage from "./components/InputPage.tsx";
 import App from "./App";
 import FourYearPlanPage from "./components/FourYearPlanPage";
+import { wrapWithTestBackend } from "react-dnd-test-utils";
+import { DragDropContext } from "react-dnd";
+import TestUtils from "react-dom/test-utils";
 
 describe("Test for App", () => {
   global.URL.createObjectURL = jest.fn();
@@ -12,15 +15,18 @@ describe("Test for App", () => {
   test("Test Rendering", () => {
     const { getByTestId } = render(
       <InputPage
-      showing={true}
-      onClickGenerate={jest.fn()}
-      onClickMajor={jest.fn()}
-      onClickConcentration={jest.fn()}
-      concentrationList={[]}
-      majorList={[]}
-      majorDisplayList={[]}
-      concentrationDisplayList={[]}
-       />);
+        showing={true}
+        onClickGenerate={jest.fn()}
+        onClickMajor={jest.fn()}
+        onClickConcentration={jest.fn()}
+        concentrationList={[]}
+        majorList={[]}
+        majorDisplayList={[]}
+        concentrationDisplayList={[]}
+        takenCourses={[]}
+        setTakenCourses={jest.fn()}
+      />
+    );
 
     //Check that input page is displaying
     expect(getByTestId("content")).toBeInTheDocument();
@@ -35,7 +41,20 @@ describe("Test for App", () => {
   // testing if the import button opens the uploader popup
   // and if we try uploading nothing the error popup appears
   test("Test Import Button opens uploader page and upload nothing to receive an error", () => {
-    const { getByTestId } = render(<App />);
+    const { getByTestId } = render(
+      <InputPage
+        showing={true}
+        onClickGenerate={jest.fn()}
+        onClickMajor={jest.fn()}
+        onClickConcentration={jest.fn()}
+        concentrationList={[]}
+        majorList={[]}
+        majorDisplayList={[]}
+        concentrationDisplayList={[]}
+        takenCourses={[]}
+        setTakenCourses={jest.fn()}
+      />
+    );
     //Check that input page is displaying
     expect(getByTestId("content")).toBeInTheDocument();
     //Check that import button can be pressed
@@ -53,7 +72,20 @@ describe("Test for App", () => {
 
   // Tests if we can upload a file and if it is the wrong file, an error page is thrown
   test("Test upload wrong file type and error thrown", () => {
-    const { getByTestId } = render(<App />);
+    const { getByTestId } = render(
+      <InputPage
+        showing={true}
+        onClickGenerate={jest.fn()}
+        onClickMajor={jest.fn()}
+        onClickConcentration={jest.fn()}
+        concentrationList={[]}
+        majorList={[]}
+        majorDisplayList={[]}
+        concentrationDisplayList={[]}
+        takenCourses={[]}
+        setTakenCourses={jest.fn()}
+      />
+    );
     //Check that input page is displaying
     expect(getByTestId("content")).toBeInTheDocument();
 
@@ -83,7 +115,20 @@ describe("Test for App", () => {
 
   // Tests if we can upload a json file and have no error is thrown
   test("Test upload json file type and no error thrown", () => {
-    const { getByTestId } = render(<App />);
+    const { getByTestId } = render(
+      <InputPage
+        showing={true}
+        onClickGenerate={jest.fn()}
+        onClickMajor={jest.fn()}
+        onClickConcentration={jest.fn()}
+        concentrationList={[]}
+        majorList={[]}
+        majorDisplayList={[]}
+        concentrationDisplayList={[]}
+        takenCourses={[]}
+        setTakenCourses={jest.fn()}
+      />
+    );
     //Check that input page is displaying
     expect(getByTestId("content")).toBeInTheDocument();
 
@@ -107,13 +152,13 @@ describe("Test for App", () => {
 
   // Tests the Export button and its functionality
   test("Test Export", () => {
-    // Renders the FourYearPlanPage
+    //Renders the FourYearPlanPage
     const { getByTestId } = render(
       <FourYearPlanPage
         showing={true}
         concentrationCourseList={[]}
         majorCourseList={[]}
-        selectMajor={"major"}
+        selectedMajor={"major"}
         selectedConcentration={"concentration"}
         completedCourses={[]}
       />
