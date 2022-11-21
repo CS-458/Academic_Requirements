@@ -30,6 +30,8 @@ function App() {
   const [major, setMajor] = useState("");
   const [concentration, setConcentration] = useState("");
 
+  const [coursesTaken, setCoursesTaken] = useState([]);
+
   //Functions and variables for controlling an error popup
   const [visibility, setVisibility] = useState(false);
   const popupCloseHandler = () => {
@@ -167,11 +169,17 @@ function App() {
         majorList={majorData}
         majorDisplayList={majorDisplayData}
         concentrationDisplayList={concentrationDisplayData}
+        takenCourses={coursesTaken}
+        setTakenCourses={setCoursesTaken}
       />
       <FourYearPlanPage
+        data-testid="FourYearPage"
         showing={clickedGenerate}
         concentrationCourseList={concentrationCourseData}
         majorCourseList={majorCourseData}
+        selectedMajor={major}
+        selectedConcentration={concentration}
+        completedCourses={coursesTaken}
       />
       <ErrorPopup
         onClose={popupCloseHandler}
