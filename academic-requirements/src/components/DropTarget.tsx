@@ -1,5 +1,5 @@
 import update from "immutability-helper";
-import { createContext, FC, useEffect } from "react";
+import { FC, useEffect } from "react";
 import { memo, useCallback, useState } from "react";
 //@ts-ignore
 import { Course } from "./DraggableCourse.tsx";
@@ -19,48 +19,26 @@ interface SemesterState {
   accepts: string[];
   lastDroppedItem: any;
   number: number;
-  courses: CourseState[];
-}
-
-interface CourseState {
-  credits: number;
-  name: string;
-  number: number;
-  semesters: string;
-  subject: string;
-  preReq: string;
-  category: string;
+  courses: Course[];
 }
 
 interface CourseListState {
   accepts: string[];
   unDroppedItem: any;
-}
-
-export interface SemesterSpec {
-  accepts: string[];
-  lastDroppedItem: any;
-  number: number;
-}
-export interface CourseSpec {
-  credits: number;
-  name: string;
-  number: number;
-  semesters: string;
-  subject: string;
-  preReq: string;
-  category: string;
+  courses: Course[]
 }
 
 export interface CourseListSpec {
   accepts: string[];
   unDroppedItem: any;
+  courses: Course[]
 }
 
 export interface ContainerState {
   droppedCourses: Course[];
-  semesters: SemesterSpec[];
-  courses: CourseSpec[];
+  semesters: Semester[];
+  coursesInCategory: Course[];
+  courseListElem: CourseList[];
 }
 
 export interface ContainerProps {
@@ -180,26 +158,82 @@ export const Container: FC<ContainerProps> = memo(function Container({
   ]);
 
   const [visibility, setVisibility] = useState(false);
-  const [courses, setCourses] = useState<CourseState[]>(PassedCourseList);
+  const [courses, setCourses] = useState<Course[]>(PassedCourseList);
 
-  const [droppedCourses, setDroppedCourses] = useState<CourseState[]>([]);
+  const [droppedCourses, setDroppedCourses] = useState<Course[]>([]);
 
   const [courseListElem, setCourseListElem] = useState<CourseListState[]>([
-    { accepts: [ItemTypes.COURSE], unDroppedItem: null },
+    { accepts: [ItemTypes.COURSE], unDroppedItem: null, courses: [] },
   ]);
 
-  const handleRemoveItem = (e) => {
-    setCourses(courses.filter((item) => item.name !== e));
+  //Stuff for category dropdown. Hovland 7Nov22
+  const [category, setCategory] = useState(""); //category that is selected
+  const [categories, setCategories] = useState<string[]>([]);
+  const [coursesInCategory, setcoursesInCategory] = useState<Course[]>([]); //category that is selected
+
+  //SelectedCategory function. Hovland7Nov7
+  function selectedCategory(_category) {
+    setCategory(_category);
+    //New string array created.
+    let set = new Array<Course>();
+    //Iterate through major course list. If the index matches the category, push the course name of the index to array.
+    PassedCourseList.map((course, index) => {
+      if (course.category.valueOf() == _category) {
+        set.push(course);
+      }
+    });
+    setcoursesInCategory(set);
+  }
+
+  //setSelectedCategory function. Hovland 7Nov22
+  function setSelectedCategory(_category) {
+    setCategory(category);
+  }
+
+  // RemoveDuplicates function.
+  function RemoveDuplicates(strings: string[]): string[] {
+    //Push all strings to a set(which disallows duplicates)
+    let set = new Set<string>();
+    strings.forEach((x) => {
+      set.add(x);
+    });
+    //Reassign all strings in the set to an array.
+    let arr = new Array<string>();
+    set.forEach((x) => {
+      arr.push(x);
+    });
+    //Return the array.
+    return arr;
+  }
+
+  //extractCategories function.
+  function extractCategories() {
+    //Initialize new array.
+    let i = new Array<string>();
+    //map is what loops over the list
+    //map calls arrow function, runs whats between curly braces.
+    //Push course categories from major and concentration course lists to array.
+    PassedCourseList.map((course, index) => {
+      i.push(course.category);
+    });
+    //Remove duplicate categories from the array.
+    setCategories(RemoveDuplicates(i));
+  }
+
+  const handleRemoveItem = (course:Course) => {
+    console.log(course)
+    setCourses(courses.filter(item => item !== course));
   };
   const handleDrop = useCallback(
     (index: number, item: { name: string }) => {
+      console.log(coursesInCategory)
       const { name } = item;
       let course = courses.find((item) => item.name === name);
       setDroppedCourses(
         update(droppedCourses, course ? { $push: [course] } : { $push: [] })
       );
 
-      let itemArr = new Array<CourseState>();
+      let itemArr = new Array<Course>();
       if (course) {
         itemArr.push(course);
       }
@@ -238,7 +272,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
               },
             })
           );
-          handleRemoveItem(name);
+          handleRemoveItem(course);
         } else {
           // fails to satisfy prerequisites
           setVisibility(true);
@@ -293,7 +327,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
             updateSemester[index].lastDroppedItem = item;
 
             // Then remove the course from its previous semester spot
-            let coursesRemove = new Array<CourseState>();
+            let coursesRemove = new Array<Course>();
             updateSemester[movedFromIndex].courses.forEach((x) => {
               if (x !== course) {
                 coursesRemove.push(x);
@@ -304,7 +338,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
             setSemestersOld(updateSemester);
 
             // Remove the course from the list, in case it did exist there too
-            handleRemoveItem(name);
+            handleRemoveItem(course);
           } else {
             // fails to satisfy prerequisites
             setVisibility(true);
@@ -339,7 +373,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
           );
 
           // Update semesters to have the course removed
-          let itemArr = new Array<CourseState>();
+          let itemArr = new Array<Course>();
           if (found) {
             semesters[courseSemesterIndex].courses.forEach((x) => {
               if (x.name !== found.name) {
@@ -373,7 +407,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
   // This function checks if every course passes the prerequisite check when moving a course
   // out of a semester and into the course bank
   function preReqCheckCoursesInSemesterAndBeyond(
-    courseToRemove: CourseState,
+    courseToRemove: Course,
     courseSemesterIndex: number
   ): boolean {
     // prereqCheck will be used to check prerequisites
@@ -438,10 +472,10 @@ export const Container: FC<ContainerProps> = memo(function Container({
     return previousCourses;
   }
 
-  // Get all CourseState objects in current semester
+  // Get all Course objects in current semester
   // param semesterIndex -> current semester index
-  function getSemesterCourses(semesterIndex: number): Array<CourseState> {
-    let semCourses = new Array<CourseState>();
+  function getSemesterCourses(semesterIndex: number): Array<Course> {
+    let semCourses = new Array<Course>();
     semesters[semesterIndex].courses.forEach((x) => {
       semCourses.push(x);
     });
@@ -462,80 +496,19 @@ export const Container: FC<ContainerProps> = memo(function Container({
 
   // Displays in console the courses in each semester upon update
   // Feel free to comment this out to reduce spam in the console
-  useEffect(() => {
-    semesters.forEach((x) => {
-      console.log("Semester number:" + x.number);
-      if (x.courses) {
-        x.courses.forEach((y) => {
-          console.log("Course: " + y.name);
-        });
-      }
-    });
-    console.log("--------------");
-  }, [semesters]);
+  // useEffect(() => {
+  //   semesters.forEach((x) => {
+  //     console.log("Semester number:" + x.number);
+  //     if (x.courses) {
+  //       x.courses.forEach((y) => {
+  //         console.log("Course: " + y.name);
+  //       });
+  //     }
+  //   });
+  //   console.log("--------------");
+  // }, [semesters]);
 
 
-  //Stuff for category dropdown. Hovland 7Nov22
-  const [category, setCategory] = useState(""); //category that is selected
-  const [categories, setCategories] = useState<string[]>([]);
-  const [coursesInCategory, setcoursesInCategory] = useState<Course[]>([]); //category that is selected
-
-  //SelectedCategory function. Hovland7Nov7
-  function selectedCategory(_category) {
-    setCategory(_category);
-    //New string array created.
-    let set = new Array<CourseState>();
-    //Iterate through major course list. If the index matches the category, push the course name of the index to array.
-    courses.map((course, index) => {
-      if (course.category.valueOf() == _category) {
-        set.push(course);
-      }
-    });
-    //Iterate through concentration course list. If the index matches the category, push the course name of the index to array.
-    //Note: investigate more.
-    //Display the array contents in log
-    setcoursesInCategory(set);
-    console.log(set);
-    //Find way to display this on the screen.
-  }
-
-  //setSelectedCategory function. Hovland 7Nov22
-  function setSelectedCategory(_category) {
-    setCategory(category);
-    //setShowConcentration(true); May be able to delete this line.
-    // props.onClickCategory(category);
-    //setConcentrationOptions(concentrations); May be able to delete this line.
-  }
-
-  // RemoveDuplicates function.
-  function RemoveDuplicates(strings: string[]): string[] {
-    //Push all strings to a set(which disallows duplicates)
-    let set = new Set<string>();
-    strings.forEach((x) => {
-      set.add(x);
-    });
-    //Reassign all strings in the set to an array.
-    let arr = new Array<string>();
-    set.forEach((x) => {
-      arr.push(x);
-    });
-    //Return the array.
-    return arr;
-  }
-
-  //extractCategories function.
-  function extractCategories() {
-    //Initialize new array.
-    let i = new Array<string>();
-    //map is what loops over the list
-    //map calls arrow function, runs whats between curly braces.
-    //Push course categories from major and concentration course lists to array.
-    courses.map((course, index) => {
-      i.push(course.category);
-    });
-    //Remove duplicate categories from the array.
-    setCategories(RemoveDuplicates(i));
-  }
   // If the semesters needs to be updated, we will force update the semesters
   useEffect(() => {
     setSemesters(semestersOld);
