@@ -78,6 +78,56 @@ export interface ContainerProps {
 export const Container: FC<ContainerProps> = memo(function Container({
   PassedCourseList,
 }) {
+  const [semestersOld, setSemestersOld] = useState<SemesterState[]>([
+    {
+      accepts: [ItemTypes.COURSE],
+      lastDroppedItem: null,
+      number: 1,
+      courses: [],
+    },
+    {
+      accepts: [ItemTypes.COURSE],
+      lastDroppedItem: null,
+      number: 2,
+      courses: [],
+    },
+    {
+      accepts: [ItemTypes.COURSE],
+      lastDroppedItem: null,
+      number: 3,
+      courses: [],
+    },
+    {
+      accepts: [ItemTypes.COURSE],
+      lastDroppedItem: null,
+      number: 4,
+      courses: [],
+    },
+    {
+      accepts: [ItemTypes.COURSE],
+      lastDroppedItem: null,
+      number: 5,
+      courses: [],
+    },
+    {
+      accepts: [ItemTypes.COURSE],
+      lastDroppedItem: null,
+      number: 6,
+      courses: [],
+    },
+    {
+      accepts: [ItemTypes.COURSE],
+      lastDroppedItem: null,
+      number: 7,
+      courses: [],
+    },
+    {
+      accepts: [ItemTypes.COURSE],
+      lastDroppedItem: null,
+      number: 8,
+      courses: [],
+    },
+  ]);
   const [semesters, setSemesters] = useState<SemesterState[]>([
     {
       accepts: [ItemTypes.COURSE],
@@ -129,6 +179,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
     },
   ]);
 
+  const [visibility, setVisibility] = useState(false);
   const [courses, setCourses] = useState<CourseState[]>(PassedCourseList);
 
   const [droppedCourses, setDroppedCourses] = useState<CourseState[]>([]);
@@ -190,7 +241,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
           handleRemoveItem(name);
         } else {
           // fails to satisfy prerequisites
-          console.log("CANNOT ADD COURSE! FAILS PREREQUISITES");
+          setVisibility(true);
         }
       }
       // Course was not found in the courses list, which means it currently occupies a semester
@@ -235,45 +286,28 @@ export const Container: FC<ContainerProps> = memo(function Container({
             // The setSemesters is not updating correctly here. I will look at it at a later time.
 
             // First update the semesters with the new course
-            let coursePush = new Array<CourseState>();
-            coursePush.push(course);
+            let updateSemester = new Array<SemesterState>();
+            updateSemester = semesters;
 
-            setSemesters(
-              update(semesters, {
-                [index]: {
-                  lastDroppedItem: {
-                    $set: item,
-                  },
-                  courses: {
-                    $push: coursePush,
-                  },
-                },
-              })
-            );
+            updateSemester[index].courses.push(course);
+            updateSemester[index].lastDroppedItem = item;
 
             // Then remove the course from its previous semester spot
-            let courseRemove = new Array<CourseState>();
-            semesters[movedFromIndex].courses.forEach((x) => {
+            let coursesRemove = new Array<CourseState>();
+            updateSemester[movedFromIndex].courses.forEach((x) => {
               if (x !== course) {
-                courseRemove.push(x);
+                coursesRemove.push(x);
               }
             });
 
-            setSemesters(
-              update(semesters, {
-                [index]: {
-                  courses: {
-                    $set: courseRemove,
-                  },
-                },
-              })
-            );
+            updateSemester[movedFromIndex].courses = coursesRemove;
+            setSemestersOld(updateSemester);
 
             // Remove the course from the list, in case it did exist there too
             handleRemoveItem(name);
           } else {
             // fails to satisfy prerequisites
-            console.log("CANNOT ADD COURSE! FAILS PREREQUISITES");
+            setVisibility(true);
           }
         }
       }
@@ -329,7 +363,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
           );
         } else {
           // fails to satisfy prerequisites
-          console.log("CANNOT MOVE COURSE! FAILS PREREQUISITES");
+          setVisibility(true);
         }
       }
     },
@@ -502,6 +536,14 @@ export const Container: FC<ContainerProps> = memo(function Container({
     //Remove duplicate categories from the array.
     setCategories(RemoveDuplicates(i));
   }
+  // If the semesters needs to be updated, we will force update the semesters
+  useEffect(() => {
+    setSemesters(semestersOld);
+  }, [semestersOld]);
+
+  const popupCloseHandler = () => {
+    setVisibility(false);
+  };
 
   return (
     <div>
@@ -512,15 +554,24 @@ export const Container: FC<ContainerProps> = memo(function Container({
         title="Error"
         error={"CANNOT"}/> */}
         <div style={{ overflow: "hidden", clear: "both" }}>
-          {semesters.map(({ accepts, lastDroppedItem, number }, index) => (
-            <Semester
-              accept={accepts}
-              lastDroppedItem={lastDroppedItem}
-              onDrop={(item) => handleDrop(index, item)}
-              number={number}
-              key={index}
-            />
-          ))}
+          <ErrorPopup
+            onClose={popupCloseHandler}
+            show={visibility}
+            title="Error"
+            error={"CANNOT MOVE COURSE! FAILS PREREQUISITES"}
+          />
+          {semesters.map(
+            ({ accepts, lastDroppedItem, number, courses }, index) => (
+              <Semester
+                accept={accepts}
+                lastDroppedItem={lastDroppedItem}
+                onDrop={(item) => handleDrop(index, item)}
+                number={number}
+                courses={courses}
+                key={index}
+              />
+            )
+          )}
         </div>
           <div
             style={{ overflow: "hidden", clear: "both" }}
