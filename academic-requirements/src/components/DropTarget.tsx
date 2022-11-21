@@ -282,7 +282,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
             // The setSemesters is not updating correctly here. I will look at it at a later time.
 
             // First update the semesters with the new course
-            let updateSemester = new Array<SemesterState>;
+            let updateSemester = new Array<SemesterState>();
             updateSemester = semesters;
 
             updateSemester[index].courses.push(course);
@@ -473,7 +473,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
   // If the semesters needs to be updated, we will force update the semesters
   useEffect(() => {
     setSemesters(semestersOld);
-  },[semestersOld]);
+  }, [semestersOld]);
 
   const popupCloseHandler = () => {
     setVisibility(false);
@@ -483,22 +483,24 @@ export const Container: FC<ContainerProps> = memo(function Container({
     <div>
       <div className="drag-drop">
         <div style={{ overflow: "hidden", clear: "both" }}>
-        <ErrorPopup
+          <ErrorPopup
             onClose={popupCloseHandler}
             show={visibility}
             title="Error"
             error={"CANNOT MOVE COURSE! FAILS PREREQUISITES"}
           />
-          {semesters.map(({ accepts, lastDroppedItem, number, courses }, index) => (
-            <Semester
-              accept={accepts}
-              lastDroppedItem={lastDroppedItem}
-              onDrop={(item) => handleDrop(index, item)}
-              number={number}
-              courses={courses}
-              key={index}
-            />
-          ))}
+          {semesters.map(
+            ({ accepts, lastDroppedItem, number, courses }, index) => (
+              <Semester
+                accept={accepts}
+                lastDroppedItem={lastDroppedItem}
+                onDrop={(item) => handleDrop(index, item)}
+                number={number}
+                courses={courses}
+                key={index}
+              />
+            )
+          )}
         </div>
         <div
           style={{ overflow: "hidden", clear: "both" }}

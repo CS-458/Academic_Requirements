@@ -31,7 +31,7 @@ export const Semester: FC<SemesterProps> = memo(function Semester({
   lastDroppedItem,
   onDrop,
   number,
-  courses
+  courses,
 }) {
   const [{ isOver }, drop] = useDrop({
     accept,
@@ -55,19 +55,21 @@ export const Semester: FC<SemesterProps> = memo(function Semester({
     >
       {isActive ? "Release to drop" : `Semester ${number}`}
 
-      {courses && courses.map(({name, subject, number, semesters, credits, preReq}, index) => 
-        <Course
-          name={name}
-          subject={subject}
-          number={number}
-          semesters={semesters}
-          type={ItemTypes.COURSE}
-          credits={credits}
-          preReq={preReq}
-          key={index}
-        />
-      )
-    }
+      {courses &&
+        courses.map(
+          ({ name, subject, number, semesters, credits, preReq }, index) => (
+            <Course
+              name={name}
+              subject={subject}
+              number={number}
+              semesters={semesters}
+              type={ItemTypes.COURSE}
+              credits={credits}
+              preReq={preReq}
+              key={index}
+            />
+          )
+        )}
     </div>
   );
 });
