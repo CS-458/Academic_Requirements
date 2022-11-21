@@ -180,13 +180,13 @@ const InputPage = (props: {
           />
           <div className="screen">
             <div className="input-grid">
-              <div className="input-grid-dropdown" data-testid="MajorDropDown">
+              <div className="input-grid-dropdown" data-testid="MajorDropDown"> 
                 <SearchableDropdown
                   options={props.majorDisplayList}
                   label="Major"
                   onSelectOption={selectedMajor}
                   showDropdown={true}
-                  thin={false}
+                  thin={true}
                 />
               </div>
               <div className="input-grid-dropdown">
@@ -195,7 +195,7 @@ const InputPage = (props: {
                   label="Concentration"
                   onSelectOption={selectedConcentration}
                   showDropdown={showConcentration}
-                  thin={false}
+                  thin={true}
                 />
               </div>
               <div className="input-grid-item">
