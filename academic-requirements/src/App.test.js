@@ -4,15 +4,10 @@ import React from "react";
 import StringProcessing from "./stringProcessing/StringProcessing";
 //@ts-ignore
 import InputPage from "./components/InputPage.tsx";
-import App from "./App";
-import FourYearPlanPage from "./components/FourYearPlanPage";
-
-//import App from "./App";
-//@ts-ignore
-import InputPage from "./components/InputPage.tsx";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
-import FourYearPlanPage from "./components/FourYearPlanPage";
+// import App from "./App";
+// import { DndProvider } from "react-dnd";
+// import { HTML5Backend } from "react-dnd-html5-backend";
+// import FourYearPlanPage from "./components/FourYearPlanPage";
 
 describe("Test for App", () => {
   global.URL.createObjectURL = jest.fn();
