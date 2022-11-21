@@ -1,10 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import ErrorPopup from "./ErrorPopup";
 //@ts-ignore
-import SearchableDropdown from "./SearchableDropdown.tsx";
-import { monitorEventLoopDelay } from "perf_hooks";
-//@ts-ignore
-import Example from './example.ts'
+import Example from "./example.ts";
 const FourYearPlanPage = (props: {
   showing: boolean;
   majorCourseList: {
@@ -23,12 +20,12 @@ const FourYearPlanPage = (props: {
     subject: string;
     category: string;
   }[];
-  onClickCategory(category: string): void; 
-
+  completedCourses: {
+    Course: string[];
+  }[];
+  selectedMajor: string;
+  selectedConcentration: string;
 }) => {
-  //Stuff for category dropdown. 
-  const [category, setCategory] = useState(""); //category that is selected
-  const [categories, setCategories] = useState<string[]>([]);
   //Functions and variables for controlling an error popup
   const [visibility, setVisibility] = useState(false);
   const popupCloseHandler = () => {
@@ -36,58 +33,28 @@ const FourYearPlanPage = (props: {
   };
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    console.log("running")
-    extractCategories()
-  }, [props])
-
   function throwError(error) {
     setVisibility(true);
     setError(error);
   }
-  //SelectedCategory function. 
-  function selectedCategory(_category) {
-    setCategory(_category);
-    //New string array created.
-    let set = new Array<string>();
-    //Iterate through major course list. If the index matches the category, push the course name of the index to array.
-    props.majorCourseList.map((course, index) => { if (course.category.valueOf() == _category) { set.push(course.name) } })
-    //Iterate through concentration course list. If the index matches the category, push the course name of the index to array. 
-    props.concentrationCourseList.map((course, index) => { if (course.category.valueOf() == _category) { set.push(course.name) } })
-    //Display the array contents in log
-    console.log(set);
-  }
-  //setSelectedCategory function. 
-  function setSelectedCategory(_category) {
-    setCategory(category);
-  }
 
-  // RemoveDuplicates function.
-  function RemoveDuplicates(strings: string[]): string[] {
-    //Push all strings to a set(which disallows duplicates)
-    let set = new Set<string>();
-    strings.forEach((x) => {
-      set.add(x);
-    });
-    //Reassign all strings in the set to an array.
-    let arr = new Array<string>;
-    set.forEach((x) => {
-      arr.push(x);
-    });
-    //Return the array.
-    return arr;
-  }
-  //extractCategories function.
-  function extractCategories() {
-    //Initialize new array.
-    let i = new Array<string>();
-    //map is what loops over the list
-    //map calls arrow function, runs whats between curly braces.
-    //Push course categories from major and concentration course lists to array.
-    props.majorCourseList.map((course, index) => { i.push(course.category) })
-    props.concentrationCourseList.map((course, index) => { i.push(course.category) })
-    //Remove duplicate categories from the array.
-    setCategories(RemoveDuplicates(i))
+  // JSON Data for the Courses
+  let info = {
+    Major: props.selectedMajor,
+    Concentration: props.selectedConcentration,
+    "Completed Courses": props.completedCourses,
+  };
+
+  // Creates the File and downloads it to user PC
+  function exportSchedule() {
+    console.log("export");
+    const fileData = JSON.stringify(info);
+    const blob = new Blob([fileData], { type: "json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.download = "schedule.json";
+    link.href = url;
+    link.click();
   }
 
   return (
@@ -96,8 +63,6 @@ const FourYearPlanPage = (props: {
         <div className="screen">
           <div className="four-year-plan" data-testid="scheduleContent">
             <h1>Academic Planner</h1>
-
-
           </div>
           <ErrorPopup
             onClose={popupCloseHandler}
@@ -105,14 +70,13 @@ const FourYearPlanPage = (props: {
             title="Error"
             error={error}
           />
-
           <div className="page">
-           { <Example
-            PassedCourseList = {props.majorCourseList}
-           />  }
+            <Example PassedCourseList={props.majorCourseList} />
             <div className="right-side">
               <div className="requirements">Requirements</div>
-              <button>Export Schedule</button>
+              <button data-testid="ExportButton" onClick={exportSchedule}>
+                Export Schedule
+              </button>
             </div>
           </div>
         </div>

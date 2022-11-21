@@ -3,14 +3,13 @@ import "./App.css";
 import InputPage from "./components/InputPage.tsx";
 import FourYearPlanPage from "./components/FourYearPlanPage.tsx";
 import ErrorPopup from "./components/ErrorPopup";
-import {DndProvider } from "react-dnd";
-import {HTML5Backend } from "react-dnd-html5-backend";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 function App() {
   /* Variables to store necessary info */
   const [clickedGenerate, setClickedGenerate] = useState();
   const [previouslyTakenCourses, setPreviouslyTakenCourses] = useState();
 
- 
   //majorData is an array of major objects returned from the database
   const [majorData, setMajorData] = useState([]);
   //majorDisplayData is an array of the 'name' of the major objects for display purposes
@@ -32,6 +31,8 @@ function App() {
 
   const [major, setMajor] = useState("");
   const [concentration, setConcentration] = useState("");
+
+  const [coursesTaken, setCoursesTaken] = useState([]);
 
   //Functions and variables for controlling an error popup
   const [visibility, setVisibility] = useState(false);
@@ -111,7 +112,7 @@ function App() {
           temp.push(x.name);
         });
         // Sets concentrationDisplayData to the 'name' of the concentrations
-        setConcentrationDisplayData(temp); 
+        setConcentrationDisplayData(temp);
       });
   }, [majorCode]); // gets called whenever major is updated
 
@@ -160,30 +161,36 @@ function App() {
   }, [concentration]);
 
   return (
-   <DndProvider backend={HTML5Backend}>
-    <div className="App">
-      <InputPage
-        showing={!clickedGenerate}
-        onClickGenerate={generateSchedule}
-        onClickMajor={selectMajor}
-        onClickConcentration={selectConcentration}
-        concentrationList={concentrationData}
-        majorList={majorData}
-        majorDisplayList={majorDisplayData}
-        concentrationDisplayList={concentrationDisplayData}
-      />
-      <FourYearPlanPage 
-        showing={clickedGenerate} 
-        concentrationCourseList={concentrationCourseData} //accessed with react props.
-        majorCourseList={majorCourseData}
-      />
-      <ErrorPopup
-        onClose={popupCloseHandler}
-        show={visibility}
-        title="Error"
-        error={error}
-      />
-    </div>
+    <DndProvider backend={HTML5Backend}>
+      <div className="App">
+        <InputPage
+          showing={!clickedGenerate}
+          onClickGenerate={generateSchedule}
+          onClickMajor={selectMajor}
+          onClickConcentration={selectConcentration}
+          concentrationList={concentrationData}
+          majorList={majorData}
+          majorDisplayList={majorDisplayData}
+          concentrationDisplayList={concentrationDisplayData}
+          takenCourses={coursesTaken}
+          setTakenCourses={setCoursesTaken}
+        />
+        <FourYearPlanPage
+          data-testid="FourYearPage"
+          showing={clickedGenerate}
+          concentrationCourseList={concentrationCourseData}
+          majorCourseList={majorCourseData}
+          selectedMajor={major}
+          selectedConcentration={concentration}
+          completedCourses={coursesTaken}
+        />
+        <ErrorPopup
+          onClose={popupCloseHandler}
+          show={visibility}
+          title="Error"
+          error={error}
+        />
+      </div>
     </DndProvider>
   );
 }

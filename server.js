@@ -95,4 +95,42 @@ app.get("/courses/concentration", (req, res) => {
   );
 });
 
+/* Gets the Requirements FOR ALL Things, so gets it for the MAJOR CONCENTRATION and all "GEN-EDS" 
+   Since there is a union, if there is an update to any ofthe columns we are trying to return
+   EVERY "Block" needs to be  modified as well
+*/
+app.get("/requirements", (req, res) => {
+  checkConnection();
+  connection.query(
+    `# Get all "major" categories and respective requirements
+    SELECT c.idCategory, c.name, c.parentCategory, cr.creditCount, cr.courseCount, cr.courseReqs
+    FROM category c
+    JOIN majorCategory mc ON mc.categoryId = c.idCategory
+    JOIN concentration co ON co.majorId = mc.majorId
+    JOIN categoryrequirements cr ON cr.categoryId = c.idCategory
+    WHERE co.idConcentration = ?
+    UNION
+    # Get all "concentration" categories and respective requirements
+    SELECT c.idCategory, c.name, c.parentCategory, cr.creditCount, cr.courseCount, cr.courseReqs
+    FROM category c
+    JOIN concentrationCategory cc ON cc.categoryId = c.idCategory
+    JOIN categoryrequirements cr ON cr.categoryId = c.idCategory
+    WHERE cc.concentrationId = ?
+    UNION
+    # Get all "gen-ed" categories and respective requirements
+    SELECT c.idCategory, c.name, c.parentCategory, cr.creditCount, cr.courseCount, cr.courseReqs
+    FROM category c
+    JOIN categoryrequirements cr ON cr.categoryId = c.idCategory
+    WHERE c.idCategory NOT IN (SELECT categoryId FROM majorCategory) AND c.idCategory NOT IN (SELECT categoryId FROM concentrationCategory)`,
+    [req.query.conid, req.query.conid],
+    function (err, result) {
+      if (err) {
+        res.send(err);
+        return;
+      }
+      res.send(result);
+    }
+  );
+});
+
 module.exports = app;

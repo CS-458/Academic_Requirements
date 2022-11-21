@@ -1,2 +1,2 @@
 //@ts-ignore
-export { Container as default } from './DropTarget.tsx'
+export { Container as default } from "./DropTarget.tsx";
