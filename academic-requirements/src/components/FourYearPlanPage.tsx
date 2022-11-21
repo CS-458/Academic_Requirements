@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import ErrorPopup from "./ErrorPopup";
 //@ts-ignore
 import Example from "./example.ts";
-
 const FourYearPlanPage = (props: {
   showing: boolean;
   majorCourseList: {
