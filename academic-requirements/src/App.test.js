@@ -23,26 +23,6 @@ describe("Testing elements", () => {
     expect(searchableDropdown).toBeTruthy();
   });
 
-  test("searchableDropdown should call function when selected", async () => {
-    const mockedOnChange = jest.fn();
-    const { getByTestId } = render(<SearchableDropdown
-      options={mockedOptions}
-      label="Test"
-      onSelectOption={mockedOnChange}
-      showDropdown={true}
-      thin={true}
-    />);
-    const searchableDropdown = screen.getByRole("combobox");
-
-    searchableDropdown.click();
-    fireEvent.click(screen.getByText('Mocked option 1'))
-
-    expect(mockedOnChange).toBeCalledTimes(1)
-
-    console.log(searchableDropdown);
-  });
-});
-
 describe("Test for App", () => {
   global.URL.createObjectURL = jest.fn();
 
