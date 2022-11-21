@@ -53,11 +53,12 @@ app.get("/concentration", (req, res) => {
   );
 });
 
+
 //TODO delete the UNION here!
 app.get("/courses/major", (req, res) => {
   checkConnection();
   connection.query(
-    `SELECT co.subject, co.number, co.name, co.credits, co.preReq
+    `SELECT co.subject, co.number, co.name, co.credits, co.preReq, c.name AS 'category'
 	FROM major m
 	JOIN majorcategory mc ON m.idMajor = mc.majorId
 	JOIN category c ON mc.categoryId = c.idCategory
@@ -65,7 +66,7 @@ app.get("/courses/major", (req, res) => {
 	JOIN course co ON cc.courseId = co.idCourse
 	WHERE m.idMajor = ?
   UNION 
-  SELECT "CS", "144", "Computer Science I", "4", "" FROM major m`,
+  SELECT "CS", "144", "Computer Science I", "4", "", "cs testing" AS 'category'` ,
     [req.query.majid],
     function (err, result) {
       if (err) {
@@ -80,7 +81,7 @@ app.get("/courses/major", (req, res) => {
 app.get("/courses/concentration", (req, res) => {
   checkConnection();
   connection.query(
-    `SELECT co.subject, co.number, co.credits, co.semesters, co.name, co.preReq
+    `SELECT co.subject, co.number, co.credits, co.semesters, co.name, co.preReq, ca.name AS 'category' 
 	FROM concentration c
 	JOIN concentrationcategory cc ON c.idConcentration = cc.concentrationId
 	JOIN category ca ON cc.categoryId = ca.idCategory

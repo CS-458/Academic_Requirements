@@ -11,7 +11,9 @@ import { CourseList } from "./CourseList.tsx";
 import StringProcessing from "../stringProcessing/StringProcessing.tsx";
 import { ItemTypes } from "./Constants";
 import React from "react";
-import { number } from "prop-types";
+//@ts-ignore
+import SearchableDropdown from "./SearchableDropdown.tsx";
+import ErrorPopup from "./ErrorPopup";
 
 interface SemesterState {
   accepts: string[];
@@ -27,6 +29,7 @@ interface CourseState {
   semesters: string;
   subject: string;
   preReq: string;
+  category: string;
 }
 
 interface CourseListState {
@@ -46,6 +49,7 @@ export interface CourseSpec {
   semesters: string;
   subject: string;
   preReq: string;
+  category: string;
 }
 
 export interface CourseListSpec {
@@ -67,6 +71,7 @@ export interface ContainerProps {
     semesters: string;
     subject: string;
     preReq: string;
+    category: string;
   }[];
 }
 
@@ -135,7 +140,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
   const handleRemoveItem = (e) => {
     setCourses(courses.filter((item) => item.name !== e));
   };
-
   const handleDrop = useCallback(
     (index: number, item: { name: string }) => {
       const { name } = item;
@@ -436,9 +440,77 @@ export const Container: FC<ContainerProps> = memo(function Container({
     console.log("--------------");
   }, [semesters]);
 
+
+  //Stuff for category dropdown. Hovland 7Nov22
+  const [category, setCategory] = useState(""); //category that is selected
+  const [categories, setCategories] = useState<string[]>([]);
+  const [coursesInCategory, setcoursesInCategory] = useState<Course[]>([]); //category that is selected
+
+  //SelectedCategory function. Hovland7Nov7
+  function selectedCategory(_category) {
+    setCategory(_category);
+    //New string array created.
+    let set = new Array<CourseState>();
+    //Iterate through major course list. If the index matches the category, push the course name of the index to array.
+    courses.map((course, index) => {
+      if (course.category.valueOf() == _category) {
+        set.push(course);
+      }
+    });
+    //Iterate through concentration course list. If the index matches the category, push the course name of the index to array.
+    //Note: investigate more.
+    //Display the array contents in log
+    setcoursesInCategory(set);
+    console.log(set);
+    //Find way to display this on the screen.
+  }
+
+  //setSelectedCategory function. Hovland 7Nov22
+  function setSelectedCategory(_category) {
+    setCategory(category);
+    //setShowConcentration(true); May be able to delete this line.
+    // props.onClickCategory(category);
+    //setConcentrationOptions(concentrations); May be able to delete this line.
+  }
+
+  // RemoveDuplicates function.
+  function RemoveDuplicates(strings: string[]): string[] {
+    //Push all strings to a set(which disallows duplicates)
+    let set = new Set<string>();
+    strings.forEach((x) => {
+      set.add(x);
+    });
+    //Reassign all strings in the set to an array.
+    let arr = new Array<string>();
+    set.forEach((x) => {
+      arr.push(x);
+    });
+    //Return the array.
+    return arr;
+  }
+
+  //extractCategories function.
+  function extractCategories() {
+    //Initialize new array.
+    let i = new Array<string>();
+    //map is what loops over the list
+    //map calls arrow function, runs whats between curly braces.
+    //Push course categories from major and concentration course lists to array.
+    courses.map((course, index) => {
+      i.push(course.category);
+    });
+    //Remove duplicate categories from the array.
+    setCategories(RemoveDuplicates(i));
+  }
+
   return (
     <div>
       <div className="drag-drop">
+        {/* <ErrorPopup
+        onClose={popupCloseHandler}
+        show{visibility}
+        title="Error"
+        error={"CANNOT"}/> */}
         <div style={{ overflow: "hidden", clear: "both" }}>
           {semesters.map(({ accepts, lastDroppedItem, number }, index) => (
             <Semester
@@ -450,19 +522,30 @@ export const Container: FC<ContainerProps> = memo(function Container({
             />
           ))}
         </div>
-        <div
-          style={{ overflow: "hidden", clear: "both" }}
-          className="class-dropdown"
-        >
-          {courseListElem.map(({ accepts }, index) => (
-            <CourseList
-              accept={accepts}
-              onDrop={(item) => handleReturnDrop(item)}
-              courses={courses}
-              key={index}
-            />
-          ))}
-        </div>
+          <div
+            style={{ overflow: "hidden", clear: "both" }}
+            className="class-dropdown"
+          >
+            <div className="courseDropdowns">
+                <div onClick={() => extractCategories()}>
+                  <SearchableDropdown
+                    options={categories}
+                    label="Category"
+                    onSelectOption={selectedCategory} //If option chosen, selected Category activated.
+                    showDropdown={true}
+                    thin={true}
+                  />
+                </div>
+            </div>
+            {courseListElem.map(({ accepts }, index) => (
+              <CourseList
+                accept={accepts}
+                onDrop={(item) => handleReturnDrop(item)}
+                courses={coursesInCategory}
+                key={index}
+              />
+            ))}
+          </div>
       </div>
     </div>
   );

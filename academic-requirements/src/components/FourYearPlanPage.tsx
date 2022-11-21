@@ -4,9 +4,6 @@ import ErrorPopup from "./ErrorPopup";
 //@ts-ignore
 import Example from "./example.ts";
 
-//@ts-ignore
-//import DropTarget from "./DropTarget.tsx"
-
 const FourYearPlanPage = (props: {
   showing: boolean;
   majorCourseList: {
@@ -16,6 +13,7 @@ const FourYearPlanPage = (props: {
     semesters: string;
     subject: string;
     preReq: string;
+    category: string;
   }[];
   concentrationCourseList: {
     credits: number;
@@ -24,6 +22,7 @@ const FourYearPlanPage = (props: {
     semesters: string;
     subject: string;
     preReq: string;
+    category: string;
   }[];
   completedCourses: {
     Course: string[];
@@ -37,6 +36,7 @@ const FourYearPlanPage = (props: {
     setVisibility(false);
   };
   const [error, setError] = useState("");
+
   function throwError(error) {
     setVisibility(true);
     setError(error);
@@ -61,6 +61,7 @@ const FourYearPlanPage = (props: {
     link.click();
   }
 
+  console.log(props.majorCourseList)
   return (
     <div>
       {props.showing && (
@@ -74,17 +75,10 @@ const FourYearPlanPage = (props: {
             title="Error"
             error={error}
           />
-
           <div className="page">
-            <Example PassedCourseList={props.majorCourseList} />
-            {/* <div className="class-dropdown"> 
-              {props.majorCourseList.map((course, index) => {
-                return <div key={index}>{course.name}</div>;
-              })}
-              {props.concentrationCourseList.map((course, index) => {
-                return <div key={index}>{course.name}</div>;
-              })}
-            </div> */}
+            <Example
+              PassedCourseList={props.majorCourseList.concat(props.concentrationCourseList)}
+            />
             <div className="right-side">
               <div className="requirements">Requirements</div>
               <button data-testid="ExportButton" onClick={exportSchedule}>
