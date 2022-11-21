@@ -105,33 +105,42 @@ const InputPage = (props: {
     setUploaderVisibility(true);
   }
   // This method handles adding a new taken course to the table
+  //BELOW CODE COMMENTED OUT TO FACILITATE TROUBLE SHOOTING. DO NOT DELETE.
+  //UNCOMMENT BEFORE MERGING BRANCH.
   function processCompletedCourse() {
     //Check that both dropdowns are filled out
-    if (selectedNumber != null && selectedAcronym != null) {
-      //TODO Check that the course is a valid course in the database
-      if (!coursesTaken.includes(selectedAcronym + "-" + selectedNumber)) {
-        //Add the course to the completed course list
-        console.log("Adding course " + selectedAcronym + "-" + selectedNumber);
-        setCoursesTaken(
-          coursesTaken.concat(selectedAcronym + "-" + selectedNumber)
-        );
-        props.setTakenCourses(
-          coursesTaken.concat(selectedAcronym + "-" + selectedNumber)
-        );
-      } else {
-        throwError("This course has already been added");
-      }
-    } else {
-      if (selectedNumber == null) {
-        throwError(
-          "No course number has been selected, please select a course number."
-        );
-      } else {
-        throwError(
-          "No course type has been selected, please select a course type before adding a course."
-        );
-      }
-    }
+    // if (selectedNumber != null && selectedAcronym != null) {
+    //   //TODO Check that the course is a valid course in the database
+    //   if (!coursesTaken.includes(selectedAcronym + "-" + selectedNumber)) {
+    //     //Add the course to the completed course list
+    //     console.log("Adding course " + selectedAcronym + "-" + selectedNumber);
+    //     setCoursesTaken(
+    //       coursesTaken.concat(selectedAcronym + "-" + selectedNumber)
+    //     );
+    //     props.setTakenCourses(
+    //       coursesTaken.concat(selectedAcronym + "-" + selectedNumber)
+    //     );
+    //   } else {
+    //     throwError("This course has already been added");
+    //   }
+    // } else {
+    //   if (selectedNumber == null) {
+    //     throwError(
+    //       "No course number has been selected, please select a course number."
+    //     );
+    //   } else {
+    //     throwError(
+    //       "No course type has been selected, please select a course type before adding a course."
+    //     );
+    //   }
+    // }
+    console.log("Adding course " + selectedAcronym + "-" + selectedNumber);
+         setCoursesTaken(
+           coursesTaken.concat(selectedAcronym + "-" + selectedNumber)
+         );
+         props.setTakenCourses(
+           coursesTaken.concat(selectedAcronym + "-" + selectedNumber)
+         );
   }
 
   // Removes the course from the coursesTaken list
@@ -160,6 +169,10 @@ const InputPage = (props: {
     showUploader();
   }
 
+  //Function to autopopulate completed courses list. with every course.
+  function fillCompletedCourses (){
+
+  }
   return (
     <div className="App">
       {props.showing && (
@@ -243,7 +256,7 @@ const InputPage = (props: {
                   <div
                     className="courseList"
                     style={{
-                      gridTemplateColumns: `repeat(${
+                      gridTemplateColumns: `repeat(${   //This may be where issue is with dropdown columns/formatting.
                         (coursesTaken.length - 1) / 10 + 1
                       }, 1fr)`,
                     }}
