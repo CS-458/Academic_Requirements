@@ -71,7 +71,11 @@ const FourYearPlanPage = (props: {
             error={error}
           />
           <div className="page">
-            <Example PassedCourseList={props.majorCourseList.concat(props.concentrationCourseList)} />
+            <Example
+              PassedCourseList={props.majorCourseList.concat(
+                props.concentrationCourseList
+              )}
+            />
             <div className="right-side">
               <div className="requirements">Requirements</div>
               <button data-testid="ExportButton" onClick={exportSchedule}>
