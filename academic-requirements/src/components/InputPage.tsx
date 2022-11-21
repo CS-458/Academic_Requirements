@@ -152,7 +152,7 @@ const InputPage = (props: {
           />
           <div className="screen">
             <div className="input-grid">
-              <div className="input-grid-dropdown">
+              <div className="input-grid-dropdown" data-testid="Major">
                 <SearchableDropdown
                   options={props.majorDisplayList}
                   label="Major"

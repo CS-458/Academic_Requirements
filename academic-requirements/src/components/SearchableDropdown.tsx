@@ -21,15 +21,16 @@ const SearchableDropdown = (props: {
   }
 
   return (
-    <div className={props.thin ? "thinContainer" : "container"}>
+    <div className={props.thin ? "thinContainer" : "container"} data-testid="select">
       {/* Text that labels the search box*/}
       <div className={props.thin ? "thinLabel" : "label"}>{props.label}</div>
       {/* Dropdown box */}
       {props.showDropdown && (
-        <Select
+          <Select
           options={props.options.map((opt) => ({ label: opt, value: opt }))}
           onChange={onChangeOption}
-        />
+          defaultInputValue={"HEY"}
+          />
       )}
     </div>
   );
