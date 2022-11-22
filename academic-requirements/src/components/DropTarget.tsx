@@ -368,6 +368,15 @@ export const Container: FC<ContainerProps> = memo(function Container({
           });
         });
 
+        // Only proceed if the course is not already in the semesters
+        let allCourses = new Array<string>;
+        semesters.forEach((x) => {
+          x.courses.forEach((y) => {
+            allCourses.push(y.name)
+          })
+        })
+        if (!allCourses.find((course) => course === name)) {
+
         // If all courses pass the preReq check, then update the course lists
         if (
           preReqCheckCoursesInSemesterAndBeyond(found, courseSemesterIndex, -1)
@@ -403,6 +412,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
           // fails to satisfy prerequisites
           setVisibility(true);
         }
+      }
       }
     },
     [courses]
