@@ -226,7 +226,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
   };
   const handleDrop = useCallback(
     (index: number, item: { name: string }) => {
-      console.log(coursesInCategory);
       const { name } = item;
       let course = courses.find((item) => item.name === name);
       setDroppedCourses(
@@ -310,38 +309,41 @@ export const Container: FC<ContainerProps> = memo(function Container({
             // Check the prerequisites for all courses past (and including) the semester the course currently resides in
             preReqsSatisfied = preReqCheckCoursesInSemesterAndBeyond(
               course,
-              movedFromIndex
+              movedFromIndex,
+              index
             );
           }
 
-          // If the prereqs are satisfied, then move the course to the semester
-          if (preReqsSatisfied) {
-            // NOTE!!!
-            // The setSemesters is not updating correctly here. I will look at it at a later time.
+          // Only proceed if the course isn't moved to the same semester
+          if (movedFromIndex !== index) {
+            // If the prereqs are satisfied, then move the course to the semester
+            if (preReqsSatisfied) {
+              // First update the semesters with the new course
+              let updateSemester = new Array<SemesterState>();
+              updateSemester = semesters;
 
-            // First update the semesters with the new course
-            let updateSemester = new Array<SemesterState>();
-            updateSemester = semesters;
+              updateSemester[index].courses.push(course);
+              updateSemester[index].lastDroppedItem = item;
 
-            updateSemester[index].courses.push(course);
-            updateSemester[index].lastDroppedItem = item;
+              // Then remove the course from its previous semester spot
+              let coursesRemove = new Array<Course>();
+              updateSemester[movedFromIndex].courses.forEach((x) => {
+                if (x !== course) {
+                  coursesRemove.push(x);
+                }
+              });
 
-            // Then remove the course from its previous semester spot
-            let coursesRemove = new Array<Course>();
-            updateSemester[movedFromIndex].courses.forEach((x) => {
-              if (x !== course) {
-                coursesRemove.push(x);
-              }
-            });
+              updateSemester[movedFromIndex].courses = coursesRemove;
 
-            updateSemester[movedFromIndex].courses = coursesRemove;
-            setSemestersOld(updateSemester);
+              // Update the semester
+              setSemestersOld(updateSemester);
 
-            // Remove the course from the list, in case it did exist there too
-            handleRemoveItem(course);
-          } else {
-            // fails to satisfy prerequisites
-            setVisibility(true);
+              // Remove the course from the list, in case it did exist there too
+              handleRemoveItem(course);
+            } else {
+              // fails to satisfy prerequisites
+              setVisibility(true);
+            }
           }
         }
       }
@@ -366,38 +368,53 @@ export const Container: FC<ContainerProps> = memo(function Container({
           });
         });
 
-        // If all courses pass the preReq check, then update the course lists
-        if (preReqCheckCoursesInSemesterAndBeyond(found, courseSemesterIndex)) {
-          setCourses(
-            update(courses, found ? { $push: [found] } : { $push: [] })
-          );
+        // Only proceed if the course is not already in the semesters
+        let allCourses = new Array<string>();
+        semesters.forEach((x) => {
+          x.courses.forEach((y) => {
+            allCourses.push(y.name);
+          });
+        });
+        if (!allCourses.find((course) => course === name)) {
+          // If all courses pass the preReq check, then update the course lists
+          if (
+            preReqCheckCoursesInSemesterAndBeyond(
+              found,
+              courseSemesterIndex,
+              -1
+            )
+          ) {
+            setCourses(
+              update(courses, found ? { $push: [found] } : { $push: [] })
+            );
 
-          // Update semesters to have the course removed
-          let itemArr = new Array<Course>();
-          if (found) {
-            semesters[courseSemesterIndex].courses.forEach((x) => {
-              if (x.name !== found.name) {
-                itemArr.push(x);
-              }
-            });
-          }
-          setSemesters(
-            update(semesters, {
-              [courseSemesterIndex]: {
-                courses: {
-                  $set: itemArr,
+            // Update semesters to have the course removed
+            let itemArr = new Array<Course>();
+            if (found) {
+              semesters[courseSemesterIndex].courses.forEach((x) => {
+                if (x.name !== found.name) {
+                  itemArr.push(x);
+                }
+              });
+            }
+            setSemesters(
+              update(semesters, {
+                [courseSemesterIndex]: {
+                  courses: {
+                    $set: itemArr,
+                  },
                 },
-              },
-            })
-          );
+              })
+            );
 
-          // Update the dropped courses to include the course that was moved out
-          setDroppedCourses(
-            update(droppedCourses, found ? { $push: [found] } : { $push: [] })
-          );
-        } else {
-          // fails to satisfy prerequisites
-          setVisibility(true);
+            // Update the dropped courses to include the course that was moved out
+            setDroppedCourses(
+              update(droppedCourses, found ? { $push: [found] } : { $push: [] })
+            );
+          } else {
+            // fails to satisfy prerequisites
+            setVisibility(true);
+          }
         }
       }
     },
@@ -408,7 +425,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
   // out of a semester and into the course bank
   function preReqCheckCoursesInSemesterAndBeyond(
     courseToRemove: Course,
-    courseSemesterIndex: number
+    courseSemesterIndex: number,
+    movedToIndex: number
   ): boolean {
     // prereqCheck will be used to check prerequisites
     const preReqCheck = new StringProcessing();
@@ -450,6 +468,16 @@ export const Container: FC<ContainerProps> = memo(function Container({
         ) {
           currentCourses = getSemesterCourses(index + 1);
           currentCoursesNames = getSemesterCoursesNames(index + 1);
+          // If the movedToIndex matches the next index, adjust the courses to include the course in question
+          if (index + 1 === movedToIndex) {
+            currentCourses.push(courseToRemove);
+            currentCoursesNames.push(
+              courseToRemove.subject + "-" + courseToRemove.number
+            );
+            previousCourses.push(
+              courseToRemove.subject + "-" + courseToRemove.number
+            );
+          }
         }
       }
     });
