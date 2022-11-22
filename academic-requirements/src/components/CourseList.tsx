@@ -44,21 +44,24 @@ export const CourseList: FC<CourseListProps> = memo(function CourseList({
   if (isActive) {
     backgroundColor = "darkgreen";
   }
-  console.log(courses);
+
   return (
     <div ref={drop} style={{ ...style, backgroundColor }}>
       {isActive ? "Release to drop" : `CourseList`}
-      {courses.map(({ name, subject, number, semesters, credits }, index) => (
-        <Course
-          name={name}
-          subject={subject}
-          number={number}
-          semesters={semesters}
-          credits={credits}
-          type={ItemTypes.COURSE}
-          key={index}
-        />
-      ))}
+      {courses.map(
+        ({ name, subject, number, semesters, credits, preReq }, index) => (
+          <Course
+            name={name}
+            subject={subject}
+            number={number}
+            semesters={semesters}
+            credits={credits}
+            type={ItemTypes.COURSE}
+            key={index}
+            preReq={preReq}
+          />
+        )
+      )}
     </div>
   );
 });

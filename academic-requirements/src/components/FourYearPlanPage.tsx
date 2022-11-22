@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+//@ts-ignore
 import ErrorPopup from "./ErrorPopup";
 //@ts-ignore
 import Example from "./example.ts";
@@ -10,6 +11,7 @@ const FourYearPlanPage = (props: {
     number: number;
     semesters: string;
     subject: string;
+    preReq: string;
     category: string;
   }[];
   concentrationCourseList: {
@@ -18,6 +20,7 @@ const FourYearPlanPage = (props: {
     number: number;
     semesters: string;
     subject: string;
+    preReq: string;
     category: string;
   }[];
   completedCourses: {
@@ -57,6 +60,7 @@ const FourYearPlanPage = (props: {
     link.click();
   }
 
+  console.log(props.majorCourseList);
   return (
     <div>
       {props.showing && (

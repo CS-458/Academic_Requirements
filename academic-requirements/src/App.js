@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 import InputPage from "./components/InputPage.tsx";
 import FourYearPlanPage from "./components/FourYearPlanPage.tsx";
 import ErrorPopup from "./components/ErrorPopup";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
 function App() {
   /* Variables to store necessary info */
   const [clickedGenerate, setClickedGenerate] = useState();

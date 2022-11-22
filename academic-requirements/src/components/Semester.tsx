@@ -4,6 +4,7 @@ import { useDrop } from "react-dnd";
 import React from "react";
 //@ts-ignore
 import { Course } from "./DraggableCourse.tsx";
+import { ItemTypes } from "./Constants";
 const style: CSSProperties = {
   height: "12rem",
   width: "20%",
@@ -22,6 +23,7 @@ export interface SemesterProps {
   lastDroppedItem?: any;
   onDrop: (item: any) => void;
   number: number;
+  courses: Course[];
 }
 
 export const Semester: FC<SemesterProps> = memo(function Semester({
@@ -29,6 +31,7 @@ export const Semester: FC<SemesterProps> = memo(function Semester({
   lastDroppedItem,
   onDrop,
   number,
+  courses,
 }) {
   const [{ isOver }, drop] = useDrop({
     accept,
@@ -52,15 +55,21 @@ export const Semester: FC<SemesterProps> = memo(function Semester({
     >
       {isActive ? "Release to drop" : `Semester ${number}`}
 
-      {lastDroppedItem && (
-        <Course
-          name={lastDroppedItem["name"]}
-          subject={lastDroppedItem["subject"]}
-          number={lastDroppedItem["number"]}
-          type={lastDroppedItem["type"]}
-          key={lastDroppedItem["key"]}
-        />
-      )}
+      {courses &&
+        courses.map(
+          ({ name, subject, number, semesters, credits, preReq }, index) => (
+            <Course
+              name={name}
+              subject={subject}
+              number={number}
+              semesters={semesters}
+              type={ItemTypes.COURSE}
+              credits={credits}
+              preReq={preReq}
+              key={index}
+            />
+          )
+        )}
     </div>
   );
 });
