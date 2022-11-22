@@ -1,5 +1,8 @@
 import React, { useState } from "react";
+//@ts-ignore
 import ErrorPopup from "./ErrorPopup";
+//@ts-ignore
+import Example from "./example.ts";
 const FourYearPlanPage = (props: {
   showing: boolean;
   majorCourseList: {
@@ -8,6 +11,8 @@ const FourYearPlanPage = (props: {
     number: number;
     semesters: string;
     subject: string;
+    preReq: string;
+    category: string;
   }[];
   concentrationCourseList: {
     credits: number;
@@ -15,6 +20,8 @@ const FourYearPlanPage = (props: {
     number: number;
     semesters: string;
     subject: string;
+    preReq: string;
+    category: string;
   }[];
   completedCourses: {
     Course: string[];
@@ -28,6 +35,7 @@ const FourYearPlanPage = (props: {
     setVisibility(false);
   };
   const [error, setError] = useState("");
+
   function throwError(error) {
     setVisibility(true);
     setError(error);
@@ -52,6 +60,7 @@ const FourYearPlanPage = (props: {
     link.click();
   }
 
+  console.log(props.majorCourseList);
   return (
     <div>
       {props.showing && (
@@ -65,25 +74,12 @@ const FourYearPlanPage = (props: {
             title="Error"
             error={error}
           />
-          <div className="grid-container">
-            <div className="semesters-container">
-              <div className="grid-item">Semester 1</div>
-              <div className="grid-item">Semester 2</div>
-              <div className="grid-item">Semester 3</div>
-              <div className="grid-item">Semester 4</div>
-              <div className="grid-item">Semester 5</div>
-              <div className="grid-item">Semester 6</div>
-              <div className="grid-item">Semester 7</div>
-              <div className="grid-item">Semester 8</div>
-            </div>
-            <div className="class-dropdown">
-              {props.majorCourseList.map((course, index) => {
-                return <div key={index}>{course.name}</div>;
-              })}
-              {props.concentrationCourseList.map((course, index) => {
-                return <div key={index}>{course.name}</div>;
-              })}
-            </div>
+          <div className="page">
+            <Example
+              PassedCourseList={props.majorCourseList.concat(
+                props.concentrationCourseList
+              )}
+            />
             <div className="right-side">
               <div className="requirements">Requirements</div>
               <button data-testid="ExportButton" onClick={exportSchedule}>

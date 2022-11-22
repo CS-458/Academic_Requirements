@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 import InputPage from "./components/InputPage.tsx";
 import FourYearPlanPage from "./components/FourYearPlanPage.tsx";
 import ErrorPopup from "./components/ErrorPopup";
@@ -89,7 +91,7 @@ function App() {
 
   // Gets the majors from the database, runs on start-up
   useEffect(() => {
-    fetch("/major")
+    fetch("/major") // create similar
       .then((res) => res.json())
       .then((result) => {
         // Sets majorData to result from database query
@@ -145,7 +147,7 @@ function App() {
         // Sets concentrationDisplayData to the 'name' of the concentrations
         setConcentrationDisplayData(temp);
       });
-  }, [majorCode]);
+  }, [majorCode]); // gets called whenever major is updated
 
   // Gets the courses related to the 'idMajor' of the selected major
   // Runs when majorCode is updated
@@ -192,38 +194,40 @@ function App() {
   }, [concentration]);
 
   return (
-    <div>
-      <InputPage
-        showing={!clickedGenerate}
-        onClickGenerate={generateSchedule}
-        onClickMajor={selectMajor}
-        onClickConcentration={selectConcentration}
-        concentrationList={concentrationData}
-        majorList={majorData}
-        majorDisplayList={majorDisplayData}
-        concentrationDisplayList={concentrationDisplayData}
-        courseSubjectAcronyms={courseSubjects}
-        setSelectedCourseSubject={setSelectedCourseSubject}
-        courseSubjectNumbers={courseSubjectNumbers}
-        takenCourses={coursesTaken}
-        setTakenCourses={setCoursesTaken}
-      />
-      <FourYearPlanPage
-        data-testid="FourYearPage"
-        showing={clickedGenerate}
-        concentrationCourseList={concentrationCourseData}
-        majorCourseList={majorCourseData}
-        selectedMajor={major}
-        selectedConcentration={concentration}
-        completedCourses={coursesTaken}
-      />
-      <ErrorPopup
-        onClose={popupCloseHandler}
-        show={visibility}
-        title="Error"
-        error={error}
-      />
-    </div>
+    <DndProvider backend={HTML5Backend}>
+      <div className="App">
+        <InputPage
+          showing={!clickedGenerate}
+          onClickGenerate={generateSchedule}
+          onClickMajor={selectMajor}
+          onClickConcentration={selectConcentration}
+          concentrationList={concentrationData}
+          courseSubjectAcronyms={courseSubjects}
+          setSelectedCourseSubject={setSelectedCourseSubject}
+          courseSubjectNumbers={courseSubjectNumbers}
+          majorList={majorData}
+          majorDisplayList={majorDisplayData}
+          concentrationDisplayList={concentrationDisplayData}
+          takenCourses={coursesTaken}
+          setTakenCourses={setCoursesTaken}
+        />
+        <FourYearPlanPage
+          data-testid="FourYearPage"
+          showing={clickedGenerate}
+          concentrationCourseList={concentrationCourseData}
+          majorCourseList={majorCourseData}
+          selectedMajor={major}
+          selectedConcentration={concentration}
+          completedCourses={coursesTaken}
+        />
+        <ErrorPopup
+          onClose={popupCloseHandler}
+          show={visibility}
+          title="Error"
+          error={error}
+        />
+      </div>
+    </DndProvider>
   );
 }
 
