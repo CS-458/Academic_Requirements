@@ -60,7 +60,7 @@ const FourYearPlanPage = (props: {
     link.click();
   }
 
-  console.log(props.majorCourseList)
+  console.log(props.majorCourseList);
   return (
     <div>
       {props.showing && (
@@ -76,7 +76,9 @@ const FourYearPlanPage = (props: {
           />
           <div className="page">
             <Example
-              PassedCourseList={props.majorCourseList.concat(props.concentrationCourseList)}
+              PassedCourseList={props.majorCourseList.concat(
+                props.concentrationCourseList
+              )}
             />
             <div className="right-side">
               <div className="requirements">Requirements</div>

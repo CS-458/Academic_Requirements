@@ -25,13 +25,13 @@ interface SemesterState {
 interface CourseListState {
   accepts: string[];
   unDroppedItem: any;
-  courses: Course[]
+  courses: Course[];
 }
 
 export interface CourseListSpec {
   accepts: string[];
   unDroppedItem: any;
-  courses: Course[]
+  courses: Course[];
 }
 
 export interface ContainerState {
@@ -220,13 +220,13 @@ export const Container: FC<ContainerProps> = memo(function Container({
     setCategories(RemoveDuplicates(i));
   }
 
-  const handleRemoveItem = (course:Course) => {
-    console.log(course)
-    setCourses(courses.filter(item => item !== course));
+  const handleRemoveItem = (course: Course) => {
+    console.log(course);
+    setCourses(courses.filter((item) => item !== course));
   };
   const handleDrop = useCallback(
     (index: number, item: { name: string }) => {
-      console.log(coursesInCategory)
+      console.log(coursesInCategory);
       const { name } = item;
       let course = courses.find((item) => item.name === name);
       setDroppedCourses(
@@ -508,7 +508,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
   //   console.log("--------------");
   // }, [semesters]);
 
-
   // If the semesters needs to be updated, we will force update the semesters
   useEffect(() => {
     setSemesters(semestersOld);
@@ -546,30 +545,30 @@ export const Container: FC<ContainerProps> = memo(function Container({
             )
           )}
         </div>
-          <div
-            style={{ overflow: "hidden", clear: "both" }}
-            className="class-dropdown"
-          >
-            <div className="courseDropdowns">
-                <div onClick={() => extractCategories()}>
-                  <SearchableDropdown
-                    options={categories}
-                    label="Category"
-                    onSelectOption={selectedCategory} //If option chosen, selected Category activated.
-                    showDropdown={true}
-                    thin={true}
-                  />
-                </div>
-            </div>
-            {courseListElem.map(({ accepts }, index) => (
-              <CourseList
-                accept={accepts}
-                onDrop={(item) => handleReturnDrop(item)}
-                courses={coursesInCategory}
-                key={index}
+        <div
+          style={{ overflow: "hidden", clear: "both" }}
+          className="class-dropdown"
+        >
+          <div className="courseDropdowns">
+            <div onClick={() => extractCategories()}>
+              <SearchableDropdown
+                options={categories}
+                label="Category"
+                onSelectOption={selectedCategory} //If option chosen, selected Category activated.
+                showDropdown={true}
+                thin={true}
               />
-            ))}
+            </div>
           </div>
+          {courseListElem.map(({ accepts }, index) => (
+            <CourseList
+              accept={accepts}
+              onDrop={(item) => handleReturnDrop(item)}
+              courses={coursesInCategory}
+              key={index}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

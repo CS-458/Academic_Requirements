@@ -53,7 +53,6 @@ app.get("/concentration", (req, res) => {
   );
 });
 
-
 //TODO delete the UNION here!
 app.get("/courses/major", (req, res) => {
   checkConnection();
@@ -66,7 +65,7 @@ app.get("/courses/major", (req, res) => {
 	JOIN course co ON cc.courseId = co.idCourse
 	WHERE m.idMajor = ?
   UNION 
-  SELECT "CS", "144", "Computer Science I", "4", "", "cs testing" AS 'category'` ,
+  SELECT "CS", "144", "Computer Science I", "4", "", "cs testing" AS 'category'`,
     [req.query.majid],
     function (err, result) {
       if (err) {
