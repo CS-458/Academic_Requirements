@@ -316,36 +316,35 @@ export const Container: FC<ContainerProps> = memo(function Container({
 
           // Only proceed if the course isn't moved to the same semester
           if (movedFromIndex !== index) {
-          // If the prereqs are satisfied, then move the course to the semester
-          if (preReqsSatisfied) {
+            // If the prereqs are satisfied, then move the course to the semester
+            if (preReqsSatisfied) {
+              // First update the semesters with the new course
+              let updateSemester = new Array<SemesterState>();
+              updateSemester = semesters;
 
-            // First update the semesters with the new course
-            let updateSemester = new Array<SemesterState>();
-            updateSemester = semesters;
+              updateSemester[index].courses.push(course);
+              updateSemester[index].lastDroppedItem = item;
 
-            updateSemester[index].courses.push(course);
-            updateSemester[index].lastDroppedItem = item;
+              // Then remove the course from its previous semester spot
+              let coursesRemove = new Array<Course>();
+              updateSemester[movedFromIndex].courses.forEach((x) => {
+                if (x !== course) {
+                  coursesRemove.push(x);
+                }
+              });
 
-            // Then remove the course from its previous semester spot
-            let coursesRemove = new Array<Course>();
-            updateSemester[movedFromIndex].courses.forEach((x) => {
-              if (x !== course) {
-                coursesRemove.push(x);
-              }
-            });
+              updateSemester[movedFromIndex].courses = coursesRemove;
 
-            updateSemester[movedFromIndex].courses = coursesRemove;
+              // Update the semester
+              setSemestersOld(updateSemester);
 
-            // Update the semester
-            setSemestersOld(updateSemester);
-
-            // Remove the course from the list, in case it did exist there too
-            handleRemoveItem(course);
-          } else {
-            // fails to satisfy prerequisites
-            setVisibility(true);
+              // Remove the course from the list, in case it did exist there too
+              handleRemoveItem(course);
+            } else {
+              // fails to satisfy prerequisites
+              setVisibility(true);
+            }
           }
-        }
         }
       }
     },
@@ -370,7 +369,9 @@ export const Container: FC<ContainerProps> = memo(function Container({
         });
 
         // If all courses pass the preReq check, then update the course lists
-        if (preReqCheckCoursesInSemesterAndBeyond(found, courseSemesterIndex, -1)) {
+        if (
+          preReqCheckCoursesInSemesterAndBeyond(found, courseSemesterIndex, -1)
+        ) {
           setCourses(
             update(courses, found ? { $push: [found] } : { $push: [] })
           );
@@ -412,7 +413,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
   function preReqCheckCoursesInSemesterAndBeyond(
     courseToRemove: Course,
     courseSemesterIndex: number,
-    movedToIndex: number,
+    movedToIndex: number
   ): boolean {
     // prereqCheck will be used to check prerequisites
     const preReqCheck = new StringProcessing();
@@ -457,8 +458,12 @@ export const Container: FC<ContainerProps> = memo(function Container({
           // If the movedToIndex matches the next index, adjust the courses to include the course in question
           if (index + 1 === movedToIndex) {
             currentCourses.push(courseToRemove);
-            currentCoursesNames.push(courseToRemove.subject + "-" + courseToRemove.number);
-            previousCourses.push(courseToRemove.subject + "-" + courseToRemove.number);
+            currentCoursesNames.push(
+              courseToRemove.subject + "-" + courseToRemove.number
+            );
+            previousCourses.push(
+              courseToRemove.subject + "-" + courseToRemove.number
+            );
           }
         }
       }
