@@ -369,50 +369,53 @@ export const Container: FC<ContainerProps> = memo(function Container({
         });
 
         // Only proceed if the course is not already in the semesters
-        let allCourses = new Array<string>;
+        let allCourses = new Array<string>();
         semesters.forEach((x) => {
           x.courses.forEach((y) => {
-            allCourses.push(y.name)
-          })
-        })
+            allCourses.push(y.name);
+          });
+        });
         if (!allCourses.find((course) => course === name)) {
+          // If all courses pass the preReq check, then update the course lists
+          if (
+            preReqCheckCoursesInSemesterAndBeyond(
+              found,
+              courseSemesterIndex,
+              -1
+            )
+          ) {
+            setCourses(
+              update(courses, found ? { $push: [found] } : { $push: [] })
+            );
 
-        // If all courses pass the preReq check, then update the course lists
-        if (
-          preReqCheckCoursesInSemesterAndBeyond(found, courseSemesterIndex, -1)
-        ) {
-          setCourses(
-            update(courses, found ? { $push: [found] } : { $push: [] })
-          );
-
-          // Update semesters to have the course removed
-          let itemArr = new Array<Course>();
-          if (found) {
-            semesters[courseSemesterIndex].courses.forEach((x) => {
-              if (x.name !== found.name) {
-                itemArr.push(x);
-              }
-            });
-          }
-          setSemesters(
-            update(semesters, {
-              [courseSemesterIndex]: {
-                courses: {
-                  $set: itemArr,
+            // Update semesters to have the course removed
+            let itemArr = new Array<Course>();
+            if (found) {
+              semesters[courseSemesterIndex].courses.forEach((x) => {
+                if (x.name !== found.name) {
+                  itemArr.push(x);
+                }
+              });
+            }
+            setSemesters(
+              update(semesters, {
+                [courseSemesterIndex]: {
+                  courses: {
+                    $set: itemArr,
+                  },
                 },
-              },
-            })
-          );
+              })
+            );
 
-          // Update the dropped courses to include the course that was moved out
-          setDroppedCourses(
-            update(droppedCourses, found ? { $push: [found] } : { $push: [] })
-          );
-        } else {
-          // fails to satisfy prerequisites
-          setVisibility(true);
+            // Update the dropped courses to include the course that was moved out
+            setDroppedCourses(
+              update(droppedCourses, found ? { $push: [found] } : { $push: [] })
+            );
+          } else {
+            // fails to satisfy prerequisites
+            setVisibility(true);
+          }
         }
-      }
       }
     },
     [courses]
