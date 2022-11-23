@@ -356,26 +356,19 @@ export const Container: FC<ContainerProps> = memo(function Container({
       const { name } = item;
       const found = droppedCourses.find((course) => course.name === name);
       setDroppedCourses(courses.filter((item) => item.name !== name));
-
+      console.log(found);
       // Find the course's semester before moving it
       let courseSemesterIndex = -1;
       if (found) {
-        semesters.forEach((sem, index) => {
-          sem.courses.forEach((c) => {
-            if (c.name === found.name) {
-              courseSemesterIndex = index;
-            }
+        if(found.dragSource !== "CourseList"){
+          semesters.forEach((sem, index) => {
+            sem.courses.forEach((c) => {
+              if (c.name === found.name) {
+                courseSemesterIndex = index;
+              }
+            });
           });
-        });
-
-        // Only proceed if the course is not already in the semesters
-        let allCourses = new Array<string>();
-        semesters.forEach((x) => {
-          x.courses.forEach((y) => {
-            allCourses.push(y.name);
-          });
-        });
-        if (!allCourses.find((course) => course === name)) {
+          console.log(courseSemesterIndex);        
           // If all courses pass the preReq check, then update the course lists
           if (
             preReqCheckCoursesInSemesterAndBeyond(

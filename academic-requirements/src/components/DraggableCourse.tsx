@@ -12,6 +12,7 @@ export interface CourseProps {
   semesters: string;
   type: string;
   preReq: string;
+  dragSource: string;
 }
 
 export const Course: FC<CourseProps> = memo(function Course({
@@ -22,11 +23,12 @@ export const Course: FC<CourseProps> = memo(function Course({
   credits,
   semesters,
   preReq,
+  dragSource,
 }) {
   const [{ opacity }, drag] = useDrag(
     () => ({
       type,
-      item: { name, subject, number, type, credits, semesters, preReq },
+      item: { name, subject, number, type, credits, semesters, preReq, dragSource },
       collect: (monitor) => ({
         opacity: monitor.isDragging() ? 0.4 : 1,
       }),

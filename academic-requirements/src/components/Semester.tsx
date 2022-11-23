@@ -66,6 +66,7 @@ export const Semester: FC<SemesterProps> = memo(function Semester({
               type={ItemTypes.COURSE}
               credits={credits}
               preReq={preReq}
+              dragSource= {"Semester"}
               key={index}
             />
           )

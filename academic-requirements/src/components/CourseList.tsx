@@ -58,6 +58,7 @@ export const CourseList: FC<CourseListProps> = memo(function CourseList({
             credits={credits}
             type={ItemTypes.COURSE}
             key={index}
+            dragSource = {"CourseList"}
             preReq={preReq}
           />
         )
