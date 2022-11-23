@@ -53,7 +53,7 @@ const SearchableDropdown = (props: {
       {/* Dropdown box */}
       {props.showDropdown && (
         <Select
-          options={props.options.map((opt) => ({ label: opt, value: opt }))}
+          options={props.options?.map((opt) => ({ label: opt, value: opt }))}
           onChange={onChangeOption}
         />
       )}

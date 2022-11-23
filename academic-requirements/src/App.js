@@ -32,6 +32,14 @@ function App() {
   const [major, setMajor] = useState("");
   const [concentration, setConcentration] = useState("");
 
+  // courseSubjects the array of subject strings from the database
+  const [courseSubjects, setCourseSubjects] = useState([]);
+  // selectedCourseSubject is the specific course subject selected
+  // On update, a useEffect is called to get the respective numbers
+  const [selectedCourseSubject, setSelectedCourseSubject] = useState("");
+  // courseSubjectNumbers the array of number (as strings) from the database
+  const [courseSubjectNumbers, setCourseSubjectNumbers] = useState([]);
+
   const [coursesTaken, setCoursesTaken] = useState([]);
 
   //Functions and variables for controlling an error popup
@@ -96,7 +104,32 @@ function App() {
         // Sets majorDisplayData to the 'name' of the majors
         setMajorDisplayData(temp);
       });
+    fetch("/subjects")
+      .then((res) => res.json())
+      .then((result) => {
+        console.log(result);
+        let temp = [];
+        result.forEach((x) => {
+          temp.push(x.subject);
+        });
+        //get Course subject data, pass in the result
+        setCourseSubjects(temp);
+      });
   }, []);
+
+  // Runs whenever a course subject has been selected
+  // Gets the array of course number for that subject from the API
+  useEffect(() => {
+    fetch(`/subjects/numbers?sub=${selectedCourseSubject}`)
+      .then((res) => res.json())
+      .then((result) => {
+        let temp = [];
+        result.forEach((x) => {
+          temp.push(x.number);
+        });
+        setCourseSubjectNumbers(temp);
+      });
+  }, [selectedCourseSubject]);
 
   // Gets the concentrations from the database based on the 'idMajor' of the selected major
   // Runs when majorCode is updated
@@ -169,6 +202,9 @@ function App() {
           onClickMajor={selectMajor}
           onClickConcentration={selectConcentration}
           concentrationList={concentrationData}
+          courseSubjectAcronyms={courseSubjects}
+          setSelectedCourseSubject={setSelectedCourseSubject}
+          courseSubjectNumbers={courseSubjectNumbers}
           majorList={majorData}
           majorDisplayList={majorDisplayData}
           concentrationDisplayList={concentrationDisplayData}
