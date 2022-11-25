@@ -1,6 +1,6 @@
-import type { CSSProperties, FC } from "react";
+import type { FC } from "react";
 import { memo } from "react";
-import { useDrag, useDrop } from "react-dnd";
+import { useDrag } from "react-dnd";
 import React from "react";
 import "./DraggableCourse.css";
 

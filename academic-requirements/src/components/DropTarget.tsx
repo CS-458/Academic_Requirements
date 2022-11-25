@@ -232,18 +232,13 @@ export const Container: FC<ContainerProps> = memo(function Container({
         update(droppedCourses, course ? { $push: [course] } : { $push: [] })
       );
 
-      let itemArr = new Array<Course>();
-      if (course) {
-        itemArr.push(course);
-      }
-
       // prereqCheck will be used to check prerequisites
       const prereqCheck = new StringProcessing();
 
       // Get all courses in previous semesters
       const previousCourses = getPreviousSemesterCourses(index);
 
-      // Get all courses in current semester (excluding the course to be added)
+      // Get all course subject and acronyms in current semester (excluding the course to be added)
       const currentCourses = new Array<string>();
       semesters[index].courses.forEach((x) => {
         currentCourses.push(x.subject + "-" + x.number);
@@ -266,7 +261,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
                   $set: item,
                 },
                 courses: {
-                  $push: itemArr,
+                  $push: [course],
                 },
               },
             })
@@ -274,13 +269,12 @@ export const Container: FC<ContainerProps> = memo(function Container({
           handleRemoveItem(course);
         } else {
           // fails to satisfy prerequisites
+          //shows error message
           setVisibility(true);
         }
       }
       // Course was not found in the courses list, which means it currently occupies a semester
       else {
-        let course = courses.find((item) => item.name === name);
-
         //Find the course and its current residing index in the semesters list
         let movedFromIndex = -1;
         semesters.forEach((x, i) => {
@@ -382,14 +376,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
             );
 
             // Update semesters to have the course removed
-            let itemArr = new Array<Course>();
-            if (found) {
-              semesters[courseSemesterIndex].courses.forEach((x) => {
-                if (x.name !== found.name) {
-                  itemArr.push(x);
-                }
-              });
-            }
+            let itemArr = semesters[courseSemesterIndex].courses.filter(course => course !==found)
+        
             setSemesters(
               update(semesters, {
                 [courseSemesterIndex]: {
