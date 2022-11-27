@@ -272,7 +272,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
             })
           );
           handleRemoveItem(course);
-
         } else {
           // fails to satisfy prerequisites
           setVisibility(true);
@@ -369,47 +368,43 @@ export const Container: FC<ContainerProps> = memo(function Container({
           });
         });
 
-          // If all courses pass the preReq check, then update the course lists
-          if (
-            preReqCheckCoursesInSemesterAndBeyond(
-              found,
-              courseSemesterIndex,
-              -1
-            )
-          ) {
-            setCourses(
-              update(courses, found ? { $push: [found] } : { $push: [] })
-            );
+        // If all courses pass the preReq check, then update the course lists
+        if (
+          preReqCheckCoursesInSemesterAndBeyond(found, courseSemesterIndex, -1)
+        ) {
+          setCourses(
+            update(courses, found ? { $push: [found] } : { $push: [] })
+          );
 
-            // Update semesters to have the course removed
-            let itemArr = new Array<Course>();
-            if (found) {
-              semesters[courseSemesterIndex].courses.forEach((x) => {
-                if (x.name !== found.name) {
-                  itemArr.push(x);
-                }
-              });
-            }
-            setSemesters(
-              update(semesters, {
-                [courseSemesterIndex]: {
-                  courses: {
-                    $set: itemArr,
-                  },
-                },
-              })
-            );
-
-            // Update the dropped courses to include the course that was moved out
-            setDroppedCourses(
-              update(droppedCourses, found ? { $push: [found] } : { $push: [] })
-            );
-          } else {
-            // fails to satisfy prerequisites
-            setVisibility(true);
+          // Update semesters to have the course removed
+          let itemArr = new Array<Course>();
+          if (found) {
+            semesters[courseSemesterIndex].courses.forEach((x) => {
+              if (x.name !== found.name) {
+                itemArr.push(x);
+              }
+            });
           }
+          setSemesters(
+            update(semesters, {
+              [courseSemesterIndex]: {
+                courses: {
+                  $set: itemArr,
+                },
+              },
+            })
+          );
+
+          // Update the dropped courses to include the course that was moved out
+          setDroppedCourses(
+            update(droppedCourses, found ? { $push: [found] } : { $push: [] })
+          );
+        } else {
+          // fails to satisfy prerequisites
+          setVisibility(true);
         }
-      },
+      }
+    },
     [courses]
   );
 

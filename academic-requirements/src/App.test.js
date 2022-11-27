@@ -39,7 +39,6 @@ describe("Test for App", () => {
   });
 
   test("Test String Processing", () => {
-
     const stringProcess = new StringProcessing();
 
     // Base & Edge Cases Testing:
