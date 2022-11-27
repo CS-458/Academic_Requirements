@@ -15,6 +15,7 @@ import React from "react";
 import SearchableDropdown from "./SearchableDropdown.tsx";
 import ErrorPopup from "./ErrorPopup";
 
+//Defines the properties that each type should have
 interface SemesterState {
   accepts: string[];
   lastDroppedItem: any;
@@ -54,7 +55,7 @@ export interface ContainerProps {
 }
 
 export const Container: FC<ContainerProps> = memo(function Container({
-  PassedCourseList,
+  PassedCourseList, //The combination of major, concentration, and gen ed
 }) {
   const [semestersOld, setSemestersOld] = useState<SemesterState[]>([
     {
@@ -157,19 +158,21 @@ export const Container: FC<ContainerProps> = memo(function Container({
     },
   ]);
 
+  //The visibility of the error message
   const [visibility, setVisibility] = useState(false);
+  //A master list of all courses for the major, concentration, and gen eds
   const [courses, setCourses] = useState<Course[]>(PassedCourseList);
-
+  //A list of all courses that have been dropped into a semester
   const [droppedCourses, setDroppedCourses] = useState<Course[]>([]);
-
+  //The course list element that allows courses to be dragged out
   const [courseListElem, setCourseListElem] = useState<CourseListState[]>([
     { accepts: [ItemTypes.COURSE], unDroppedItem: null, courses: [] },
   ]);
 
   //Stuff for category dropdown. Hovland 7Nov22
   const [category, setCategory] = useState(""); //category that is selected
-  const [categories, setCategories] = useState<string[]>([]);
-  const [coursesInCategory, setcoursesInCategory] = useState<Course[]>([]); //category that is selected
+  const [categories, setCategories] = useState<string[]>([]);//list of all categories
+  const [coursesInCategory, setcoursesInCategory] = useState<Course[]>([]); //courses in category that is selected
 
   //SelectedCategory function. Hovland7Nov7
   function selectedCategory(_category) {
@@ -220,10 +223,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
     setCategories(RemoveDuplicates(i));
   }
 
-  //  const handleRemoveItem = (course: Course) => {
-  //    console.log(course);
-  //    setCourses(courses.filter((item) => item !== course));
-  //  };
+  //Handle a drop into a semester from a semester or the course list
   const handleDrop = useCallback(
     (index: number, item: { name: string, dragSource: string }) => {
       console.log(index);
@@ -351,64 +351,48 @@ export const Container: FC<ContainerProps> = memo(function Container({
     [semesters]
   );
 
+  //handle a drop into the course list from a semester
   const handleReturnDrop = useCallback(
     (item: { name: string, dragSource: string }) => {
       const { name } = item;
       const {dragSource} = item;
       console.log(dragSource)
-      // const found = droppedCourses.find((course) => course.name === name);
-      // console.log(found);
-      // // Find the course's semester before moving it
-      // let courseSemesterIndex = -1;
-      // if (found) {
-        if(dragSource !== "CourseList"){
-          let movedFromIndex = +dragSource.split(" ")[1];
-          const found = semesters[movedFromIndex].courses.find(item => item.name === name)
-          found.dragSource = "CourseList";
-          setDroppedCourses(courses.filter((item) => item.name !== name));
-          // semesters.forEach((sem, index) => {
-          //   sem.courses.forEach((c) => {
-          //     if (c.name === found.name) {
-          //       courseSemesterIndex = index;
-          //     }
-          //   });
-          // });
-          // console.log(courseSemesterIndex);        
-          // If all courses pass the preReq check, then update the course lists
-          if (
-            preReqCheckCoursesInSemesterAndBeyond(
-              found,
-              movedFromIndex,
-              -1
-            )
-          ) {
-            setCourses(
-              update(courses, found ? { $push: [found] } : { $push: [] })
-            );
+      //ignore all drops from the course list
+      if(dragSource !== "CourseList"){
+        //get the semester index from the drag source
+        let movedFromIndex = +dragSource.split(" ")[1];
+        const found = semesters[movedFromIndex].courses.find(item => item.name === name)
+        //set the drag source to course list (may be redundant but I'm scared to mess with it)
+        found.dragSource = "CourseList";
+        setDroppedCourses(courses.filter((item) => item.name !== name));    
+        // If all courses pass the preReq check, then update the course lists
+        if (
+          preReqCheckCoursesInSemesterAndBeyond(
+            found,
+            movedFromIndex,
+            -1
+          )
+        ) {
+          setCourses(
+            update(courses, found ? { $push: [found] } : { $push: [] })
+          );
 
-            // Update semesters to have the course removed
-            let itemArr = semesters[movedFromIndex].courses.filter(course => course !==found)
-        
-            setSemesters(
-              update(semesters, {
-                [movedFromIndex]: {
-                  courses: {
-                    $set: itemArr,
-                  },
+          // Update semesters to have the course removed
+          let itemArr = semesters[movedFromIndex].courses.filter(course => course !==found)
+          setSemesters(
+            update(semesters, {
+              [movedFromIndex]: {
+                courses: {
+                  $set: itemArr,
                 },
-              })
-            );
-
-            // Update the dropped courses to include the course that was moved out
-            setDroppedCourses(
-              update(droppedCourses, found ? { $push: [found] } : { $push: [] })
-            );
-          } else {
-            // fails to satisfy prerequisites
-            setVisibility(true);
-          }
+              },
+            })
+          );
+        } else {
+          // fails to satisfy prerequisites
+          setVisibility(true);
         }
-      //}
+      }
     },
     [courses, semesters]
   );

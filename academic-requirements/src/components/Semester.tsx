@@ -5,6 +5,7 @@ import React from "react";
 //@ts-ignore
 import { Course } from "./DraggableCourse.tsx";
 import { ItemTypes } from "./Constants";
+//styling for the semester
 const style: CSSProperties = {
   height: "12rem",
   width: "20%",
@@ -33,6 +34,7 @@ export const Semester: FC<SemesterProps> = memo(function Semester({
   semesterNumber,
   courses,
 }) {
+  //defines the drop action
   const [{ isOver }, drop] = useDrop({
     accept,
     drop: onDrop,
@@ -41,6 +43,7 @@ export const Semester: FC<SemesterProps> = memo(function Semester({
     }),
   });
 
+  //Changes the background color when you're hovering over the semester
   const isActive = isOver;
   let backgroundColor = "#222";
   if (isActive) {
