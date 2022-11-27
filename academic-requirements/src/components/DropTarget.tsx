@@ -226,7 +226,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
   //Handle a drop into a semester from a semester or the course list
   const handleDrop = useCallback(
     (index: number, item: { name: string; dragSource: string }) => {
-      console.log(index);
       const { name } = item;
       const { dragSource } = item;
       let movedFromIndex = -1;
@@ -260,7 +259,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
       });
 
       // Run the prerequisite check on the course
-      console.log(dragSource === "CourseList");
       if (dragSource === "CourseList") {
         if (
           prereqCheck.courseInListCheck(
@@ -293,12 +291,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
       // Course was not found in the courses list, which means it currently occupies a semester
       else {
         //Find the course and its current residing index in the semesters list
-        console.log(movedFromIndex);
         let preReqsSatisfied = true;
-        console.log(course);
-        console.log(movedFromIndex > -1);
         if (course && movedFromIndex > -1) {
-          console.log("Made it");
           // Course was moved from later to earlier
           if (movedFromIndex > index) {
             // Only check the prerequisites for the course itself that is being moved earlier
@@ -310,7 +304,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
           }
           // Course was moved from earlier to later
           else {
-            console.log("here");
             // Check the prerequisites for all courses past (and including) the semester the course currently resides in
             preReqsSatisfied = preReqCheckCoursesInSemesterAndBeyond(
               course,
@@ -321,13 +314,11 @@ export const Container: FC<ContainerProps> = memo(function Container({
 
           // Only proceed if the course isn't moved to the same semester
           if (movedFromIndex !== index) {
-            console.log("this if statement");
             // If the prereqs are satisfied, then move the course to the semester
             if (preReqsSatisfied) {
               // First update the semesters with the new course
               let updateSemester = new Array<SemesterState>();
               updateSemester = semesters;
-              console.log("updating");
               updateSemester[index].courses.push(course);
               updateSemester[index].lastDroppedItem = item;
 
