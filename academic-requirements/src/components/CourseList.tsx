@@ -30,7 +30,7 @@ export const CourseList: FC<CourseListProps> = memo(function CourseList({
   onDrop,
   courses,
 }) {
-  //defines the drop 
+  //defines the drop
   const [{ isOver }, drop] = useDrop({
     accept,
     drop: onDrop,
@@ -59,7 +59,7 @@ export const CourseList: FC<CourseListProps> = memo(function CourseList({
             credits={credits}
             type={ItemTypes.COURSE}
             key={index}
-            dragSource = {"CourseList"}
+            dragSource={"CourseList"}
             preReq={preReq}
           />
         )

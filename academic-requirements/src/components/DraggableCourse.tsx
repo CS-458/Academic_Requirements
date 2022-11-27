@@ -30,7 +30,16 @@ export const Course: FC<CourseProps> = memo(function Course({
   const [{ opacity }, drag] = useDrag(
     () => ({
       type,
-      item: { name, subject, number, type, credits, semesters, preReq, dragSource },
+      item: {
+        name,
+        subject,
+        number,
+        type,
+        credits,
+        semesters,
+        preReq,
+        dragSource,
+      },
       collect: (monitor) => ({
         opacity: monitor.isDragging() ? 0.4 : 1,
       }),
