@@ -22,7 +22,7 @@ export interface SemesterProps {
   accept: Course;
   lastDroppedItem?: any;
   onDrop: (item: any) => void;
-  number: number;
+  semesterNumber: number;
   courses: Course[];
 }
 
@@ -30,7 +30,7 @@ export const Semester: FC<SemesterProps> = memo(function Semester({
   accept,
   lastDroppedItem,
   onDrop,
-  number,
+  semesterNumber,
   courses,
 }) {
   const [{ isOver }, drop] = useDrop({
@@ -53,7 +53,7 @@ export const Semester: FC<SemesterProps> = memo(function Semester({
       style={{ ...style, backgroundColor }}
       data-testid="semester"
     >
-      {isActive ? "Release to drop" : `Semester ${number}`}
+      {isActive ? "Release to drop" : `Semester ${semesterNumber}`}
 
       {courses &&
         courses.map(
@@ -66,7 +66,7 @@ export const Semester: FC<SemesterProps> = memo(function Semester({
               type={ItemTypes.COURSE}
               credits={credits}
               preReq={preReq}
-              dragSource= {"Semester"}
+              dragSource= {"Semester " + semesterNumber}
               key={index}
             />
           )

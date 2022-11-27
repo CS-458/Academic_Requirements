@@ -33,7 +33,7 @@ export const Course: FC<CourseProps> = memo(function Course({
         opacity: monitor.isDragging() ? 0.4 : 1,
       }),
     }),
-    [name, type]
+    [name, type, dragSource]
   );
   return (
     <div
