@@ -136,4 +136,41 @@ app.get("/requirements", (req, res) => {
   );
 });
 
+//get the list of subjects for the completed course dropdown (first)
+app.get("/subjects", (req, res) => {
+  checkConnection();
+  connection.query(
+    `SELECT DISTINCT c.subject 
+    FROM course c
+    ORDER BY c.subject ASC;`,
+    [],
+    function (err, result) {
+      if (err) {
+        res.send(err);
+        return;
+      }
+      res.send(result);
+    }
+  );
+});
+
+// Gets all of the course numbers for a provided subject
+app.get("/subjects/numbers", (req, res) => {
+  checkConnection();
+  connection.query(
+    `SELECT DISTINCT c.number 
+    FROM course c 
+    WHERE c.subject = ?
+    ORDER BY c.number ASC;`,
+    [req.query.sub],
+    function (err, result) {
+      if (err) {
+        res.send(err);
+        return;
+      }
+      res.send(result);
+    }
+  );
+});
+
 module.exports = app;
