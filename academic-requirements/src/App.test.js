@@ -1,4 +1,12 @@
-import { fireEvent, render, screen, cleanup, waitForElement, getByLabelText, getByTestId } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  cleanup,
+  waitForElement,
+  getByLabelText,
+  getByTestId,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import selectEvent from "react-select-event";
 import React from "react";
@@ -15,16 +23,21 @@ afterEach(cleanup);
 
 describe("Testing searchable dropdown", () => {
   const mockedOptions = [
-    'Mocked option 1', 'Mocked option 2','Mocked option 3'
+    "Mocked option 1",
+    "Mocked option 2",
+    "Mocked option 3",
   ];
   test("searchableDropdown should render with no errors", () => {
     //Mocked function
     const mockedOnChange = jest.fn();
     //Render the searchable dropdown
-    const { getByText } = render(<SearchableDropdown 
-      options={mockedOptions} 
-      onSelectOption={mockedOnChange}
-       showDropdown={true}/>);
+    const { getByText } = render(
+      <SearchableDropdown
+        options={mockedOptions}
+        onSelectOption={mockedOnChange}
+        showDropdown={true}
+      />
+    );
     //get the <input/>
     const searchableDropdown = screen.getByRole("combobox");
     //Hopefully it renders
@@ -33,14 +46,17 @@ describe("Testing searchable dropdown", () => {
 
   test("searchableDropdown should be able to be clicked", async () => {
     const mockedOnChange = jest.fn();
-    const { getByTestId, getByText, getByRole } = render(<SearchableDropdown 
-      options={mockedOptions} 
-      onSelectOption={mockedOnChange}
-      showDropdown={true}
-      thin={false}
-      label={"dropdown"} />);
-    
-    const temp = screen.getByRole("combobox")
+    const { getByTestId, getByText, getByRole } = render(
+      <SearchableDropdown
+        options={mockedOptions}
+        onSelectOption={mockedOnChange}
+        showDropdown={true}
+        thin={false}
+        label={"dropdown"}
+      />
+    );
+
+    const temp = screen.getByRole("combobox");
     //Open the menu (click on dropdown)
     await selectEvent.openMenu(temp);
     //Select "Mocked option 1"
@@ -51,12 +67,15 @@ describe("Testing searchable dropdown", () => {
 
   test("searchableDropdown should be able to be clicked multiple times", async () => {
     const mockedOnChange = jest.fn();
-    const { getByRole } = render(<SearchableDropdown
-      options={mockedOptions}
-      onSelectOption={mockedOnChange}
-      showDropdown={true}
-      thin={false}
-      label={"dropdown"}/>);
+    const { getByRole } = render(
+      <SearchableDropdown
+        options={mockedOptions}
+        onSelectOption={mockedOnChange}
+        showDropdown={true}
+        thin={false}
+        label={"dropdown"}
+      />
+    );
     const temp = screen.getByRole("combobox");
     //Repeat this 3 times, checking the function calls on the way
     await selectEvent.openMenu(temp);
