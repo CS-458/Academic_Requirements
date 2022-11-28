@@ -15,10 +15,11 @@ import React from "react";
 import SearchableDropdown from "./SearchableDropdown.tsx";
 import ErrorPopup from "./ErrorPopup";
 
+//Defines the properties that each type should have
 interface SemesterState {
   accepts: string[];
   lastDroppedItem: any;
-  number: number;
+  semesterNumber: number;
   courses: Course[];
 }
 
@@ -54,55 +55,55 @@ export interface ContainerProps {
 }
 
 export const Container: FC<ContainerProps> = memo(function Container({
-  PassedCourseList,
+  PassedCourseList, //The combination of major, concentration, and gen ed
 }) {
   const [semestersOld, setSemestersOld] = useState<SemesterState[]>([
     {
       accepts: [ItemTypes.COURSE],
       lastDroppedItem: null,
-      number: 1,
+      semesterNumber: 1,
       courses: [],
     },
     {
       accepts: [ItemTypes.COURSE],
       lastDroppedItem: null,
-      number: 2,
+      semesterNumber: 2,
       courses: [],
     },
     {
       accepts: [ItemTypes.COURSE],
       lastDroppedItem: null,
-      number: 3,
+      semesterNumber: 3,
       courses: [],
     },
     {
       accepts: [ItemTypes.COURSE],
       lastDroppedItem: null,
-      number: 4,
+      semesterNumber: 4,
       courses: [],
     },
     {
       accepts: [ItemTypes.COURSE],
       lastDroppedItem: null,
-      number: 5,
+      semesterNumber: 5,
       courses: [],
     },
     {
       accepts: [ItemTypes.COURSE],
       lastDroppedItem: null,
-      number: 6,
+      semesterNumber: 6,
       courses: [],
     },
     {
       accepts: [ItemTypes.COURSE],
       lastDroppedItem: null,
-      number: 7,
+      semesterNumber: 7,
       courses: [],
     },
     {
       accepts: [ItemTypes.COURSE],
       lastDroppedItem: null,
-      number: 8,
+      semesterNumber: 8,
       courses: [],
     },
   ]);
@@ -110,66 +111,68 @@ export const Container: FC<ContainerProps> = memo(function Container({
     {
       accepts: [ItemTypes.COURSE],
       lastDroppedItem: null,
-      number: 1,
+      semesterNumber: 1,
       courses: [],
     },
     {
       accepts: [ItemTypes.COURSE],
       lastDroppedItem: null,
-      number: 2,
+      semesterNumber: 2,
       courses: [],
     },
     {
       accepts: [ItemTypes.COURSE],
       lastDroppedItem: null,
-      number: 3,
+      semesterNumber: 3,
       courses: [],
     },
     {
       accepts: [ItemTypes.COURSE],
       lastDroppedItem: null,
-      number: 4,
+      semesterNumber: 4,
       courses: [],
     },
     {
       accepts: [ItemTypes.COURSE],
       lastDroppedItem: null,
-      number: 5,
+      semesterNumber: 5,
       courses: [],
     },
     {
       accepts: [ItemTypes.COURSE],
       lastDroppedItem: null,
-      number: 6,
+      semesterNumber: 6,
       courses: [],
     },
     {
       accepts: [ItemTypes.COURSE],
       lastDroppedItem: null,
-      number: 7,
+      semesterNumber: 7,
       courses: [],
     },
     {
       accepts: [ItemTypes.COURSE],
       lastDroppedItem: null,
-      number: 8,
+      semesterNumber: 8,
       courses: [],
     },
   ]);
 
+  //The visibility of the error message
   const [visibility, setVisibility] = useState(false);
+  //A master list of all courses for the major, concentration, and gen eds
   const [courses, setCourses] = useState<Course[]>(PassedCourseList);
-
+  //A list of all courses that have been dropped into a semester
   const [droppedCourses, setDroppedCourses] = useState<Course[]>([]);
-
+  //The course list element that allows courses to be dragged out
   const [courseListElem, setCourseListElem] = useState<CourseListState[]>([
     { accepts: [ItemTypes.COURSE], unDroppedItem: null, courses: [] },
   ]);
 
   //Stuff for category dropdown. Hovland 7Nov22
   const [category, setCategory] = useState(""); //category that is selected
-  const [categories, setCategories] = useState<string[]>([]);
-  const [coursesInCategory, setcoursesInCategory] = useState<Course[]>([]); //category that is selected
+  const [categories, setCategories] = useState<string[]>([]); //list of all categories
+  const [coursesInCategory, setcoursesInCategory] = useState<Course[]>([]); //courses in category that is selected
 
   //SelectedCategory function. Hovland7Nov7
   function selectedCategory(_category) {
@@ -220,37 +223,43 @@ export const Container: FC<ContainerProps> = memo(function Container({
     setCategories(RemoveDuplicates(i));
   }
 
-  const handleRemoveItem = (course: Course) => {
-    console.log(course);
-    setCourses(courses.filter((item) => item !== course));
-  };
+  //Handle a drop into a semester from a semester or the course list
   const handleDrop = useCallback(
-    (index: number, item: { name: string }) => {
+    (index: number, item: { name: string; dragSource: string }) => {
       const { name } = item;
-      let course = courses.find((item) => item.name === name);
+      const { dragSource } = item;
+      let movedFromIndex = -1;
+      var course;
+      if (dragSource !== "CourseList") {
+        //index of semester it was moved from
+        movedFromIndex = +dragSource.split(" ")[1];
+        course = semesters[movedFromIndex].courses.find(
+          (item) => item.name === name
+        );
+      } else {
+        //find the course by name in the master list of all courses
+        course = courses.find((item) => item.name === name);
+      }
+      console.log(course);
+      console.log(dragSource);
+      //Could potentially add a duplicate if course is in schedule more than once
       setDroppedCourses(
         update(droppedCourses, course ? { $push: [course] } : { $push: [] })
       );
-
-      let itemArr = new Array<Course>();
-      if (course) {
-        itemArr.push(course);
-      }
-
       // prereqCheck will be used to check prerequisites
       const prereqCheck = new StringProcessing();
 
       // Get all courses in previous semesters
       const previousCourses = getPreviousSemesterCourses(index);
 
-      // Get all courses in current semester (excluding the course to be added)
+      // Get all course subject and acronyms in current semester (excluding the course to be added)
       const currentCourses = new Array<string>();
       semesters[index].courses.forEach((x) => {
         currentCourses.push(x.subject + "-" + x.number);
       });
 
       // Run the prerequisite check on the course
-      if (course) {
+      if (dragSource === "CourseList") {
         if (
           prereqCheck.courseInListCheck(
             course.preReq,
@@ -259,6 +268,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
           )
         ) {
           // prereqCheck returned true, so add the course to the semester
+          course.dragSource = "Semester " + index;
           setSemesters(
             update(semesters, {
               [index]: {
@@ -266,34 +276,22 @@ export const Container: FC<ContainerProps> = memo(function Container({
                   $set: item,
                 },
                 courses: {
-                  $push: itemArr,
+                  $push: [course],
                 },
               },
             })
           );
-          handleRemoveItem(course);
+          //handleRemoveItem(course);
         } else {
           // fails to satisfy prerequisites
+          //shows error message
           setVisibility(true);
         }
       }
       // Course was not found in the courses list, which means it currently occupies a semester
       else {
-        let course = courses.find((item) => item.name === name);
-
         //Find the course and its current residing index in the semesters list
-        let movedFromIndex = -1;
-        semesters.forEach((x, i) => {
-          x.courses.forEach((y) => {
-            if (y.name === item.name) {
-              course = y;
-              movedFromIndex = i;
-            }
-          });
-        });
-
         let preReqsSatisfied = true;
-
         if (course && movedFromIndex > -1) {
           // Course was moved from later to earlier
           if (movedFromIndex > index) {
@@ -321,17 +319,13 @@ export const Container: FC<ContainerProps> = memo(function Container({
               // First update the semesters with the new course
               let updateSemester = new Array<SemesterState>();
               updateSemester = semesters;
-
               updateSemester[index].courses.push(course);
               updateSemester[index].lastDroppedItem = item;
 
               // Then remove the course from its previous semester spot
-              let coursesRemove = new Array<Course>();
-              updateSemester[movedFromIndex].courses.forEach((x) => {
-                if (x !== course) {
-                  coursesRemove.push(x);
-                }
-              });
+              let coursesRemove = updateSemester[movedFromIndex].courses.filter(
+                (item) => item !== course
+              );
 
               updateSemester[movedFromIndex].courses = coursesRemove;
 
@@ -339,7 +333,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
               setSemestersOld(updateSemester);
 
               // Remove the course from the list, in case it did exist there too
-              handleRemoveItem(course);
+              //handleRemoveItem(course);
             } else {
               // fails to satisfy prerequisites
               setVisibility(true);
@@ -351,78 +345,52 @@ export const Container: FC<ContainerProps> = memo(function Container({
     [semesters]
   );
 
+  //handle a drop into the course list from a semester
   const handleReturnDrop = useCallback(
-    (item: { name: string }) => {
+    (item: { name: string; dragSource: string }) => {
       const { name } = item;
-      const found = droppedCourses.find((course) => course.name === name);
-      setDroppedCourses(courses.filter((item) => item.name !== name));
+      const { dragSource } = item;
+      console.log(dragSource);
+      //ignore all drops from the course list
+      if (dragSource !== "CourseList") {
+        //get the semester index from the drag source
+        let movedFromIndex = +dragSource.split(" ")[1];
+        const found = semesters[movedFromIndex].courses.find(
+          (item) => item.name === name
+        );
+        //set the drag source to course list (may be redundant but I'm scared to mess with it)
+        found.dragSource = "CourseList";
+        setDroppedCourses(courses.filter((item) => item.name !== name));
+        // If all courses pass the preReq check, then update the course lists
+        if (preReqCheckCoursesInSemesterAndBeyond(found, movedFromIndex, -1)) {
+          setCourses(
+            update(courses, found ? { $push: [found] } : { $push: [] })
+          );
 
-      // Find the course's semester before moving it
-      let courseSemesterIndex = -1;
-      if (found) {
-        semesters.forEach((sem, index) => {
-          sem.courses.forEach((c) => {
-            if (c.name === found.name) {
-              courseSemesterIndex = index;
-            }
-          });
-        });
-
-        // Only proceed if the course is not already in the semesters
-        let allCourses = new Array<string>();
-        semesters.forEach((x) => {
-          x.courses.forEach((y) => {
-            allCourses.push(y.name);
-          });
-        });
-        if (!allCourses.find((course) => course === name)) {
-          // If all courses pass the preReq check, then update the course lists
-          if (
-            preReqCheckCoursesInSemesterAndBeyond(
-              found,
-              courseSemesterIndex,
-              -1
-            )
-          ) {
-            setCourses(
-              update(courses, found ? { $push: [found] } : { $push: [] })
-            );
-
-            // Update semesters to have the course removed
-            let itemArr = new Array<Course>();
-            if (found) {
-              semesters[courseSemesterIndex].courses.forEach((x) => {
-                if (x.name !== found.name) {
-                  itemArr.push(x);
-                }
-              });
-            }
-            setSemesters(
-              update(semesters, {
-                [courseSemesterIndex]: {
-                  courses: {
-                    $set: itemArr,
-                  },
+          // Update semesters to have the course removed
+          let itemArr = semesters[movedFromIndex].courses.filter(
+            (course) => course !== found
+          );
+          setSemesters(
+            update(semesters, {
+              [movedFromIndex]: {
+                courses: {
+                  $set: itemArr,
                 },
-              })
-            );
-
-            // Update the dropped courses to include the course that was moved out
-            setDroppedCourses(
-              update(droppedCourses, found ? { $push: [found] } : { $push: [] })
-            );
-          } else {
-            // fails to satisfy prerequisites
-            setVisibility(true);
-          }
+              },
+            })
+          );
+        } else {
+          // fails to satisfy prerequisites
+          setVisibility(true);
         }
       }
     },
-    [courses]
+    [courses, semesters]
   );
 
   // This function checks if every course passes the prerequisite check when moving a course
-  // out of a semester and into the course bank
+  // out of a semester
   function preReqCheckCoursesInSemesterAndBeyond(
     courseToRemove: Course,
     courseSemesterIndex: number,
@@ -439,9 +407,13 @@ export const Container: FC<ContainerProps> = memo(function Container({
     let currentCoursesNames = getSemesterCoursesNames(courseSemesterIndex);
 
     let preReqsSatisfied = true;
+    let courseHasMoved = false;
 
     semesters.forEach((currSemester, index) => {
-      if (preReqsSatisfied && currSemester.number - 1 >= courseSemesterIndex) {
+      if (
+        preReqsSatisfied &&
+        currSemester.semesterNumber - 1 >= courseSemesterIndex
+      ) {
         // Check every course in the current semester passes the prerequsites
         currentCourses.forEach((x) => {
           preReqsSatisfied =
@@ -461,6 +433,15 @@ export const Container: FC<ContainerProps> = memo(function Container({
           }
         });
 
+        // If the course has been "mock-moved" and the prereq checks have been run on the semester
+        // where the course has moved to, then we can now add the course to the previousCourses list
+        if (courseHasMoved) {
+          previousCourses.push(
+            courseToRemove.subject + "-" + courseToRemove.number
+          );
+          courseHasMoved = false;
+        }
+
         // Update the current course lists to be for the next semester
         if (
           index + 1 < semesters.length &&
@@ -474,9 +455,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
             currentCoursesNames.push(
               courseToRemove.subject + "-" + courseToRemove.number
             );
-            previousCourses.push(
-              courseToRemove.subject + "-" + courseToRemove.number
-            );
+            courseHasMoved = true;
           }
         }
       }
@@ -490,7 +469,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
   function getPreviousSemesterCourses(semesterIndex: number): Array<string> {
     let previousCourses = new Array<string>();
     semesters.forEach((currSemester) => {
-      if (currSemester.number - 1 < semesterIndex) {
+      if (currSemester.semesterNumber - 1 < semesterIndex) {
         currSemester.courses.forEach((x) => {
           previousCourses.push(x.subject + "-" + x.number);
         });
@@ -526,7 +505,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
   // Feel free to comment this out to reduce spam in the console
   // useEffect(() => {
   //   semesters.forEach((x) => {
-  //     console.log("Semester number:" + x.number);
+  //     console.log("Semester number:" + x.semesterNumber);
   //     if (x.courses) {
   //       x.courses.forEach((y) => {
   //         console.log("Course: " + y.name);
@@ -548,11 +527,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
   return (
     <div>
       <div className="drag-drop">
-        {/* <ErrorPopup
-        onClose={popupCloseHandler}
-        show{visibility}
-        title="Error"
-        error={"CANNOT"}/> */}
         <div style={{ overflow: "hidden", clear: "both" }}>
           <ErrorPopup
             onClose={popupCloseHandler}
@@ -561,12 +535,12 @@ export const Container: FC<ContainerProps> = memo(function Container({
             error={"CANNOT MOVE COURSE! FAILS PREREQUISITES"}
           />
           {semesters.map(
-            ({ accepts, lastDroppedItem, number, courses }, index) => (
+            ({ accepts, lastDroppedItem, semesterNumber, courses }, index) => (
               <Semester
                 accept={accepts}
                 lastDroppedItem={lastDroppedItem}
                 onDrop={(item) => handleDrop(index, item)}
-                number={number}
+                semesterNumber={semesterNumber}
                 courses={courses}
                 key={index}
               />
