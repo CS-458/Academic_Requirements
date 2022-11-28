@@ -78,6 +78,7 @@ const FourYearPlanPage = (props: {
               PassedCourseList={props.majorCourseList.concat(
                 props.concentrationCourseList
               )}
+              CompletedCourses={props.completedCourses}
             />
             <div className="right-side">
               <div className="requirements">Requirements</div>
