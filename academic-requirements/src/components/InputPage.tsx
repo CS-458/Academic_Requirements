@@ -139,12 +139,12 @@ const InputPage = (props: {
       }
     }
     console.log("Adding course " + selectedAcronym + "-" + selectedNumber);
-         setCoursesTaken(
-           coursesTaken.concat(selectedAcronym + "-" + selectedNumber)
-         );
-         props.setTakenCourses(
-           coursesTaken.concat(selectedAcronym + "-" + selectedNumber)
-         );
+   // setCoursesTaken(
+    //  coursesTaken.concat(selectedAcronym + "-" + selectedNumber)
+   // );
+   // props.setTakenCourses(
+   //   coursesTaken.concat(selectedAcronym + "-" + selectedNumber)
+   // );
   }
 
   // Removes the course from the coursesTaken list
@@ -174,9 +174,7 @@ const InputPage = (props: {
   }
 
   //Function to autopopulate completed courses list. with every course.
-  function fillCompletedCourses (){
-
-  }
+  function fillCompletedCourses() {}
   return (
     <div className="App">
       {props.showing && (
@@ -197,7 +195,7 @@ const InputPage = (props: {
           />
           <div className="screen">
             <div className="input-grid">
-              <div className="input-grid-dropdown" data-testid="MajorDropDown"> 
+              <div className="input-grid-dropdown" data-testid="MajorDropDown">
                 <SearchableDropdown
                   options={props.majorDisplayList}
                   label="Major"
@@ -260,7 +258,8 @@ const InputPage = (props: {
                   <div
                     className="courseList"
                     style={{
-                      gridTemplateColumns: `repeat(${   //This may be where issue is with dropdown columns/formatting.
+                      gridTemplateColumns: `repeat(${
+                        //This may be where issue is with dropdown columns/formatting.
                         (coursesTaken.length - 1) / 10 + 1
                       }, 1fr)`,
                     }}
