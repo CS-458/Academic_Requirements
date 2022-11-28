@@ -139,12 +139,12 @@ const InputPage = (props: {
       }
     }
     console.log("Adding course " + selectedAcronym + "-" + selectedNumber);
-   // setCoursesTaken(
+    // setCoursesTaken(
     //  coursesTaken.concat(selectedAcronym + "-" + selectedNumber)
-   // );
-   // props.setTakenCourses(
-   //   coursesTaken.concat(selectedAcronym + "-" + selectedNumber)
-   // );
+    // );
+    // props.setTakenCourses(
+    //   coursesTaken.concat(selectedAcronym + "-" + selectedNumber)
+    // );
   }
 
   // Removes the course from the coursesTaken list
