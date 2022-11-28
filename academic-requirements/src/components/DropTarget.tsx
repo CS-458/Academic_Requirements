@@ -52,7 +52,7 @@ export interface ContainerProps {
     preReq: string;
     category: string;
   }[];
-  CompletedCourses:{
+  CompletedCourses: {
     identifier: string;
   }[];
 }
