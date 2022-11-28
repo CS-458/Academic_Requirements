@@ -259,7 +259,10 @@ export const Container: FC<ContainerProps> = memo(function Container({
       });
 
       // Run the prerequisite check on the course
-      if (dragSource === "CourseList" && !courseAlreadyInSemester(course, index)) {
+      if (
+        dragSource === "CourseList" &&
+        !courseAlreadyInSemester(course, index)
+      ) {
         if (
           prereqCheck.courseInListCheck(
             course.preReq,
@@ -313,7 +316,10 @@ export const Container: FC<ContainerProps> = memo(function Container({
           }
 
           // Only proceed if the course isn't moved to the same semester
-          if (movedFromIndex !== index && !courseAlreadyInSemester(course, index)) {
+          if (
+            movedFromIndex !== index &&
+            !courseAlreadyInSemester(course, index)
+          ) {
             // If the prereqs are satisfied, then move the course to the semester
             if (preReqsSatisfied) {
               // First update the semesters with the new course
@@ -464,14 +470,17 @@ export const Container: FC<ContainerProps> = memo(function Container({
     return preReqsSatisfied;
   }
 
-  function courseAlreadyInSemester(course: Course, semesterIndex: number): boolean {
+  function courseAlreadyInSemester(
+    course: Course,
+    semesterIndex: number
+  ): boolean {
     let found = false;
     if (semesterIndex >= 0 || semesterIndex <= 8) {
       semesters[semesterIndex].courses.forEach((x) => {
         if (x === course) {
           found = true;
         }
-      })
+      });
     }
     return found;
   }
