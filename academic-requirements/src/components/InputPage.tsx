@@ -14,10 +14,6 @@ import ImportPopup from "./ImportPopup";
 import majors from "../mockDataLists/majors.tsx";
 // @ts-ignore
 import concentrations from "../mockDataLists/concentrations.tsx";
-// @ts-ignore
-import courseSubjectAcronym from "../mockDataLists/courseSubjectAcronym.tsx";
-// @ts-ignore
-import courseNumber from "../mockDataLists/courseNumber.tsx";
 
 // Input page is the page where the user inputs all of their information
 const InputPage = (props: {
@@ -26,6 +22,11 @@ const InputPage = (props: {
   majorDisplayList: [];
   concentrationList: [];
   concentrationDisplayList: [];
+
+  courseSubjectAcronyms: string[];
+  setSelectedCourseSubject(subject: string): void;
+  courseSubjectNumbers: string[];
+
   takenCourses: string[];
   setTakenCourses(courses: string[]): void;
   onClickMajor(major: string): void;
@@ -75,14 +76,20 @@ const InputPage = (props: {
   const [selectedAcronym, setSelectedAcronym] = useState(null);
   const [selectedNumber, setSelectedNumber] = useState(null);
 
+  // When a new subject is selected, reset the selected number back to null
+  useEffect(() => {
+    setSelectedNumber(null);
+  }, [selectedAcronym]);
+
   function selectedCourseSubjectAcronym(_selectedAcronym) {
     setSelectedAcronym(_selectedAcronym);
-    // TODO update list of course numbers based on the acronym
+
+    // The updates the selected course acronym in App.js
+    props.setSelectedCourseSubject(_selectedAcronym);
   }
 
   function selectedCourseNumber(_selectedNumber) {
     setSelectedNumber(_selectedNumber);
-    //TODO Check that a selected number is reset to null when you select a new course
   }
 
   const [visibility, setVisibility] = useState(false);
@@ -194,7 +201,7 @@ const InputPage = (props: {
                 <SearchableDropdown
                   options={props.majorDisplayList}
                   label="Major"
-                  onSelectOption={selectedMajor}
+                  onSelectOption={selectedMajor} //reference
                   showDropdown={true}
                   thin={true}
                 />
@@ -211,17 +218,17 @@ const InputPage = (props: {
               <div className="input-grid-item">
                 <div className="courseDropdowns">
                   <SearchableDropdown
-                    options={courseSubjectAcronym}
+                    options={props.courseSubjectAcronyms}
                     label="Course Subject"
                     onSelectOption={selectedCourseSubjectAcronym}
                     showDropdown={true}
                     thin={true}
                   />
                   <SearchableDropdown
-                    options={courseNumber}
+                    options={props.courseSubjectNumbers}
                     label="Course Number"
                     onSelectOption={selectedCourseNumber}
-                    showDropdown={true}
+                    showDropdown={selectedAcronym}
                     thin={true}
                   />
                 </div>

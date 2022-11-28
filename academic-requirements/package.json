@@ -16,17 +16,36 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "clsx": "^1.2.1",
+    "dnd-core-cjs": "^9.5.1",
+    "immutability-helper": "^3.1.1",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
+    "react-dnd": "^16.0.1",
+    "react-dnd-cjs": "^9.5.1",
+    "react-dnd-html5-backend": "^16.0.1",
+    "react-dnd-html5-backend-cjs": "^9.5.1",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
     "react-select": "^5.5.2",
-    "react-tables": "^1.0.2",
+    "react-select-event": "^5.5.1",
     "web-vitals": "^2.1.4"
+  },
+  "devDependencies": {
+    "react-dnd-test-backend": "^16.0.1"
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "dnd-core": "dnd-core-cjs",
+      "react-dnd": "react-dnd-cjs",
+      "react-dnd-html5-backend": "react-dnd-html5-backend-cjs"
+    },
+    "transformIgnorePatterns": [
+      "/node_modules/(?!react-dnd|dnd-core|react-dnd-html5-backend)"
+    ]
   },
   "name": "academic-requirements",
   "private": true,
-  "proxy": "http://localhost:5000",
+  "proxy": "http://localhost:5000/",
   "scripts": {
     "build": "react-scripts build",
     "eject": "react-scripts eject",

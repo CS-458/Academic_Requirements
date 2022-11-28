@@ -53,16 +53,19 @@ app.get("/concentration", (req, res) => {
   );
 });
 
+//TODO delete the UNION here!
 app.get("/courses/major", (req, res) => {
   checkConnection();
   connection.query(
-    `SELECT co.subject, co.number, co.name, co.credits
+    `SELECT co.subject, co.number, co.name, co.credits, co.preReq, c.name AS 'category'
 	FROM major m
 	JOIN majorcategory mc ON m.idMajor = mc.majorId
 	JOIN category c ON mc.categoryId = c.idCategory
 	JOIN coursecategory cc ON c.idCategory = cc.categoryId
 	JOIN course co ON cc.courseId = co.idCourse
-	WHERE m.idMajor = ?`,
+	WHERE m.idMajor = ?
+  UNION 
+  SELECT "CS", "144", "Computer Science I", "4", "", "cs testing" AS 'category'`,
     [req.query.majid],
     function (err, result) {
       if (err) {
@@ -77,7 +80,7 @@ app.get("/courses/major", (req, res) => {
 app.get("/courses/concentration", (req, res) => {
   checkConnection();
   connection.query(
-    `SELECT co.subject, co.number, co.credits, co.semesters, co.name
+    `SELECT co.subject, co.number, co.credits, co.semesters, co.name, co.preReq, ca.name AS 'category' 
 	FROM concentration c
 	JOIN concentrationcategory cc ON c.idConcentration = cc.concentrationId
 	JOIN category ca ON cc.categoryId = ca.idCategory
@@ -123,6 +126,43 @@ app.get("/requirements", (req, res) => {
     JOIN categoryrequirements cr ON cr.categoryId = c.idCategory
     WHERE c.idCategory NOT IN (SELECT categoryId FROM majorCategory) AND c.idCategory NOT IN (SELECT categoryId FROM concentrationCategory)`,
     [req.query.conid, req.query.conid],
+    function (err, result) {
+      if (err) {
+        res.send(err);
+        return;
+      }
+      res.send(result);
+    }
+  );
+});
+
+//get the list of subjects for the completed course dropdown (first)
+app.get("/subjects", (req, res) => {
+  checkConnection();
+  connection.query(
+    `SELECT DISTINCT c.subject 
+    FROM course c
+    ORDER BY c.subject ASC;`,
+    [],
+    function (err, result) {
+      if (err) {
+        res.send(err);
+        return;
+      }
+      res.send(result);
+    }
+  );
+});
+
+// Gets all of the course numbers for a provided subject
+app.get("/subjects/numbers", (req, res) => {
+  checkConnection();
+  connection.query(
+    `SELECT DISTINCT c.number 
+    FROM course c 
+    WHERE c.subject = ?
+    ORDER BY c.number ASC;`,
+    [req.query.sub],
     function (err, result) {
       if (err) {
         res.send(err);
