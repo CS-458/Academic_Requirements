@@ -390,7 +390,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
   );
 
   // This function checks if every course passes the prerequisite check when moving a course
-  // out of a semester and into the course bank
+  // out of a semester
   function preReqCheckCoursesInSemesterAndBeyond(
     courseToRemove: Course,
     courseSemesterIndex: number,
@@ -407,6 +407,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
     let currentCoursesNames = getSemesterCoursesNames(courseSemesterIndex);
 
     let preReqsSatisfied = true;
+    let courseHasMoved = false;
 
     semesters.forEach((currSemester, index) => {
       if (
@@ -432,6 +433,15 @@ export const Container: FC<ContainerProps> = memo(function Container({
           }
         });
 
+        // If the course has been "mock-moved" and the prereq checks have been run on the semester
+        // where the course has moved to, then we can now add the course to the previousCourses list
+        if (courseHasMoved) {
+          previousCourses.push(
+            courseToRemove.subject + "-" + courseToRemove.number
+          );
+          courseHasMoved = false;
+        }
+
         // Update the current course lists to be for the next semester
         if (
           index + 1 < semesters.length &&
@@ -445,9 +455,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
             currentCoursesNames.push(
               courseToRemove.subject + "-" + courseToRemove.number
             );
-            previousCourses.push(
-              courseToRemove.subject + "-" + courseToRemove.number
-            );
+            courseHasMoved = true;
           }
         }
       }
