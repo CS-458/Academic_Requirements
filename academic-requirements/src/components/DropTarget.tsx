@@ -59,7 +59,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
   PassedCourseList, //The combination of major, concentration, and gen ed
   CompletedCourses, //List of completed courses in subject-number format
 }) {
-  console.log(CompletedCourses)
+  console.log(CompletedCourses);
   const [semestersOld, setSemestersOld] = useState<SemesterState[]>([
     {
       accepts: [ItemTypes.COURSE],
