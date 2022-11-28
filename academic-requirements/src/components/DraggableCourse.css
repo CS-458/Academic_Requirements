@@ -14,6 +14,7 @@
   border-radius: 5px;
   padding: "5rem 1rem";
   margin: 5px;
+  color: black;
 }
 .CourseText:first-line {
   font-size: 11pt;
