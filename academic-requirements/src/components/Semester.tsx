@@ -5,6 +5,7 @@ import React from "react";
 //@ts-ignore
 import { Course } from "./DraggableCourse.tsx";
 import { ItemTypes } from "./Constants";
+//styling for the semester
 const style: CSSProperties = {
   height: "12rem",
   width: "20%",
@@ -22,7 +23,7 @@ export interface SemesterProps {
   accept: Course;
   lastDroppedItem?: any;
   onDrop: (item: any) => void;
-  number: number;
+  semesterNumber: number;
   courses: Course[];
 }
 
@@ -30,9 +31,10 @@ export const Semester: FC<SemesterProps> = memo(function Semester({
   accept,
   lastDroppedItem,
   onDrop,
-  number,
+  semesterNumber,
   courses,
 }) {
+  //defines the drop action
   const [{ isOver }, drop] = useDrop({
     accept,
     drop: onDrop,
@@ -41,6 +43,7 @@ export const Semester: FC<SemesterProps> = memo(function Semester({
     }),
   });
 
+  //Changes the background color when you're hovering over the semester
   const isActive = isOver;
   let backgroundColor = "#222";
   if (isActive) {
@@ -53,7 +56,7 @@ export const Semester: FC<SemesterProps> = memo(function Semester({
       style={{ ...style, backgroundColor }}
       data-testid="semester"
     >
-      {isActive ? "Release to drop" : `Semester ${number}`}
+      {isActive ? "Release to drop" : `Semester ${semesterNumber}`}
 
       {courses &&
         courses.map(
@@ -66,6 +69,7 @@ export const Semester: FC<SemesterProps> = memo(function Semester({
               type={ItemTypes.COURSE}
               credits={credits}
               preReq={preReq}
+              dragSource={"Semester " + (semesterNumber - 1)}
               key={index}
             />
           )

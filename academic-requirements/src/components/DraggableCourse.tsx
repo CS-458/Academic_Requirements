@@ -1,9 +1,10 @@
-import type { CSSProperties, FC } from "react";
+import type { FC } from "react";
 import { memo } from "react";
-import { useDrag, useDrop } from "react-dnd";
+import { useDrag } from "react-dnd";
 import React from "react";
 import "./DraggableCourse.css";
 
+//defines the expected course properties
 export interface CourseProps {
   credits: number;
   name: string;
@@ -12,6 +13,7 @@ export interface CourseProps {
   semesters: string;
   type: string;
   preReq: string;
+  dragSource: string;
 }
 
 export const Course: FC<CourseProps> = memo(function Course({
@@ -22,16 +24,27 @@ export const Course: FC<CourseProps> = memo(function Course({
   credits,
   semesters,
   preReq,
+  dragSource,
 }) {
+  //defines the drag action
   const [{ opacity }, drag] = useDrag(
     () => ({
       type,
-      item: { name, subject, number, type, credits, semesters, preReq },
+      item: {
+        name,
+        subject,
+        number,
+        type,
+        credits,
+        semesters,
+        preReq,
+        dragSource,
+      },
       collect: (monitor) => ({
         opacity: monitor.isDragging() ? 0.4 : 1,
       }),
     }),
-    [name, type]
+    [name, type, dragSource] //what is collected by the semester and course list when you drop it
   );
   return (
     <div

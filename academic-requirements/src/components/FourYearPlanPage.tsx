@@ -60,7 +60,6 @@ const FourYearPlanPage = (props: {
     link.click();
   }
 
-  console.log(props.majorCourseList);
   return (
     <div>
       {props.showing && (

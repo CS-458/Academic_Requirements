@@ -5,6 +5,7 @@ import React from "react";
 import { ItemTypes } from "./Constants.js";
 //@ts-ignore
 import { Course } from "./DraggableCourse.tsx";
+//Styling for the course list
 const style: CSSProperties = {
   height: "100%",
   width: "100%",
@@ -20,17 +21,16 @@ const style: CSSProperties = {
 
 export interface CourseListProps {
   accept: Course;
-  // unDroppedItem?: any
   onDrop: (item: any) => void;
   courses: Course[];
 }
 
 export const CourseList: FC<CourseListProps> = memo(function CourseList({
   accept,
-  //unDroppedItem,
   onDrop,
   courses,
 }) {
+  //defines the drop
   const [{ isOver }, drop] = useDrop({
     accept,
     drop: onDrop,
@@ -39,6 +39,7 @@ export const CourseList: FC<CourseListProps> = memo(function CourseList({
     }),
   });
 
+  //changes the background color on hover over course list
   const isActive = isOver;
   let backgroundColor = "#222";
   if (isActive) {
@@ -58,6 +59,7 @@ export const CourseList: FC<CourseListProps> = memo(function CourseList({
             credits={credits}
             type={ItemTypes.COURSE}
             key={index}
+            dragSource={"CourseList"}
             preReq={preReq}
           />
         )
