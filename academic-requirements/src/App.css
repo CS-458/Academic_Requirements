@@ -42,15 +42,15 @@ body {
   height: 100%;
   display: grid;
   grid-template-columns: 60% auto auto;
-  column-gap: 15px;
+  column-gap: 1px;
   row-gap: 50px;
 }
 
 .semesters-container {
   height: 100%;
   display: grid;
-  grid-template-columns: auto auto auto auto;
-  column-gap: 10px;
+  grid-template-columns: 100%;
+  column-gap: 1px;
   row-gap: 100px;
 }
 
@@ -70,15 +70,33 @@ body {
   overflow-y: scroll;
 }
 
-.right-side {
-  text-align: center;
+.drag-drop {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 50% 25% 25%;
+  column-gap: 1px;
 }
 
+/* .schedule{
+  height: 80%;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: 50% 50%;
+  column-gap: 10px;
+  row-gap: 10px;
+} */
+
+.page {
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto auto;
+  column-gap: 1px;
+}
 .requirements {
   height: 90%;
   background-color: gainsboro;
   text-align: center;
-  overflow-y: scroll;
 }
 
 .input-grid {
@@ -119,4 +137,14 @@ body {
   text-align: center;
   width: 100%;
   float: left;
+}
+
+.RequirementText{
+  width:100%;
+  padding-bottom: 15px;
+  display: grid;
+  grid-template-columns: 75% 25%;
+}
+.percentage{
+  text-align: right;
 }

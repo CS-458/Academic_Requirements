@@ -113,7 +113,6 @@ const InputPage = (props: {
   }
   // This method handles adding a new taken course to the table
   function processCompletedCourse() {
-    //Check that both dropdowns are filled out
     if (selectedNumber != null && selectedAcronym != null) {
       //TODO Check that the course is a valid course in the database
       if (!coursesTaken.includes(selectedAcronym + "-" + selectedNumber)) {
@@ -139,6 +138,13 @@ const InputPage = (props: {
         );
       }
     }
+    console.log("Adding course " + selectedAcronym + "-" + selectedNumber);
+    // setCoursesTaken(
+    //  coursesTaken.concat(selectedAcronym + "-" + selectedNumber)
+    // );
+    // props.setTakenCourses(
+    //   coursesTaken.concat(selectedAcronym + "-" + selectedNumber)
+    // );
   }
 
   // Removes the course from the coursesTaken list
@@ -167,6 +173,8 @@ const InputPage = (props: {
     showUploader();
   }
 
+  //Function to autopopulate completed courses list. with every course.
+  function fillCompletedCourses() {}
   return (
     <div className="App">
       {props.showing && (
@@ -191,9 +199,9 @@ const InputPage = (props: {
                 <SearchableDropdown
                   options={props.majorDisplayList}
                   label="Major"
-                  onSelectOption={selectedMajor}
+                  onSelectOption={selectedMajor} //reference
                   showDropdown={true}
-                  thin={false}
+                  thin={true}
                 />
               </div>
               <div className="input-grid-dropdown">
@@ -202,7 +210,7 @@ const InputPage = (props: {
                   label="Concentration"
                   onSelectOption={selectedConcentration}
                   showDropdown={showConcentration}
-                  thin={false}
+                  thin={true}
                 />
               </div>
               <div className="input-grid-item">
@@ -251,6 +259,7 @@ const InputPage = (props: {
                     className="courseList"
                     style={{
                       gridTemplateColumns: `repeat(${
+                        //This may be where issue is with dropdown columns/formatting.
                         (coursesTaken.length - 1) / 10 + 1
                       }, 1fr)`,
                     }}

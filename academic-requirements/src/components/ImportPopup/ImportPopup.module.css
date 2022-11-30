@@ -8,6 +8,7 @@
   right: 0;
   background: rgba(0, 0, 0, 0.7);
   transition: opacity 500ms;
+  z-index: 100;
 }
 .popup {
   margin: 70px auto;
