@@ -59,7 +59,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
   PassedCourseList, //The combination of major, concentration, and gen ed
   CompletedCourses, //List of completed courses in subject-number format
 }) {
-  console.log(CompletedCourses);
   const [semestersOld, setSemestersOld] = useState<SemesterState[]>([
     {
       accepts: [ItemTypes.COURSE],
@@ -243,8 +242,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
         //find the course by name in the master list of all courses
         course = courses.find((item) => item.name === name);
       }
-      console.log(course);
-      console.log(dragSource);
+
       //Could potentially add a duplicate if course is in schedule more than once
       setDroppedCourses(
         update(droppedCourses, course ? { $push: [course] } : { $push: [] })
@@ -261,7 +259,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
         currentCourses.push(x.subject + "-" + x.number);
       });
 
-      // Run the prerequisite check on the course
+      // Run the prerequisite check on the course if dragged from the course list
       if (
         dragSource === "CourseList" &&
         !courseAlreadyInSemester(course, index)
@@ -359,7 +357,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
     (item: { name: string; dragSource: string }) => {
       const { name } = item;
       const { dragSource } = item;
-      console.log(dragSource);
       //ignore all drops from the course list
       if (dragSource !== "CourseList") {
         //get the semester index from the drag source
@@ -499,6 +496,11 @@ export const Container: FC<ContainerProps> = memo(function Container({
         });
       }
     });
+
+    // Append completed courses to the array
+    CompletedCourses.forEach((x) => {
+      previousCourses.push(x);
+    })
 
     return previousCourses;
   }
