@@ -500,7 +500,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
     // Append completed courses to the array
     CompletedCourses.forEach((x) => {
       previousCourses.push(x);
-    })
+    });
 
     return previousCourses;
   }
