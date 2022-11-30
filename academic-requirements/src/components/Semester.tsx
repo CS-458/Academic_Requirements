@@ -17,6 +17,7 @@ const style: CSSProperties = {
   fontSize: "1rem",
   lineHeight: "normal",
   float: "left",
+  whiteSpace: "pre"
 };
 
 export interface SemesterProps {
@@ -56,7 +57,7 @@ export const Semester: FC<SemesterProps> = memo(function Semester({
       style={{ ...style, backgroundColor }}
       data-testid="semester"
     >
-      {isActive ? "Release to drop" : `Semester ${semesterNumber}`}
+      {isActive ? "Release to drop" : `Semester ${semesterNumber} ${semesterNumber % 2 == 0 ? '\nSpring' : '\nFall'}`}
 
       {courses &&
         courses.map(
