@@ -32,6 +32,9 @@ function App() {
   const [major, setMajor] = useState("");
   const [concentration, setConcentration] = useState("");
 
+  //requirements for the concentration
+  const [requirements, setRequirementsData] = useState([]);
+
   // courseSubjects the array of subject strings from the database
   const [courseSubjects, setCourseSubjects] = useState([]);
   // selectedCourseSubject is the specific course subject selected
@@ -107,7 +110,6 @@ function App() {
     fetch("/subjects")
       .then((res) => res.json())
       .then((result) => {
-        console.log(result);
         let temp = [];
         result.forEach((x) => {
           temp.push(x.subject);
@@ -171,6 +173,16 @@ function App() {
       });
   }, [concentrationCode]);
 
+  //Gets the requirements related to the major/concentration
+  useEffect(() => {
+    fetch(`/requirements?conid=${concentrationCode}`)
+      .then((res) => res.json())
+      .then((result) => {
+        // Sets concentrationCourseData to the result from the query
+        setRequirementsData(result);
+      });
+  }, [concentrationCode]);
+
   // Gets the 'idMajor' relating to the 'name' of the selected major
   // Runs when major is updated
   useEffect(() => {
@@ -219,6 +231,7 @@ function App() {
           selectedMajor={major}
           selectedConcentration={concentration}
           completedCourses={coursesTaken}
+          requirements={requirements}
         />
         <ErrorPopup
           onClose={popupCloseHandler}

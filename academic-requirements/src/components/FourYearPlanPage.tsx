@@ -28,6 +28,14 @@ const FourYearPlanPage = (props: {
   }[];
   selectedMajor: string;
   selectedConcentration: string;
+  requirements: {
+    courseCount: number
+    courseReqs: string
+    creditCount: number
+    idCategory: number
+    name: string
+    parentCategory: number
+  }[]
 }) => {
   //Functions and variables for controlling an error popup
   const [visibility, setVisibility] = useState(false);
@@ -79,13 +87,11 @@ const FourYearPlanPage = (props: {
                 props.concentrationCourseList
               )}
               CompletedCourses={props.completedCourses}
+              requirements={props.requirements}
             />
-            <div className="right-side">
-              <div className="requirements">Requirements</div>
-              <button data-testid="ExportButton" onClick={exportSchedule}>
-                Export Schedule
-              </button>
-            </div>
+            <button data-testid="ExportButton" onClick={exportSchedule}>
+              Export Schedule
+            </button>
           </div>
         </div>
       )}
