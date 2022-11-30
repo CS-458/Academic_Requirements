@@ -29,6 +29,9 @@ const ImportPopup = (props) => {
   const processUpload = () => {
     // HTML of the uploaded file
     var filenameElement = document.getElementById("fileName");
+
+    var file = document.getElementById("fileName").files[0];
+
     // if file has been selected
     if (filenameElement.files.length > 0) {
       //store file name in fileName
@@ -48,6 +51,12 @@ const ImportPopup = (props) => {
     }
     // if it is file "uploads" (really justs closes the the pop up)
     else {
+      let fileReader = new FileReader();
+      fileReader.readAsText(file);
+      fileReader.onload = function () {
+        console.log(fileReader.result)
+      }
+
       console.log("upload");
       closeHandler();
     }
