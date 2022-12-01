@@ -64,6 +64,16 @@ it("test /courses/concentration endpoint", async () => {
     });
 });
 
+it("test /courses/geneds endpoint", async () => {
+  await supertest(app)
+    .get("/courses/geneds")
+    .expect(200)
+    .then((response) => {
+      expect(Array.isArray(response.body)).toBeTruthy();
+      expect(response.body.length).toBeGreaterThan(0);
+    });
+});
+
 it("test /requirements endpoint", async () => {
   await supertest(app)
     .get("/requirements?conid=10")

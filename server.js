@@ -63,9 +63,7 @@ app.get("/courses/major", (req, res) => {
 	JOIN category c ON mc.categoryId = c.idCategory
 	JOIN coursecategory cc ON c.idCategory = cc.categoryId
 	JOIN course co ON cc.courseId = co.idCourse
-	WHERE m.idMajor = ?
-  UNION 
-  SELECT "CS", "144", "Computer Science I", "4", "", "cs testing" AS 'category'`,
+	WHERE m.idMajor = ?`,
     [req.query.majid],
     function (err, result) {
       if (err) {
@@ -88,6 +86,26 @@ app.get("/courses/concentration", (req, res) => {
 	JOIN course co ON coc.courseId = co.idCourse
 	WHERE c.idConcentration = ?`,
     [req.query.conid],
+    function (err, result) {
+      if (err) {
+        res.send(err);
+        return;
+      }
+      res.send(result);
+    }
+  );
+});
+
+app.get("/courses/geneds", (req, res) => {
+  checkConnection();
+  connection.query(
+    `SELECT co.subject, co.number, co.credits, co.semesters, co.name, co.preReq, cat.name AS 'category'
+    FROM category cat
+    JOIN coursecategory cc ON cc.categoryId = cat.idCategory
+    JOIN course co ON co.idCourse = cc.courseId
+    WHERE cat.idCategory NOT IN (SELECT categoryId FROM majorCategory) AND 
+          cat.idCategory NOT IN (SELECT categoryId FROM concentrationCategory)`,
+    [],
     function (err, result) {
       if (err) {
         res.send(err);
