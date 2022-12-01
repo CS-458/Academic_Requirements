@@ -13,6 +13,8 @@ const FourYearPlanPage = (props: {
     subject: string;
     preReq: string;
     category: string;
+    id: number;
+    idCategory: number;
   }[];
   concentrationCourseList: {
     credits: number;
@@ -22,6 +24,8 @@ const FourYearPlanPage = (props: {
     subject: string;
     preReq: string;
     category: string;
+    id: number;
+    idCategory: number;
   }[];
   completedCourses: {
     Course: string[];
@@ -29,13 +33,13 @@ const FourYearPlanPage = (props: {
   selectedMajor: string;
   selectedConcentration: string;
   requirements: {
-    courseCount: number
-    courseReqs: string
-    creditCount: number
-    idCategory: number
-    name: string
-    parentCategory: number
-  }[]
+    courseCount: number;
+    courseReqs: string;
+    creditCount: number;
+    idCategory: number;
+    name: string;
+    parentCategory: number;
+  }[];
 }) => {
   //Functions and variables for controlling an error popup
   const [visibility, setVisibility] = useState(false);

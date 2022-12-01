@@ -15,7 +15,7 @@ import React from "react";
 import SearchableDropdown from "./SearchableDropdown.tsx";
 import ErrorPopup from "./ErrorPopup";
 //@ts-ignore
-import {Requirement} from "./Requirement.tsx";
+import { Requirement } from "./Requirement.tsx";
 
 //Defines the properties that each type should have
 interface SemesterState {
@@ -53,16 +53,21 @@ export interface ContainerProps {
     subject: string;
     preReq: string;
     category: string;
+    id: number;
+    idCategory: number;
   }[];
   CompletedCourses: string[];
   requirements: {
-    courseCount: number
-    courseReqs: string
-    creditCount: number
-    idCategory: number
-    name: string
-    parentCategory: number
-  }[]
+    courseCount: number;
+    courseReqs: string;
+    creditCount: number;
+    idCategory: number;
+    name: string;
+    parentCategory: number;
+    coursesTaken: string;
+    courseCountTaken: number;
+    creditCountTaken: number;
+  }[];
 }
 
 export const Container: FC<ContainerProps> = memo(function Container({
@@ -183,7 +188,18 @@ export const Container: FC<ContainerProps> = memo(function Container({
   ]);
 
   //The list of requirements and their completion for display
-  const [requirementsDisplay, setRequirementsDisplay] = useState<Requirement[]>([]);
+  const [requirementsDisplay, setRequirementsDisplay] = useState<Requirement[]>(
+    []
+  );
+  //A list of all courses that are in more than one categories, for use with requirements
+  const [coursesInMultipleCategories, setCoursesInMultipleCategories] =
+    useState<
+      {
+        idString: string;
+        categories: number[];
+      }[]
+    >([]);
+
   //Stuff for category dropdown. Hovland 7Nov22
   const [category, setCategory] = useState(""); //category that is selected
   const [categories, setCategories] = useState<string[]>([]); //list of all categories
@@ -299,7 +315,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
               },
             })
           );
-          //handleRemoveItem(course);
+          checkRequirements(course);
         } else {
           // fails to satisfy prerequisites
           //shows error message
@@ -560,17 +576,95 @@ export const Container: FC<ContainerProps> = memo(function Container({
     setVisibility(false);
   };
 
-
   useEffect(() => {
-    let temp : Requirement[]=[];
-    requirements.forEach((x) =>{if(!x.parentCategory){
-      temp.push(x);
-    }}
-    );
+    let temp: Requirement[] = [];
+    requirements.forEach((x) => {
+      if (!x.parentCategory) {
+        temp.push(x);
+      }
+    });
     setRequirementsDisplay(temp);
-  },[requirements]);
-  console.log(requirementsDisplay)
-  console.log(requirements)
+    //get the courses with more than one category they can satisfy
+    var tempArr: {
+      idString: string;
+      categories: number[];
+    }[] = [];
+    //go through each item in the array to get any with duplicate categories
+    for (var i = 0; i < PassedCourseList.length; i++) {
+      let skip = false;
+      //check that we havent already added this on to the array
+      for (var k = 0; k < tempArr.length; k++) {
+        if (
+          PassedCourseList[i].subject + "-" + PassedCourseList[i].number ===
+          tempArr[k].idString
+        ) {
+          skip = true;
+        }
+      }
+      //only look for more if this one isn't recorded
+      if (!skip) {
+        let currentIdString =
+          PassedCourseList[i].subject + "-" + PassedCourseList[i].number;
+        let tempCatArr: number[] = [];
+        for (var j = i + 1; j < PassedCourseList.length; j++) {
+          if (
+            currentIdString ===
+            PassedCourseList[j].subject + "-" + PassedCourseList[j].number
+          ) {
+            tempCatArr.push(PassedCourseList[i].idCategory);
+          }
+        }
+        if (tempCatArr.length > 0) {
+          tempArr.push({ idString: currentIdString, categories: tempCatArr });
+        }
+      }
+    }
+    setCoursesInMultipleCategories(tempArr);
+  }, [requirements]);
+  console.log(coursesInMultipleCategories);
+  //TODO do the requirements define when a course can be taken twice for credit
+  //TODO pull all courses with more than one category
+  function checkRequirements(course: Course) {
+    //Requirement format
+    // courseCount:null
+    // courseReqs:null
+    // creditCount:null
+    // idCategory:7
+    // name:"Computer Science Core"
+    // parentCategory:null
+    //requirements array contains major then concentration then gen-eds
+    //Start at first element in array (major requirements) and go top down
+    let courseString = course.subject + "-" + course.number;
+    requirements.forEach((x) => {
+      //Check if this is the category of the course
+      if (course.idCategory == x.idCategory) {
+        console.log("Matched Category" + x.idCategory);
+        //Check if a course has already been used for this requirement
+        if (!x.coursesTaken.indexOf(courseString)) {
+          console.log("Not already counted");
+          //The only requirement is a course count
+          if (x.courseCount && !x.courseReqs && !x.creditCount) {
+          }
+          //The only requirement is a courses required list
+          if (!x.courseCount && x.courseReqs && !x.creditCount) {
+            //TODO run some string processing
+          }
+          //The only requirement is a credit count
+          if (!x.courseCount && !x.courseReqs && x.creditCount) {
+          }
+          //The requirement is a course count and a list of required courses
+          if (x.courseCount && x.courseReqs && !x.creditCount) {
+          }
+          //The requirement is a credit count and list of required courses
+          if (x.courseCount && !x.courseReqs && !x.creditCount) {
+          }
+          //The requirement is a credit count and a course count
+          if (x.courseCount && !x.courseReqs && x.creditCount) {
+          }
+        }
+      }
+    });
+  }
   return (
     <div>
       <div className="drag-drop">
@@ -583,7 +677,10 @@ export const Container: FC<ContainerProps> = memo(function Container({
           />
           <div className="schedule">
             {semesters.map(
-              ({ accepts, lastDroppedItem, semesterNumber, courses }, index) => (
+              (
+                { accepts, lastDroppedItem, semesterNumber, courses },
+                index
+              ) => (
                 <Semester
                   accept={accepts}
                   lastDroppedItem={lastDroppedItem}
@@ -622,18 +719,37 @@ export const Container: FC<ContainerProps> = memo(function Container({
         </div>
         <div className="requirements">
           <p>Requirements</p>
-          {requirementsDisplay?.map(({name, courseCount, courseReqs, creditCount, idCategory, parentCategory, percentage}, index)=>(
-            <Requirement
-              courseCount={courseCount}
-              courseReqs={courseReqs}
-              creditCount={creditCount}
-              idCategory={idCategory}
-              name={name}
-              parentCategory={parentCategory}
-              percentage={percentage} 
-              key={index}
-            />  
-          ))}
+          {requirementsDisplay?.map(
+            (
+              {
+                name,
+                courseCount,
+                courseReqs,
+                creditCount,
+                idCategory,
+                parentCategory,
+                percentage,
+                coursesTaken,
+                courseCountTaken,
+                creditCountTaken,
+              },
+              index
+            ) => (
+              <Requirement
+                courseCount={courseCount}
+                courseReqs={courseReqs}
+                creditCount={creditCount}
+                idCategory={idCategory}
+                name={name}
+                parentCategory={parentCategory}
+                percentage={percentage}
+                coursesTaken={coursesTaken}
+                courseCountTaken={courseCountTaken}
+                creditCountTaken={creditCountTaken}
+                key={index}
+              />
+            )
+          )}
         </div>
       </div>
     </div>

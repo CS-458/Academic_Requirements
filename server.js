@@ -57,15 +57,15 @@ app.get("/concentration", (req, res) => {
 app.get("/courses/major", (req, res) => {
   checkConnection();
   connection.query(
-    `SELECT co.subject, co.number, co.name, co.credits, co.preReq, c.name AS 'category'
+    `SELECT co.subject, co.number, co.name, co.credits, co.preReq, co.idCourse, c.name AS 'category', c.idCategory
 	FROM major m
 	JOIN majorcategory mc ON m.idMajor = mc.majorId
 	JOIN category c ON mc.categoryId = c.idCategory
 	JOIN coursecategory cc ON c.idCategory = cc.categoryId
 	JOIN course co ON cc.courseId = co.idCourse
 	WHERE m.idMajor = ?
-  UNION 
-  SELECT "CS", "144", "Computer Science I", "4", "", "cs testing" AS 'category'`,
+  #UNION 
+  #SELECT "CS", "144", "Computer Science I", "4", "", "cs testing" AS 'category'`,
     [req.query.majid],
     function (err, result) {
       if (err) {
@@ -77,10 +77,11 @@ app.get("/courses/major", (req, res) => {
   );
 });
 
+//TODO get the category id to match from instead of name
 app.get("/courses/concentration", (req, res) => {
   checkConnection();
   connection.query(
-    `SELECT co.subject, co.number, co.credits, co.semesters, co.name, co.preReq, ca.name AS 'category' 
+    `SELECT co.subject, co.number, co.credits, co.semesters, co.name, co.preReq, co.idCourse, ca.name AS 'category', ca.idCategory
 	FROM concentration c
 	JOIN concentrationcategory cc ON c.idConcentration = cc.concentrationId
 	JOIN category ca ON cc.categoryId = ca.idCategory
