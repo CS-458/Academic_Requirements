@@ -107,7 +107,6 @@ function App() {
     fetch("/subjects")
       .then((res) => res.json())
       .then((result) => {
-        console.log(result);
         let temp = [];
         result.forEach((x) => {
           temp.push(x.subject);
