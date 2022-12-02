@@ -192,6 +192,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
   const [requirementsDisplay, setRequirementsDisplay] = useState<Requirement[]>(
     []
   );
+  //Requirements that are manipulated
+  const [reqList, setReqList]= useState<Requirement[]>(requirements);
   //A list of all courses that are in more than one categories, for use with requirements
   const [coursesInMultipleCategories, setCoursesInMultipleCategories] =
     useState<
@@ -614,15 +616,16 @@ export const Container: FC<ContainerProps> = memo(function Container({
         let currentIdString =
           PassedCourseList[i].subject + "-" + PassedCourseList[i].number;
         let tempCatArr: number[] = [];
-        for (var j = i + 1; j < PassedCourseList.length; j++) {
+        for (var j = i; j < PassedCourseList.length; j++) {
           if (
             currentIdString ===
             PassedCourseList[j].subject + "-" + PassedCourseList[j].number
           ) {
-            tempCatArr.push(PassedCourseList[i].idCategory);
+            //console.log(PassedCourseList[j].name +" "+ PassedCourseList[j].idCategory);
+            tempCatArr.push(PassedCourseList[j].idCategory);
           }
         }
-        if (tempCatArr.length > 0) {
+        if (tempCatArr.length > 1) {
           tempArr.push({ idString: currentIdString, categories: tempCatArr });
         }
       }
@@ -632,53 +635,88 @@ export const Container: FC<ContainerProps> = memo(function Container({
   
   //TODO do the requirements define when a course can be taken twice for credit
   //TODO pull all courses with more than one category
-  function checkRequirements(course: Course) {
-    console.log(requirements);
+  const checkRequirements = useCallback((course: Course) =>{
+    //console.log(requirements);
+    //console.log(coursesInMultipleCategories);
     //requirements array contains major then concentration then gen-eds
     //Start at first element in array (major requirements) and go top down
     let courseString = course.subject + "-" + course.number;
     const reqCheck = new StringProcessing();
-    requirements.forEach((x) => {
+    for (var i = 0; i < reqList.length; i++){
+      let x = reqList[i];
+      if(x.coursesTaken == undefined){x.coursesTaken = [];}
+      if(x.creditCountTaken == undefined){x.creditCountTaken=0;}
+      if(x.courseCountTaken == undefined){x.courseCountTaken=0;}
       //Check if this is the category of the course
       if (course.idCategory == x.idCategory) {
         console.log("Matched Category" + x.idCategory);
         //Check if a course has already been used for this requirement
-        if (!x.coursesTaken?.indexOf(courseString)) {
+        console.log(x.coursesTaken.indexOf(courseString));
+        if (x.coursesTaken.indexOf(courseString)==-1) {
           console.log("Not already counted");
           //The only requirement is a course count
           if (x.courseCount && !x.courseReqs && !x.creditCount) {
+            console.log("courses")
             x.courseCountTaken = x.courseCountTaken + 1;
-            x.percentage = x.courseCountTaken / x.courseCount;
+            x.percentage = (x.courseCountTaken / x.courseCount)*100;
           }
           //The only requirement is a courses required list
           if (!x.courseCount && x.courseReqs && !x.creditCount) {
+            console.log("required courses")
             //TODO run some string processing
             console.log(reqCheck.courseInListCheck(x.courseReqs,[courseString]));
+          
           }
           //The only requirement is a credit count
           if (!x.courseCount && !x.courseReqs && x.creditCount) {
+            console.log("credits")
             x.creditCountTaken = x.creditCountTaken + course.credits;
-            x.percentage = x.creditCountTaken/x.creditCount;
+            x.percentage = (x.creditCountTaken/x.creditCount)*100;
+           
+         
           }
           //The requirement is a course count and a list of required courses
           if (x.courseCount && x.courseReqs && !x.creditCount) {
+            console.log("course count with required courses")
             console.log(reqCheck.courseInListCheck(x.courseReqs,[courseString]));
+            
           }
           //The requirement is a credit count and list of required courses
           if (!x.courseCount && x.courseReqs && x.creditCount) {
+            console.log("credits and list")
             console.log(reqCheck.courseInListCheck(x.courseReqs,[courseString]));
+            
           }
           //The requirement is a credit count and a course count
           if (x.courseCount && !x.courseReqs && x.creditCount) {
+            console.log("credits and course count")
+            x.courseCountTaken = x.courseCountTaken + 1;
+            x.creditCountTaken = x.creditCountTaken + course.credits;
+            let temp1 = (x.creditCountTaken/x.creditCount)*100;
+            let temp2 = (x.courseCountTaken/x.courseCount)*100;
+            if(temp1>temp2){
+              x.percentage = temp2;
+            }else{
+              x.percentage = temp1;
+            }   
           }
           //The requirement is a credit count, a course count, and a course list
           if (x.courseCount && x.courseReqs && x.creditCount) {
+            console.log("all three")
             console.log(reqCheck.courseInListCheck(x.courseReqs,[courseString]));
+            
           }
+          x.coursesTaken.push(courseString);
+          console.log("Courses taken "+x.coursesTaken)
+
         }
       }
-    });
-  }
+    }
+    for (var i=0; i< requirements.length; i++ ){
+      console.log(requirements[i].idCategory +""+ requirements[i].percentage)
+    }
+  },[reqList]);
+
   return (
     <div>
       <div className="drag-drop">
