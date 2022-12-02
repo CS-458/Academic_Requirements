@@ -274,7 +274,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
         //find the course by name in the master list of all courses
         course = courses.find((item) => item.name === name);
       }
-      
+
       console.log("Managing Course:", course);
 
       //Could potentially add a duplicate if course is in schedule more than once

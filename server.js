@@ -53,7 +53,6 @@ app.get("/concentration", (req, res) => {
   );
 });
 
-//TODO delete the UNION here!
 app.get("/courses/major", (req, res) => {
   checkConnection();
   connection.query(
@@ -63,7 +62,8 @@ app.get("/courses/major", (req, res) => {
 	JOIN category c ON mc.categoryId = c.idCategory
 	JOIN coursecategory cc ON c.idCategory = cc.categoryId
 	JOIN course co ON cc.courseId = co.idCourse
-	WHERE m.idMajor = ?`,
+	WHERE m.idMajor = ?
+  ORDER BY co.subject, co.number`,
     [req.query.majid],
     function (err, result) {
       if (err) {
@@ -85,7 +85,8 @@ app.get("/courses/concentration", (req, res) => {
 	JOIN category ca ON cc.categoryId = ca.idCategory
 	JOIN coursecategory coc ON ca.idCategory = coc.categoryId
 	JOIN course co ON coc.courseId = co.idCourse
-	WHERE c.idConcentration = ?`,
+	WHERE c.idConcentration = ?
+  ORDER BY co.subject, co.number`,
     [req.query.conid],
     function (err, result) {
       if (err) {
@@ -105,7 +106,8 @@ app.get("/courses/geneds", (req, res) => {
     JOIN coursecategory cc ON cc.categoryId = cat.idCategory
     JOIN course co ON co.idCourse = cc.courseId
     WHERE cat.idCategory NOT IN (SELECT categoryId FROM majorCategory) AND 
-          cat.idCategory NOT IN (SELECT categoryId FROM concentrationCategory)`,
+          cat.idCategory NOT IN (SELECT categoryId FROM concentrationCategory)
+    ORDER BY co.subject, co.number`,
     [],
     function (err, result) {
       if (err) {
