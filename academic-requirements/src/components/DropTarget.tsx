@@ -243,6 +243,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
         course = courses.find((item) => item.name === name);
       }
 
+      console.log("Managing Course:", course);
+
       //Could potentially add a duplicate if course is in schedule more than once
       setDroppedCourses(
         update(droppedCourses, course ? { $push: [course] } : { $push: [] })
