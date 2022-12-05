@@ -37,6 +37,9 @@ function App() {
   //requirements for the concentration
   const [requirements, setRequirementsData] = useState([]);
 
+  //general requirements
+  const [requirementsGen, setRequirementsGenData] =useState([]);
+
   // courseSubjects the array of subject strings from the database
   const [courseSubjects, setCourseSubjects] = useState([]);
   // selectedCourseSubject is the specific course subject selected
@@ -191,6 +194,16 @@ function App() {
       });
   }, [concentrationCode]);
 
+    //Gets the requirements related to the major/concentration
+    useEffect(() => {
+      fetch(`/requirements/gen?conid=${concentrationCode}`)
+        .then((res) => res.json())
+        .then((result) => {
+          // Sets concentrationCourseData to the result from the query
+          setRequirementsGenData(result);
+        });
+    }, [concentrationCode]);
+
   // Gets the 'idMajor' relating to the 'name' of the selected major
   // Runs when major is updated
   useEffect(() => {
@@ -241,6 +254,7 @@ function App() {
           selectedConcentration={concentration}
           completedCourses={coursesTaken}
           requirements={requirements}
+          requirementsGen={requirementsGen}
         />
         <ErrorPopup
           onClose={popupCloseHandler}

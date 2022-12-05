@@ -52,6 +52,14 @@ const FourYearPlanPage = (props: {
     name: string;
     parentCategory: number;
   }[];
+  requirementsGen: {
+    courseCount: number;
+    courseReqs: string;
+    creditCount: number;
+    idCategory: number;
+    name: string;
+    parentCategory: number;
+  }[];
 }) => {
   //Functions and variables for controlling an error popup
   const [visibility, setVisibility] = useState(false);
@@ -104,6 +112,7 @@ const FourYearPlanPage = (props: {
                 .concat(props.genEdCourseList)}
               CompletedCourses={props.completedCourses}
               requirements={props.requirements}
+              requirementsGen={props.requirementsGen}
             />
             <button data-testid="ExportButton" onClick={exportSchedule}>
               Export Schedule
