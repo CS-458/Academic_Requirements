@@ -163,8 +163,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
 
   //The visibility of the error message
   const [visibility, setVisibility] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [titleName, setTitle] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
+  const [titleName, setTitle] = useState("");
   //A master list of all courses for the major, concentration, and gen eds
   const [courses, setCourses] = useState<Course[]>(PassedCourseList);
   //A list of all courses that have been dropped into a semester
@@ -244,15 +244,14 @@ export const Container: FC<ContainerProps> = memo(function Container({
       } else {
         //find the course by name in the master list of all courses
         course = courses.find((item) => item.name === name);
-         
       }
 
       console.log("Managing Course:", course);
 
       //Could potentially add a duplicate if course is in schedule more than once
-        setDroppedCourses(
-          update(droppedCourses, course ? { $push: [course] } : { $push: [] })
-       );
+      setDroppedCourses(
+        update(droppedCourses, course ? { $push: [course] } : { $push: [] })
+      );
       // prereqCheck will be used to check prerequisites
       const prereqCheck = new StringProcessing();
 
@@ -426,7 +425,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
     let preReqsSatisfied = true;
     let courseHasMoved = false;
 
-    semesters.forEach((currSemester, index) => {         
+    semesters.forEach((currSemester, index) => {
       if (
         preReqsSatisfied &&
         currSemester.semesterNumber - 1 >= courseSemesterIndex
@@ -481,7 +480,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
     return preReqsSatisfied;
   }
 
-  function courseAlreadyInSemester(     
+  function courseAlreadyInSemester(
     course: Course,
     semesterIndex: number
   ): boolean {
@@ -527,22 +526,21 @@ export const Container: FC<ContainerProps> = memo(function Container({
     return semCourses;
   }
 
-  function checkForCourseInMultipleSemesters(course1){
-      //Iterate through array of courses dragged and dropped into semester
-      semesters.map((semester,index) => {
-        //If index of the course already dropped in the dropped course array is the same as
-        //the current course being dropped, Display a message.
-        console.log(courses);
-        semester.courses.map((course2,index) => {
-        if(course1==course2)
-        {
-         setTitle("Warning")
-         setVisibility(true);
-         setErrorMessage("Course already in other semesters.");
-        }}
-        )
-      })
- }
+  function checkForCourseInMultipleSemesters(course1) {
+    //Iterate through array of courses dragged and dropped into semester
+    semesters.map((semester, index) => {
+      //If index of the course already dropped in the dropped course array is the same as
+      //the current course being dropped, Display a message.
+      console.log(courses);
+      semester.courses.map((course2, index) => {
+        if (course1 == course2) {
+          setTitle("Warning");
+          setVisibility(true);
+          setErrorMessage("Course already in other semesters.");
+        }
+      });
+    });
+  }
   // Get all courses (string) in current semester
   // param semesterIndex -> current semester index
   function getSemesterCoursesNames(semesterIndex: number): Array<string> {
@@ -585,7 +583,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
             onClose={popupCloseHandler}
             show={visibility}
             title={titleName}
-            error={errorMessage}       
+            error={errorMessage}
           />
           {semesters.map(
             ({ accepts, lastDroppedItem, semesterNumber, courses }, index) => (

@@ -77,13 +77,12 @@ const FourYearPlanPage = (props: {
           <div className="four-year-plan" data-testid="scheduleContent">
             <h1>Academic Planner</h1>
           </div>
-           { <ErrorPopup
-            onClose={popupCloseHandler}
-            show={visibility}
-            title="Error"
-            error={error}
-            //Possibly place if statement for popup here.
-          /> } 
+            <ErrorPopup
+              onClose={popupCloseHandler}
+              show={visibility}
+              title="Error"
+              error={error}
+            />
           <div className="page">
             <Example
               PassedCourseList={props.majorCourseList
