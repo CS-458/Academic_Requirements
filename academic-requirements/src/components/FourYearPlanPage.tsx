@@ -67,12 +67,13 @@ const FourYearPlanPage = (props: {
           <div className="four-year-plan" data-testid="scheduleContent">
             <h1>Academic Planner</h1>
           </div>
-          <ErrorPopup
+           { <ErrorPopup
             onClose={popupCloseHandler}
             show={visibility}
             title="Error"
             error={error}
-          />
+            //Possibly place if statement for popup here.
+          /> } 
           <div className="page">
             <Example
               PassedCourseList={props.majorCourseList.concat(

@@ -14,6 +14,7 @@ import React from "react";
 //@ts-ignore
 import SearchableDropdown from "./SearchableDropdown.tsx";
 import ErrorPopup from "./ErrorPopup";
+import { TEXT } from "react-dnd-html5-backend/dist/NativeTypes";
 
 //Defines the properties that each type should have
 interface SemesterState {
@@ -163,6 +164,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
 
   //The visibility of the error message
   const [visibility, setVisibility] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   //A master list of all courses for the major, concentration, and gen eds
   const [courses, setCourses] = useState<Course[]>(PassedCourseList);
   //A list of all courses that have been dropped into a semester
@@ -227,6 +229,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
   }
 
   //Handle a drop into a semester from a semester or the course list
+  //Check out for AR-118
   const handleDrop = useCallback(
     (index: number, item: { name: string; dragSource: string }) => {
       const { name } = item;
@@ -350,11 +353,14 @@ export const Container: FC<ContainerProps> = memo(function Container({
           }
         }
       }
+      //Run fuction I need to write for checking semesters.
+      checkForCourseInMultipleSemesters(course);
     },
     [semesters]
   );
 
   //handle a drop into the course list from a semester
+  //Check out for AR-118
   const handleReturnDrop = useCallback(
     (item: { name: string; dragSource: string }) => {
       const { name } = item;
@@ -394,6 +400,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
           setVisibility(true);
         }
       }
+      //may want to run function around here for checking courses in semesters.
+    //  checkForCourseInMultipleSemesters(courses);
     },
     [courses, semesters]
   );
@@ -418,7 +426,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
     let preReqsSatisfied = true;
     let courseHasMoved = false;
 
-    semesters.forEach((currSemester, index) => {
+    semesters.forEach((currSemester, index) => {          //Check out this loop, may put pop up statement here.
       if (
         preReqsSatisfied &&
         currSemester.semesterNumber - 1 >= courseSemesterIndex
@@ -473,7 +481,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
     return preReqsSatisfied;
   }
 
-  function courseAlreadyInSemester(
+  function courseAlreadyInSemester(     
     course: Course,
     semesterIndex: number
   ): boolean {
@@ -514,6 +522,22 @@ export const Container: FC<ContainerProps> = memo(function Container({
     return semCourses;
   }
 
+  function checkForCourseInMultipleSemesters(course){
+    //BUG:If semesters emptied, course and try to re-add a course to semesters,
+    //Error message will display.
+    //Possible reason: course not being removed from droppedCourses.
+
+    //Iterate through array of courses dragged and dropped into semester
+      droppedCourses.map((course,index) => {
+        //If index of the course already dropped in the dropped course array is the same as
+        //the current course being dropped, Display a message.
+        if(droppedCourses.at(courses[index])==course)
+        {
+         setVisibility(true);
+         setErrorMessage("Course already in other semesters.");
+        }
+      })
+ }
   // Get all courses (string) in current semester
   // param semesterIndex -> current semester index
   function getSemesterCoursesNames(semesterIndex: number): Array<string> {
@@ -556,7 +580,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
             onClose={popupCloseHandler}
             show={visibility}
             title="Error"
-            error={"CANNOT MOVE COURSE! FAILS PREREQUISITES"}
+            error={errorMessage}       //Experiment here, AR-118
           />
           {semesters.map(
             ({ accepts, lastDroppedItem, semesterNumber, courses }, index) => (
