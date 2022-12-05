@@ -841,7 +841,17 @@ export const Container: FC<ContainerProps> = memo(function Container({
             if (!x.courseCount && x.courseReqs && !x.creditCount) {
               console.log("required courses")
               //TODO run some string processing
-              console.log(reqCheck.courseInListCheck(x.courseReqs,[courseString]));
+              let validCourse = false;
+              courseReqArr.forEach(item => {
+                let found = reqCheck.courseInListCheck(item, [courseString])
+                if(found){
+                  validCourse = true;
+                }
+              })
+              if(validCourse){
+                x.percentage = x.percentage + 1/courseReqArr.length;
+                console.log(x.percentage)
+              }
             
             }
             //The only requirement is a credit count
@@ -855,13 +865,33 @@ export const Container: FC<ContainerProps> = memo(function Container({
             //The requirement is a course count and a list of required courses
             if (x.courseCount && x.courseReqs && !x.creditCount) {
               console.log("course count with required courses")
-              console.log(reqCheck.courseInListCheck(x.courseReqs,[courseString]));
+              let validCourse = false;
+              courseReqArr.forEach(item => {
+                let found = reqCheck.courseInListCheck(item, [courseString])
+                if(found){
+                  validCourse = true;
+                }
+              })
+              if(validCourse){
+                x.percentage = x.percentage + 1/courseReqArr.length;
+                console.log(x.percentage)
+              }
               
             }
             //The requirement is a credit count and list of required courses
             if (!x.courseCount && x.courseReqs && x.creditCount) {
               console.log("credits and list")
-              console.log(reqCheck.courseInListCheck(x.courseReqs,[courseString]));
+              let validCourse = false;
+              courseReqArr.forEach(item => {
+                let found = reqCheck.courseInListCheck(item, [courseString])
+                if(found){
+                  validCourse = true;
+                }
+              })
+              if(validCourse){
+                x.percentage = x.percentage + 1/courseReqArr.length;
+                console.log(x.percentage)
+              }
               
             }
             //The requirement is a credit count and a course count
