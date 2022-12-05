@@ -30,26 +30,32 @@ app.listen(port, () => console.log(`Listening on port ${port}`));
 //This is used to get the idMajor from the db using the name
 app.get("/majorID", (req, res) => {
   checkConnection();
-  connection.query("SELECT idMajor FROM Major WHERE Major.name = ?", [req.query.mname], function (err, result) {
-    if (err) {
-      res.send(err);
-      return;
-    }
-    res.send(result);
-  });
-});
-
-app.get("/concentrationID", (req, res) => {
-  checkConnection();
-  connection.query("SELECT idConcentration FROM Concentration WHERE Concentration.name = ?",
-   [req.query.cname],
+  connection.query(
+    "SELECT idMajor FROM Major WHERE Major.name = ?",
+    [req.query.mname],
     function (err, result) {
       if (err) {
         res.send(err);
         return;
       }
       res.send(result);
-  });
+    }
+  );
+});
+
+app.get("/concentrationID", (req, res) => {
+  checkConnection();
+  connection.query(
+    "SELECT idConcentration FROM Concentration WHERE Concentration.name = ?",
+    [req.query.cname],
+    function (err, result) {
+      if (err) {
+        res.send(err);
+        return;
+      }
+      res.send(result);
+    }
+  );
 });
 
 app.get("/major", (req, res) => {
