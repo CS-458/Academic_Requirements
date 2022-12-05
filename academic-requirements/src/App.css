@@ -87,10 +87,8 @@ body {
 }
 
 .schedule{
-  height: 80%;
-  width: 80%;
-  
-  
+  height: 100%;
+  width: 100%;
   column-gap: 1px;
   row-gap: 1px;
   
@@ -101,6 +99,7 @@ body {
   display: grid;
   grid-template-rows: auto auto;
   column-gap: 1px;
+  text-align: center;
   
 }
 .requirements {
@@ -108,6 +107,7 @@ body {
   background-color: gainsboro;
   text-align: center;
   overflow: auto;
+  border-radius: 2%;
 }
 
 .input-grid {
@@ -117,14 +117,14 @@ body {
   column-gap: 15px;
   row-gap: 0px;
   justify-items: center;
-  
+ 
 
 }
 
 .input-grid-item {
   text-align: center;
   height: 100%;
-  
+ 
 }
 
 .input-grid-dropdown {
@@ -132,7 +132,7 @@ body {
   height: 100%;
   display: flex;
   flex-flow: column nowrap;
-  
+ 
 }
 
 .input-grid-item-courses {
@@ -151,6 +151,7 @@ body {
   text-align: center;
   width: 100%;
   float: left;
+  
 }
 
 .RequirementText{
@@ -158,7 +159,24 @@ body {
   padding-bottom: 15px;
   display: grid;
   grid-template-columns: 75% 25%;
+  text-align: center;
+  
 }
 .percentage{
   text-align: right;
+}
+
+.semester{
+  height: 11rem;
+  width: 17%;
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+  color: white;
+  padding: 1rem;
+  text-align: center;
+  font-size: 1rem;
+  line-height: normal;
+  float: left;
+  border-radius: 0.5rem;
+
 }

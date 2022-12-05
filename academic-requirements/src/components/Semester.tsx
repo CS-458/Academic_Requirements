@@ -8,7 +8,7 @@ import { ItemTypes } from "./Constants";
 //styling for the semester
 const style: CSSProperties = {
   height: "11rem",
-  width: "17%",
+  width: "18.5%",
   marginRight: ".5rem",
   marginBottom: ".5rem",
   color: "white",
@@ -19,7 +19,7 @@ const style: CSSProperties = {
   float: "left",
   background: "navy",
   borderRadius: ".5rem",
-  
+  overflow: "auto",
 };
 
 export interface SemesterProps {
@@ -51,8 +51,9 @@ export const Semester: FC<SemesterProps> = memo(function Semester({
   let backgroundColor = "#222";
   if (isActive) {
     backgroundColor = "darkgreen";
-  }
-
+  } 
+   backgroundColor= "navyblue";
+  
   return (
     <div
       ref={drop}
