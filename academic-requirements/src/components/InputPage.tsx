@@ -48,6 +48,15 @@ const InputPage = (props: {
   const [concentrationOptions, setConcentrationOptions] =
     useState<Array<string>>(); // all available concentrations
 
+  const [jsonData, setJSONData] = useState([]);
+
+  useEffect(() => {
+    if(jsonData != undefined)
+    {
+      console.log(jsonData[0]);
+    }
+  },[jsonData])
+
   const [coursesTaken, setCoursesTaken] = useState<Array<string>>(
     props.takenCourses
   ); // courses taken list of strings
@@ -192,6 +201,7 @@ const InputPage = (props: {
             title="Upload"
             show={uploaderVisibility}
             onClose={popupCloseHandlerUp}
+            returnJSON={setJSONData}
           />
           <div className="screen">
             <div className="input-grid">

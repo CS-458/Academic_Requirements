@@ -6,6 +6,8 @@ import PropTypes from "prop-types";
 const ImportPopup = (props) => {
   const [show, setShow] = useState(false);
 
+  let data;
+
   const closeHandler = (e) => {
     setShow(false);
     props.onClose(false);
@@ -49,15 +51,15 @@ const ImportPopup = (props) => {
       closeHandler();
       throwError("Not a JSON File");
     }
-    // if it is file "uploads" (really justs closes the the pop up)
+    // if it is file "uploads"
     else {
       let fileReader = new FileReader();
       fileReader.readAsText(file);
       fileReader.onload = function () {
-        console.log(fileReader.result)
+        data = fileReader.result;
+        props.returnJSON(JSON.parse(data).FourYearPlans);
+        console.log("upload");
       }
-
-      console.log("upload");
       closeHandler();
     }
   };
@@ -102,6 +104,7 @@ ImportPopup.propTypes = {
   title: PropTypes.string.isRequired,
   show: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
+  returnJSON: PropTypes.func.isRequired,
 };
 
 export default ImportPopup;

@@ -15,6 +15,7 @@ import React from "react";
 import SearchableDropdown from "./SearchableDropdown.tsx";
 import ErrorPopup from "./ErrorPopup";
 
+
 //Defines the properties that each type should have
 interface SemesterState {
   accepts: string[];
