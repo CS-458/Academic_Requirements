@@ -112,6 +112,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
 
   //The visibility of the error message
   const [visibility, setVisibility] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   //A master list of all courses for the major, concentration, and gen eds
   const [courses, setCourses] = useState<Course[]>(PassedCourseList);
   // A list of courses that should have a warning color on them
@@ -240,6 +241,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
           // fails to satisfy prerequisites
           //shows error message
           setVisibility(true);
+          setErrorMessage("CANNOT MOVE COURSE! FAILS PREREQUISITES");
         }
       }
       // Course was not found in the courses list, which means it currently occupies a semester
@@ -294,6 +296,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
             } else {
               // fails to satisfy prerequisites
               setVisibility(true);
+              setErrorMessage("CANNOT MOVE COURSE! FAILS PREREQUISITES");
             }
           }
         }
@@ -339,6 +342,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
         } else {
           // fails to satisfy prerequisites
           setVisibility(true);
+          setErrorMessage("CANNOT MOVE COURSE! FAILS PREREQUISITES");
         }
       }
     },
@@ -504,6 +508,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
         // If the course is not offered during the semester, add it to the warning course list
         if (!(warningCourses.find(x => x === updateWarning.course))) {
           warningCourses.push(updateWarning.course);
+          setVisibility(true);
+          setErrorMessage("WARNING! Course is not typically offered during the " + ((updateWarning.courseSemester % 2 === 0) ? "Spring" : "Fall") + " semester");
         }
       }
       // Otherwise remove it from the warning course list
@@ -525,7 +531,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
             onClose={popupCloseHandler}
             show={visibility}
             title="Error"
-            error={"CANNOT MOVE COURSE! FAILS PREREQUISITES"}
+            error={errorMessage}
           />
           {semesters.map(
             ({ accepts, lastDroppedItem, semesterNumber, courses }, index) => (
