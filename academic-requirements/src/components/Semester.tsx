@@ -1,10 +1,11 @@
 import type { CSSProperties, FC } from "react";
-import { memo } from "react";
 import { useDrop } from "react-dnd";
 import React from "react";
 //@ts-ignore
 import { Course } from "./DraggableCourse.tsx";
 import { ItemTypes } from "./Constants";
+import { useEffect } from "react";
+
 //styling for the semester
 const style: CSSProperties = {
   height: "12rem",
@@ -26,14 +27,16 @@ export interface SemesterProps {
   onDrop: (item: any) => void;
   semesterNumber: number;
   courses: Course[];
+  warningCourses: Course[];
 }
 
-export const Semester: FC<SemesterProps> = memo(function Semester({
+export const Semester: FC<SemesterProps> = function Semester({
   accept,
   lastDroppedItem,
   onDrop,
   semesterNumber,
   courses,
+  warningCourses,
 }) {
   //defines the drop action
   const [{ isOver }, drop] = useDrop({
@@ -61,20 +64,21 @@ export const Semester: FC<SemesterProps> = memo(function Semester({
 
       {courses &&
         courses.map(
-          ({ name, subject, number, semesters, credits, preReq }, index) => (
+          (course, index) => (
             <Course
-              name={name}
-              subject={subject}
-              number={number}
-              semesters={semesters}
+              name={course.name}
+              subject={course.subject}
+              number={course.number}
+              semesters={course.semesters}
               type={ItemTypes.COURSE}
-              credits={credits}
-              preReq={preReq}
+              credits={course.credits}
+              preReq={course.preReq}
               dragSource={"Semester " + (semesterNumber - 1)}
               key={index}
+              warningColor={warningCourses.find(x => x === course)}
             />
           )
         )}
     </div>
   );
-});
+};

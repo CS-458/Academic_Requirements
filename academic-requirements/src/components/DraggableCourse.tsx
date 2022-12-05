@@ -2,6 +2,7 @@ import type { FC } from "react";
 import { memo } from "react";
 import { useDrag } from "react-dnd";
 import React from "react";
+import clsx from "clsx";
 import "./DraggableCourse.css";
 
 //defines the expected course properties
@@ -14,6 +15,7 @@ export interface CourseProps {
   type: string;
   preReq: string;
   dragSource: string;
+  warningColor: boolean;
 }
 
 export const Course: FC<CourseProps> = memo(function Course({
@@ -25,6 +27,7 @@ export const Course: FC<CourseProps> = memo(function Course({
   semesters,
   preReq,
   dragSource,
+  warningColor,
 }) {
   //defines the drag action
   const [{ opacity }, drag] = useDrag(
@@ -39,6 +42,7 @@ export const Course: FC<CourseProps> = memo(function Course({
         semesters,
         preReq,
         dragSource,
+        warningColor,
       },
       collect: (monitor) => ({
         opacity: monitor.isDragging() ? 0.4 : 1,
@@ -51,7 +55,7 @@ export const Course: FC<CourseProps> = memo(function Course({
       ref={drag}
       style={{ opacity }}
       data-testid="course"
-      className="CourseText"
+      className={clsx("CourseText", warningColor && "CourseWarning")}
     >
       {/* {isDropped ? <s>{name}</s> : name}  */}
       {subject}-{number}

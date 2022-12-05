@@ -59,56 +59,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
   PassedCourseList, //The combination of major, concentration, and gen ed
   CompletedCourses, //List of completed courses in subject-number format
 }) {
-  const [semestersOld, setSemestersOld] = useState<SemesterState[]>([
-    {
-      accepts: [ItemTypes.COURSE],
-      lastDroppedItem: null,
-      semesterNumber: 1,
-      courses: [],
-    },
-    {
-      accepts: [ItemTypes.COURSE],
-      lastDroppedItem: null,
-      semesterNumber: 2,
-      courses: [],
-    },
-    {
-      accepts: [ItemTypes.COURSE],
-      lastDroppedItem: null,
-      semesterNumber: 3,
-      courses: [],
-    },
-    {
-      accepts: [ItemTypes.COURSE],
-      lastDroppedItem: null,
-      semesterNumber: 4,
-      courses: [],
-    },
-    {
-      accepts: [ItemTypes.COURSE],
-      lastDroppedItem: null,
-      semesterNumber: 5,
-      courses: [],
-    },
-    {
-      accepts: [ItemTypes.COURSE],
-      lastDroppedItem: null,
-      semesterNumber: 6,
-      courses: [],
-    },
-    {
-      accepts: [ItemTypes.COURSE],
-      lastDroppedItem: null,
-      semesterNumber: 7,
-      courses: [],
-    },
-    {
-      accepts: [ItemTypes.COURSE],
-      lastDroppedItem: null,
-      semesterNumber: 8,
-      courses: [],
-    },
-  ]);
   const [semesters, setSemesters] = useState<SemesterState[]>([
     {
       accepts: [ItemTypes.COURSE],
@@ -164,6 +114,9 @@ export const Container: FC<ContainerProps> = memo(function Container({
   const [visibility, setVisibility] = useState(false);
   //A master list of all courses for the major, concentration, and gen eds
   const [courses, setCourses] = useState<Course[]>(PassedCourseList);
+  // A list of courses that should have a warning color on them
+  const [warningCourses, setWarningCourses] = useState<Course[]>([]);
+  const [updateWarning, setUpdateWarning] = useState<{course: Course, courseSemester: number}>({course: undefined, courseSemester: -1});
   //A list of all courses that have been dropped into a semester
   const [droppedCourses, setDroppedCourses] = useState<Course[]>([]);
   //The course list element that allows courses to be dragged out
@@ -188,11 +141,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
       }
     });
     setcoursesInCategory(set);
-  }
-
-  //setSelectedCategory function. Hovland 7Nov22
-  function setSelectedCategory(_category) {
-    setCategory(category);
   }
 
   // RemoveDuplicates function.
@@ -266,7 +214,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
       ) {
         if (
           prereqCheck.courseInListCheck(
-            course.preReq,
+            course !== undefined ? course.preReq : "",
             previousCourses,
             currentCourses
           )
@@ -285,7 +233,9 @@ export const Container: FC<ContainerProps> = memo(function Container({
               },
             })
           );
-          //handleRemoveItem(course);
+
+          setUpdateWarning({course: course, courseSemester: index + 1});
+
         } else {
           // fails to satisfy prerequisites
           //shows error message
@@ -301,7 +251,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
           if (movedFromIndex > index) {
             // Only check the prerequisites for the course itself that is being moved earlier
             preReqsSatisfied = prereqCheck.courseInListCheck(
-              course.preReq,
+              course !== undefined ? course.preReq : "",
               previousCourses,
               currentCourses
             );
@@ -337,10 +287,10 @@ export const Container: FC<ContainerProps> = memo(function Container({
               updateSemester[movedFromIndex].courses = coursesRemove;
 
               // Update the semester
-              setSemestersOld(updateSemester);
+              setSemesters(updateSemester);
 
-              // Remove the course from the list, in case it did exist there too
-              //handleRemoveItem(course);
+              setUpdateWarning({course: course, courseSemester: index + 1});
+
             } else {
               // fails to satisfy prerequisites
               setVisibility(true);
@@ -395,6 +345,11 @@ export const Container: FC<ContainerProps> = memo(function Container({
     [courses, semesters]
   );
 
+  // This function checks if the course that was moved is in a "valid" fall or spring semester
+  function checkCourseSemester(course: Course, semNum: number) {
+    return (course.semesters === 'FA' && semNum % 2 === 0) || (course.semesters === 'SP' && semNum % 2 === 1);
+  }
+
   // This function checks if every course passes the prerequisite check when moving a course
   // out of a semester
   function preReqCheckCoursesInSemesterAndBeyond(
@@ -425,7 +380,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
           preReqsSatisfied =
             preReqsSatisfied &&
             preReqCheck.courseInListCheck(
-              x.preReq,
+              x !== undefined ? x.preReq : "",
               previousCourses,
               currentCoursesNames
             );
@@ -541,10 +496,22 @@ export const Container: FC<ContainerProps> = memo(function Container({
   //   console.log("--------------");
   // }, [semesters]);
 
-  // If the semesters needs to be updated, we will force update the semesters
+  //Update the warningCourses
   useEffect(() => {
-    setSemesters(semestersOld);
-  }, [semestersOld]);
+    if (updateWarning.course !== undefined) {
+      // Check if the course is offered in the semester it was dragged to
+      if (checkCourseSemester(updateWarning.course, updateWarning.courseSemester)) {
+        // If the course is not offered during the semester, add it to the warning course list
+        if (!(warningCourses.find(x => x === updateWarning.course))) {
+          warningCourses.push(updateWarning.course);
+        }
+      }
+      // Otherwise remove it from the warning course list
+      else {
+        warningCourses.splice(warningCourses.find(x => x === updateWarning.course), 1);
+      }
+    } 
+  },[updateWarning]);
 
   const popupCloseHandler = () => {
     setVisibility(false);
@@ -569,6 +536,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
                 semesterNumber={semesterNumber}
                 courses={courses}
                 key={index}
+                warningCourses={warningCourses}
               />
             )
           )}
