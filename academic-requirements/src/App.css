@@ -12,11 +12,13 @@
 
 .completedCourses {
   height: 300px;
+  
 }
 
 .courseList {
   display: grid;
   border-radius: 15px;
+  
 }
 
 button {
@@ -26,7 +28,7 @@ button {
   font-size: 24px;
   padding: 10px;
   border-radius: 15px;
-  overflow-y: scroll;
+  
 }
 
 .addCourseButton {
@@ -36,6 +38,7 @@ button {
 
 body {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
+
 }
 
 .grid-container {
@@ -44,6 +47,8 @@ body {
   grid-template-columns: 60% auto auto;
   column-gap: 1px;
   row-gap: 50px;
+  background-color: #004990;
+  
 }
 
 .semesters-container {
@@ -52,11 +57,14 @@ body {
   grid-template-columns: 100%;
   column-gap: 1px;
   row-gap: 100px;
+  overflow: auto;
+  background-color: #004990;
+  
 }
 
 .grid-item {
   background-color: gainsboro;
-  height: 200px;
+  height: 20px;
   text-align: center;
 }
 
@@ -67,7 +75,8 @@ body {
   padding: 5px;
   border-color: black;
   border-width: 2px;
-  overflow-y: scroll;
+  
+  
 }
 
 .drag-drop {
@@ -77,26 +86,28 @@ body {
   column-gap: 1px;
 }
 
-/* .schedule{
+.schedule{
   height: 80%;
-  width: 100%;
-  display: grid;
-  grid-template-columns: 100%;
-  grid-template-rows: 50% 50%;
-  column-gap: 10px;
-  row-gap: 10px;
-} */
+  width: 80%;
+  
+  
+  column-gap: 1px;
+  row-gap: 1px;
+  
+} 
 
 .page {
   height: 100%;
   display: grid;
   grid-template-rows: auto auto;
   column-gap: 1px;
+  
 }
 .requirements {
   height: 90%;
   background-color: gainsboro;
   text-align: center;
+  overflow: auto;
 }
 
 .input-grid {
@@ -106,12 +117,14 @@ body {
   column-gap: 15px;
   row-gap: 0px;
   justify-items: center;
+  
 
 }
 
 .input-grid-item {
   text-align: center;
   height: 100%;
+  
 }
 
 .input-grid-dropdown {
@@ -119,6 +132,7 @@ body {
   height: 100%;
   display: flex;
   flex-flow: column nowrap;
+  
 }
 
 .input-grid-item-courses {
@@ -130,7 +144,7 @@ body {
   color: white;
   border-radius: 15px;
   width: 100%;
-  overflow-y: scroll;
+  
 }
 
 .courseDropdowns {

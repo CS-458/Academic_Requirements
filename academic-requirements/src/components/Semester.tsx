@@ -7,8 +7,8 @@ import { Course } from "./DraggableCourse.tsx";
 import { ItemTypes } from "./Constants";
 //styling for the semester
 const style: CSSProperties = {
-  height: "12rem",
-  width: "20%",
+  height: "11rem",
+  width: "17%",
   marginRight: ".5rem",
   marginBottom: ".5rem",
   color: "white",
@@ -17,6 +17,9 @@ const style: CSSProperties = {
   fontSize: "1rem",
   lineHeight: "normal",
   float: "left",
+  background: "navy",
+  borderRadius: ".5rem",
+  
 };
 
 export interface SemesterProps {

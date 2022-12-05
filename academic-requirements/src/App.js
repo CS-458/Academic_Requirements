@@ -32,6 +32,8 @@ function App() {
   const [major, setMajor] = useState("");
   const [concentration, setConcentration] = useState("");
 
+  //requirements for the concentration
+  const [requirements, setRequirementsData] = useState([]);
   const [coursesTaken, setCoursesTaken] = useState([]);
 
   //Functions and variables for controlling an error popup
@@ -171,6 +173,7 @@ function App() {
   }, [concentration]);
 
   return (
+    <DndProvider backend={HTML5Backend}>
     <div>
       <InputPage
         showing={!clickedGenerate}
@@ -192,6 +195,7 @@ function App() {
         selectedMajor={major}
         selectedConcentration={concentration}
         completedCourses={coursesTaken}
+        requirements={requirements}
       />
       <ErrorPopup
         onClose={popupCloseHandler}
@@ -200,6 +204,7 @@ function App() {
         error={error}
       />
     </div>
+    </DndProvider>
   );
 }
 
