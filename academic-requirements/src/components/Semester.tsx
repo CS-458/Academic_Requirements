@@ -55,6 +55,9 @@ export const Semester: FC<SemesterProps> = memo(function Semester({
     backgroundColor = "darkgreen";
   }
 
+  // Gets the total number of credits per semester and throws
+  // proper warning dependant on the number of credits
+  // <12 = Low 12 - 18 No Warning 18< High
   const getTotalCredits = () => {
     var SemesterCredits = 0;
     courses.forEach((x) => {
@@ -73,6 +76,7 @@ export const Semester: FC<SemesterProps> = memo(function Semester({
     return SemesterCredits;
   };
 
+  // Checks if there is a warning, if warning exists select and return proper warning
   const GetWarning = () => {
     let warnState: string = "";
     if (!isWarning) {
