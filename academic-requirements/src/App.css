@@ -18,7 +18,8 @@
 .courseList {
   display: grid;
   border-radius: 15px;
-  
+  border-radius: 7%;
+  align-content: left;
 }
 
 button {
@@ -109,7 +110,7 @@ body {
   overflow: auto;
   border-radius: 2%;
 }
-
+/*entire main paine  background of the first page*/
 .input-grid {
   display: grid;
   grid-template-columns: auto auto 33.33%;
@@ -117,43 +118,47 @@ body {
   column-gap: 15px;
   row-gap: 0px;
   justify-items: center;
+  
  
 
 }
-
+/* boxes where the import schedule, generate schedule and course subject and number buttons/ elements are held.*/
 .input-grid-item {
   text-align: center;
   height: 100%;
+  
  
 }
-
+/* both the major and concentration boxes, this is the backgound box*/
 .input-grid-dropdown {
   text-align: center;
   height: 100%;
   display: flex;
   flex-flow: column nowrap;
+  
  
 }
-
+/* the completed courses box on the first page, on the bottom right */
 .input-grid-item-courses {
   height: 150%;
   display: flex;
   justify-content: center;
   overflow: hidden;
   background-color: #004990;
+  border-color: black;
   color: white;
   border-radius: 15px;
   width: 100%;
   
 }
-
+/* Text inside the course dropdown menu*/
 .courseDropdowns {
   text-align: center;
   width: 100%;
   float: left;
   
 }
-
+/* The words inside of the requirements box in the schedule generator*/
 .RequirementText{
   width:100%;
   padding-bottom: 15px;
@@ -162,10 +167,12 @@ body {
   text-align: center;
   
 }
+/* the percent sign in the requirements category*/
 .percentage{
   text-align: right;
 }
 
+/* an attempt to reconfigure and fix the semester boxes, doesn't work*/
 .semester{
   height: 11rem;
   width: 17%;

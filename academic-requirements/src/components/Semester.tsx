@@ -17,7 +17,7 @@ const style: CSSProperties = {
   fontSize: "1rem",
   lineHeight: "normal",
   float: "left",
-  background: "navy",
+  background: "#004990",
   borderRadius: ".5rem",
   overflow: "auto",
 };
@@ -52,7 +52,7 @@ export const Semester: FC<SemesterProps> = memo(function Semester({
   if (isActive) {
     backgroundColor = "darkgreen";
   } 
-   backgroundColor= "navyblue";
+   backgroundColor= "#004990";
   
   return (
     <div
