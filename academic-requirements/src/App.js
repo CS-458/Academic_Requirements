@@ -28,6 +28,8 @@ function App() {
   const [majorCourseData, setMajorCourseData] = useState([]);
   //concentrationCourseData is an array of the course object related to the concentration
   const [concentrationCourseData, setConcentrationCourseData] = useState([]);
+  // genEdCourseData is an array of the course object for general education courses
+  const [genEdCourseData, setGenEdCourseData] = useState([]);
 
   const [major, setMajor] = useState("");
   const [concentration, setConcentration] = useState("");
@@ -89,7 +91,8 @@ function App() {
     setConcentration(selectedConcentration);
   }
 
-  // Gets the majors from the database, runs on start-up
+  // Runs on startup
+  // Get all the data that doesn't need user input
   useEffect(() => {
     fetch("/major") // create similar
       .then((res) => res.json())
@@ -107,13 +110,17 @@ function App() {
     fetch("/subjects")
       .then((res) => res.json())
       .then((result) => {
-        console.log(result);
         let temp = [];
         result.forEach((x) => {
           temp.push(x.subject);
         });
         //get Course subject data, pass in the result
         setCourseSubjects(temp);
+      });
+    fetch("/courses/geneds")
+      .then((res) => res.json())
+      .then((result) => {
+        setGenEdCourseData(result);
       });
   }, []);
 
@@ -216,6 +223,7 @@ function App() {
           showing={clickedGenerate}
           concentrationCourseList={concentrationCourseData}
           majorCourseList={majorCourseData}
+          genEdCourseList={genEdCourseData}
           selectedMajor={major}
           selectedConcentration={concentration}
           completedCourses={coursesTaken}
