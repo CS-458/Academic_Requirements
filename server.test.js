@@ -103,3 +103,23 @@ it("test /subjects/numbers endpoint", async () => {
       expect(response.body.length).toBeGreaterThan(0);
     });
 });
+
+it("test /majorID endpoint", async () => {
+  await supertest(app)
+    .get("/majorID?mname=Computer Science")
+    .expect(200)
+    .then((response) => {
+      expect(Array.isArray(response.body)).toBeTruthy();
+      expect(response.body.length).toBeGreaterThan(0);
+    });
+});
+
+it("test /concentrationID endpoint", async () => {
+  await supertest(app)
+    .get("/concentrationID?cname=Mobile Applications")
+    .expect(200)
+    .then((response) => {
+      expect(Array.isArray(response.body)).toBeTruthy();
+      expect(response.body.length).toBeGreaterThan(0);
+    });
+});
