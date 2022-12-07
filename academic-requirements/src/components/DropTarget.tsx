@@ -83,6 +83,7 @@ export interface ContainerProps {
     courseCountTaken: number;
     creditCountTaken: number;
   }[];
+  fourYearPlan: {};
 }
 
 export const Container: FC<ContainerProps> = memo(function Container({
@@ -90,6 +91,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
   CompletedCourses, //List of completed courses in subject-number format
   requirements, //List of requirements for major/concentration
   requirementsGen, //List of requirements for gen-eds
+  fourYearPlan, // The four year plan if requested on Input page, or null
 }) {
   const [semestersOld, setSemestersOld] = useState<SemesterState[]>([
     {
@@ -226,7 +228,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
   const [coursesInCategory, setcoursesInCategory] = useState<Course[]>([]); //courses in category that is selected
 
   // Used to keep track of which information to display in the far right area
-  const defaultInformationType = "Calculated Requirements"; // The default
+  const defaultInformationType = "Requirements (Calculated)"; // The default
   const [informationTypes, setInformationTypes] = useState<string[]>([
     defaultInformationType,
   ]);
@@ -244,11 +246,20 @@ export const Container: FC<ContainerProps> = memo(function Container({
         }
         return [...prevInformationTypes];
       });
-    } else {
-      // If there are no more completed courses, remove it as an option
-      setInformationTypes([]);
     }
   }, [CompletedCourses]);
+
+  useEffect(() => {
+    if (fourYearPlan) {
+      setInformationTypes((prevInformationTypes) => {
+        // the ... is a spread operator and essentially means "take everything up to this point"
+        if (!prevInformationTypes.includes("Requirements (Four Year Plan)")) {
+          return [...prevInformationTypes, "Requirements (Four Year Plan)"];
+        }
+        return [...prevInformationTypes];
+      });
+    }
+  }, [fourYearPlan]);
 
   //SelectedCategory function. Hovland7Nov7
   function selectedCategory(_category) {
@@ -1066,6 +1077,9 @@ export const Container: FC<ContainerProps> = memo(function Container({
             />
           </div>
           <div className="right-information-box-content">
+            {displayedInformationType == "Requirements (Four Year Plan)" && (
+              <>{fourYearPlan}</>
+            )}
             {displayedInformationType == "Completed Courses" && (
               <>
                 {CompletedCourses?.map((completedCourse, index) => {
@@ -1088,7 +1102,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
                 })}
               </>
             )}
-            {displayedInformationType == "Calculated Requirements" && (
+            {displayedInformationType == "Requirements (Calculated)" && (
               <>
                 {requirementsDisplay?.map(
                   (

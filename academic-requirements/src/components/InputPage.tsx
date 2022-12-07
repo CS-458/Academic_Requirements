@@ -22,6 +22,7 @@ const InputPage = (props: {
   majorDisplayList: [];
   concentrationList: [];
   concentrationDisplayList: [];
+  concentrationHasFourYearPlan: boolean;
 
   courseSubjectAcronyms: string[];
   setSelectedCourseSubject(subject: string): void;
@@ -36,6 +37,7 @@ const InputPage = (props: {
     concentration: string,
     previousCourses: string[]
   ): void;
+  setUseFourYearPlan(usePlan: boolean): void;
 }) => {
   //TODO make sure all of this information being passed is filled in and valid
 
@@ -52,6 +54,10 @@ const InputPage = (props: {
     props.takenCourses
   ); // courses taken list of strings
   const tableRef = useRef<HTMLTableElement>(null);
+
+  function handleUseFourYearPlan(e) {
+    props.setUseFourYearPlan(e.target.checked);
+  }
 
   /* 
   Methods that assign major, minor, or concentration when picking option from a dropdown
@@ -251,6 +257,19 @@ const InputPage = (props: {
                 >
                   Generate My Schedule
                 </button>
+                <br />
+                {props.concentrationHasFourYearPlan && (
+                  <div style={{ fontSize: "1em", margin: "10px" }}>
+                    <input
+                      id="fourYearPlan"
+                      type="checkbox"
+                      onChange={handleUseFourYearPlan}
+                    />
+                    <label htmlFor="fourYearPlan">
+                      Autoload the four year plan?
+                    </label>
+                  </div>
+                )}
               </div>
               <div className="input-grid-item-courses">
                 <div className="completedCourses">

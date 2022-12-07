@@ -60,6 +60,7 @@ const FourYearPlanPage = (props: {
     name: string;
     parentCategory: number;
   }[];
+  fourYearPlan: {};
 }) => {
   //Functions and variables for controlling an error popup
   const [visibility, setVisibility] = useState(false);
@@ -113,6 +114,7 @@ const FourYearPlanPage = (props: {
               CompletedCourses={props.completedCourses}
               requirements={props.requirements}
               requirementsGen={props.requirementsGen}
+              fourYearPlan={props.fourYearPlan}
             />
             <button data-testid="ExportButton" onClick={exportSchedule}>
               Export Schedule

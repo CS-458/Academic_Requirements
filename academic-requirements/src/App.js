@@ -40,6 +40,10 @@ function App() {
   //general requirements
   const [requirementsGen, setRequirementsGenData] = useState([]);
 
+  // Flag for using a four year plan
+  const [useFourYearPlan, setUseFourYearPlan] = useState(false);
+  const [fourYearPlan, setFourYearPlan] = useState(null);
+
   // courseSubjects the array of subject strings from the database
   const [courseSubjects, setCourseSubjects] = useState([]);
   // selectedCourseSubject is the specific course subject selected
@@ -222,6 +226,7 @@ function App() {
       if (concentrationDisplayData[i] == concentration) {
         // Sets the concentrationCode to the 'idConcentration' of the selected concentration
         setConcentrationCode(concentrationData[i].idConcentration);
+        setFourYearPlan(concentrationData[i].fourYearPlan);
       }
     }
   }, [concentration]);
@@ -243,6 +248,8 @@ function App() {
           concentrationDisplayList={concentrationDisplayData}
           takenCourses={coursesTaken}
           setTakenCourses={setCoursesTaken}
+          setUseFourYearPlan={setUseFourYearPlan}
+          concentrationHasFourYearPlan={fourYearPlan != null}
         />
         <FourYearPlanPage
           data-testid="FourYearPage"
@@ -255,6 +262,7 @@ function App() {
           completedCourses={coursesTaken}
           requirements={requirements}
           requirementsGen={requirementsGen}
+          fourYearPlan={useFourYearPlan ? fourYearPlan : null}
         />
         <ErrorPopup
           onClose={popupCloseHandler}
