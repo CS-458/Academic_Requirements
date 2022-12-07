@@ -27,7 +27,8 @@ export interface SemesterProps {
   onDrop: (item: any) => void;
   semesterNumber: number;
   courses: Course[];
-  warningCourses: Course[];
+  warningPrerequisiteCourses: Course[];
+  warningFallvsSpringCourses: Course[];
 }
 
 export const Semester: FC<SemesterProps> = function Semester({
@@ -36,7 +37,8 @@ export const Semester: FC<SemesterProps> = function Semester({
   onDrop,
   semesterNumber,
   courses,
-  warningCourses,
+  warningPrerequisiteCourses,
+  warningFallvsSpringCourses
 }) {
   //defines the drop action
   const [{ isOver }, drop] = useDrop({
@@ -75,7 +77,8 @@ export const Semester: FC<SemesterProps> = function Semester({
               preReq={course.preReq}
               dragSource={"Semester " + (semesterNumber - 1)}
               key={index}
-              warningColor={warningCourses.find(x => x === course)}
+              warningYellowColor={warningPrerequisiteCourses.find(x => x === course)}
+              warningOrangeColor={warningFallvsSpringCourses.find(x => x === course)}
             />
           )
         )}

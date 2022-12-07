@@ -116,7 +116,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
   //A master list of all courses for the major, concentration, and gen eds
   const [courses, setCourses] = useState<Course[]>(PassedCourseList);
   // A list of courses that should have a warning color on them
-  const [warningCourses, setWarningCourses] = useState<Course[]>([]);
+  const [warningPrerequisiteCourses, setWarningPrerequisiteCourses] = useState<Course[]>([]);
+  const [warningFallvsSpringCourses, setWarningFallvsSpringCourses] = useState<Course[]>([]);
   // Warning for spring/fall semester
   const [updateWarning, setUpdateWarning] = useState<{course: Course, oldSemester: number, newSemester: number, draggedOut: boolean, newCheck: boolean}>({course: undefined, oldSemester: -1, newSemester: -1, draggedOut: true, newCheck: false});
   //A list of all courses that have been dropped into a semester
@@ -302,8 +303,37 @@ export const Container: FC<ContainerProps> = memo(function Container({
 
   // This function checks if the course that was moved is in a "valid" fall or spring semester
   function checkCourseSemester(course: Course, semNum: number) {
-    return (course.semesters === 'FA' && semNum % 2 === 0) || (course.semesters === 'SP' && semNum % 2 === 1);
+    return (course.semesters === 'FA' && semNum % 2 === 1) || (course.semesters === 'SP' && semNum % 2 === 0);
   }
+
+     // This useEffect handles fall vs spring course placement
+     useEffect(() => {
+      if (updateWarning.newCheck) {
+        // Check if the course is offered in the semester it was dragged to
+        if (checkCourseSemester(updateWarning.course, updateWarning.newSemester)) {
+          // If the course is not offered during the semester, add it to the warning course list
+          if (!(warningFallvsSpringCourses.find(x => x === updateWarning.course))) {
+            warningFallvsSpringCourses.push(updateWarning.course);
+            setVisibility(true);
+            setErrorMessage("WARNING! " + updateWarning.course.subject + "-" + updateWarning.course.number + " is not typically offered during the " + ((updateWarning.newSemester % 2 === 0) ? "Fall" : "Spring") + " semester");
+          }
+        }
+        // Otherwise remove it from the warning course list
+        else {
+          let temp = new Array<Course>();
+          let removeCourse = warningFallvsSpringCourses.find((x) => x === updateWarning.course);
+          warningFallvsSpringCourses.forEach((x) => {
+            if (x !== removeCourse) {
+              temp.push(x);
+            }
+          })
+          setWarningFallvsSpringCourses(temp);
+        }
+      } 
+      //Reset the warning
+      setUpdateWarning({course: undefined, oldSemester: -1, newSemester: -1, draggedOut: true, newCheck: false});
+    },[semesters]);
+
 
   // This useEffect is in charge of checking prerequisites
   useEffect(() => {
@@ -344,9 +374,9 @@ export const Container: FC<ContainerProps> = memo(function Container({
         setErrorMessage("WARNING! " + updateWarning.course.subject + "-" + updateWarning.course.number + " has failed the following prerequisites: " + satisfied.failedString);
         
         // Update the warning courses to include the just dragged course
-        let temp = warningCourses;
+        let temp = warningPrerequisiteCourses;
         temp.push(updateWarning.course);
-        setWarningCourses(temp);
+        setWarningPrerequisiteCourses(temp);
       }
     }
 
@@ -371,6 +401,24 @@ export const Container: FC<ContainerProps> = memo(function Container({
     //Reset the warning
     setUpdateWarning({course: undefined, oldSemester: -1, newSemester: -1, draggedOut: true, newCheck: false});
   }, [semesters]);
+
+  /*
+  // This useEffect breaks ties for warningFallvsSpringCourses (prereq takes precedent)
+  useEffect(() => {
+    // Remove spring vs fall courses if they are already in duplication or prereq warnings
+    if (warningFallvsSpringCourses.length > 0) {
+      warningFallvsSpringCourses.forEach((x) => {
+        warningPrerequisiteCourses.forEach((y) => {
+          if (x === y) {
+            let temp = warningFallvsSpringCourses;
+            temp.splice(warningFallvsSpringCourses.find((z) => z === x), 1);
+            setWarningFallvsSpringCourses(temp);
+          }
+        })
+      })
+    }
+  },[warningPrerequisiteCourses])
+  */
 
   // This function checks if every course passes the prerequisite check when moving a course
   // out of a semester
@@ -424,9 +472,9 @@ export const Container: FC<ContainerProps> = memo(function Container({
       }
     });
 
-    // Found
+    // Prepping variables for modifying warningPrerequisitesCourses
     let found = false;
-    let tempWarningCourses = warningCourses;
+    let tempWarningCourses = warningPrerequisiteCourses;
     let initialPreviousCourses = new Array<Course>();
 
     // Add previous courses to initialPreviousCourses (the course object, not the strings)
@@ -440,7 +488,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
 
     //Remove any courses that were marked as warning, but now have resolved prerequisites
     if (!movedRight) {
-    warningCourses.forEach((currentWarningCourse) => {
+    warningPrerequisiteCourses.forEach((currentWarningCourse) => {
       if (!initialPreviousCourses.find((prevCourse) => prevCourse === currentWarningCourse)) {
       failedCoursesList.forEach((currentFailedCourse) => {
         if (currentWarningCourse === currentFailedCourse) {
@@ -465,7 +513,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
     })
 
     // Update the warning courses to remove the currently now-satisifed prereqs course
-    setWarningCourses(tempWarningCourses);
+    setWarningPrerequisiteCourses(tempWarningCourses);
   }
 
     // If any courses have failed, notify the user of each course that failed
@@ -473,10 +521,10 @@ export const Container: FC<ContainerProps> = memo(function Container({
       let message = "";
       // Push each failed course to the warningCourses and modify the warning message
       failedCoursesList.forEach((x) => {
-        if (!warningCourses.find((z) => z === x)) {
-          let temp = warningCourses;
+        if (!warningPrerequisiteCourses.find((z) => z === x)) {
+          let temp = warningPrerequisiteCourses;
           temp.push(x);
-          setWarningCourses(temp);
+          setWarningPrerequisiteCourses(temp);
         }
         message.length > 0 ?
         message = message + "," + x.subject + "-" + x.number : message = message + x.subject + "-" + x.number;
@@ -554,32 +602,16 @@ export const Container: FC<ContainerProps> = memo(function Container({
     return semCourses;
   }
 
-  //Update the warningCourses to handle fall vs spring course placement
-  // This is a WIP
-  /*
+  // THE FOLLOWING USEEFFECTS CAN BE DELETED
+  // Log the prerequisite warning courses (the ones that appear in yellow)
   useEffect(() => {
-    if (updateWarning.course !== undefined) {
-      // Check if the course is offered in the semester it was dragged to
-      if (checkCourseSemester(updateWarning.course, updateWarning.courseSemester)) {
-        // If the course is not offered during the semester, add it to the warning course list
-        if (!(warningCourses.find(x => x === updateWarning.course))) {
-          warningCourses.push(updateWarning.course);
-          setVisibility(true);
-          setErrorMessage("WARNING! Course is not typically offered during the " + ((updateWarning.courseSemester % 2 === 0) ? "Spring" : "Fall") + " semester");
-        }
-      }
-      // Otherwise remove it from the warning course list
-      else {
-        warningCourses.splice(warningCourses.find(x => x === updateWarning.course), 1);
-      }
-    } 
-  },[updateWarning]);
-  */
+    console.log(warningPrerequisiteCourses);
+  },[warningPrerequisiteCourses.length]);
 
-  // Log the warning courses (the ones that should be yellow)
+  // Log the fall vs spring warning courses (the ones that appear in orange)
   useEffect(() => {
-    console.log(warningCourses);
-  },[warningCourses.length]);
+    console.log(warningFallvsSpringCourses);
+  },[warningFallvsSpringCourses.length]);
 
   const popupCloseHandler = () => {
     setVisibility(false);
@@ -604,7 +636,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
                 semesterNumber={semesterNumber}
                 courses={courses}
                 key={index}
-                warningCourses={warningCourses}
+                warningPrerequisiteCourses={warningPrerequisiteCourses}
+                warningFallvsSpringCourses={warningFallvsSpringCourses}
               />
             )
           )}

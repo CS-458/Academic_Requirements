@@ -20,8 +20,12 @@
   background-color: gainsboro;
 }
 
-.CourseWarning {
+.CourseWarningYellow {
   background-color: rgb(219, 248, 90);
+}
+
+.CourseWarningOrange {
+  background-color:rgb(231, 159, 77);
 }
 
 .CourseText:first-line {

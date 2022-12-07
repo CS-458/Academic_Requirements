@@ -15,7 +15,8 @@ export interface CourseProps {
   type: string;
   preReq: string;
   dragSource: string;
-  warningColor: boolean;
+  warningYellowColor: boolean;
+  warningOrangeColor: boolean;
 }
 
 export const Course: FC<CourseProps> = memo(function Course({
@@ -27,7 +28,8 @@ export const Course: FC<CourseProps> = memo(function Course({
   semesters,
   preReq,
   dragSource,
-  warningColor,
+  warningYellowColor,
+  warningOrangeColor
 }) {
   //defines the drag action
   const [{ opacity }, drag] = useDrag(
@@ -42,7 +44,8 @@ export const Course: FC<CourseProps> = memo(function Course({
         semesters,
         preReq,
         dragSource,
-        warningColor,
+        warningYellowColor,
+        warningOrangeColor
       },
       collect: (monitor) => ({
         opacity: monitor.isDragging() ? 0.4 : 1,
@@ -55,7 +58,7 @@ export const Course: FC<CourseProps> = memo(function Course({
       ref={drag}
       style={{ opacity }}
       data-testid="course"
-      className={clsx("CourseText", warningColor && "CourseWarning")}
+      className={clsx("CourseText", warningYellowColor && "CourseWarningYellow", warningOrangeColor && "CourseWarningOrange")}
     >
       {/* {isDropped ? <s>{name}</s> : name}  */}
       {subject}-{number}
