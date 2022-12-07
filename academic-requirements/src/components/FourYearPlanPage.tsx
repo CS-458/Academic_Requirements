@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import ErrorPopup from "./ErrorPopup";
 //@ts-ignore
 import Example from "./example.ts";
+
 const FourYearPlanPage = (props: {
   showing: boolean;
   majorCourseList: {
@@ -23,11 +24,28 @@ const FourYearPlanPage = (props: {
     preReq: string;
     category: string;
   }[];
+  genEdCourseList: {
+    credits: number;
+    name: string;
+    number: number;
+    semesters: string;
+    subject: string;
+    preReq: string;
+    category: string;
+  }[];
   completedCourses: {
     Course: string[];
   }[];
   selectedMajor: string;
   selectedConcentration: string;
+  requirements: {
+    courseCount: number;
+    courseReqs: string;
+    creditCount: number;
+    idCategory: number;
+    name: string;
+    parentCategory: number;
+  }[];
 }) => {
   //Functions and variables for controlling an error popup
   const [visibility, setVisibility] = useState(false);
@@ -75,17 +93,15 @@ const FourYearPlanPage = (props: {
           />
           <div className="page">
             <Example
-              PassedCourseList={props.majorCourseList.concat(
-                props.concentrationCourseList
-              )}
+              PassedCourseList={props.majorCourseList
+                .concat(props.concentrationCourseList)
+                .concat(props.genEdCourseList)}
               CompletedCourses={props.completedCourses}
+              requirements={props.requirements}
             />
-            <div className="right-side">
-              <div className="requirements">Requirements</div>
-              <button data-testid="ExportButton" onClick={exportSchedule}>
-                Export Schedule
-              </button>
-            </div>
+            <button data-testid="ExportButton" onClick={exportSchedule}>
+              Export Schedule
+            </button>
           </div>
         </div>
       )}

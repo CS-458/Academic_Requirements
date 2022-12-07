@@ -64,6 +64,16 @@ it("test /courses/concentration endpoint", async () => {
     });
 });
 
+it("test /courses/geneds endpoint", async () => {
+  await supertest(app)
+    .get("/courses/geneds")
+    .expect(200)
+    .then((response) => {
+      expect(Array.isArray(response.body)).toBeTruthy();
+      expect(response.body.length).toBeGreaterThan(0);
+    });
+});
+
 it("test /requirements endpoint", async () => {
   await supertest(app)
     .get("/requirements?conid=10")
@@ -87,6 +97,26 @@ it("test /subjects endpoint", async () => {
 it("test /subjects/numbers endpoint", async () => {
   await supertest(app)
     .get("/subjects/numbers?sub=CS")
+    .expect(200)
+    .then((response) => {
+      expect(Array.isArray(response.body)).toBeTruthy();
+      expect(response.body.length).toBeGreaterThan(0);
+    });
+});
+
+it("test /majorID endpoint", async () => {
+  await supertest(app)
+    .get("/majorID?mname=Computer Science")
+    .expect(200)
+    .then((response) => {
+      expect(Array.isArray(response.body)).toBeTruthy();
+      expect(response.body.length).toBeGreaterThan(0);
+    });
+});
+
+it("test /concentrationID endpoint", async () => {
+  await supertest(app)
+    .get("/concentrationID?cname=Mobile Applications")
     .expect(200)
     .then((response) => {
       expect(Array.isArray(response.body)).toBeTruthy();

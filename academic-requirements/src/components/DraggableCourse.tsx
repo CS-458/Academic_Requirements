@@ -4,6 +4,7 @@ import { useDrag } from "react-dnd";
 import React from "react";
 import clsx from "clsx";
 import "./DraggableCourse.css";
+import { func } from "prop-types";
 
 //defines the expected course properties
 export interface CourseProps {
@@ -53,6 +54,18 @@ export const Course: FC<CourseProps> = memo(function Course({
     }),
     [name, type, dragSource] //what is collected by the semester and course list when you drop it
   );
+
+  // Gets the URL to the UW Stout Bulletin for the given Course
+  function getURL(subject, number) {
+    var URL =
+      "https://bulletin.uwstout.edu/content.php?filter%5B27%5D=" +
+      subject +
+      "&filter%5B29%5D=" +
+      number +
+      "&filter%5Bcourse_type%5D=-1&filter%5Bkeyword%5D=&filter%5B32%5D=1&filter%5Bcpage%5D=1&cur_cat_oid=21&expand=&navoid=544&search_database=Filter#acalog_template_course_filter";
+    return URL;
+  }
+
   return (
     <div
       ref={drag}
@@ -66,6 +79,10 @@ export const Course: FC<CourseProps> = memo(function Course({
       {name}
       <br />
       credits: {credits}
+      <br />
+      <a href={getURL(subject, number)} target="_blank">
+        Description
+      </a>
     </div>
   );
 });

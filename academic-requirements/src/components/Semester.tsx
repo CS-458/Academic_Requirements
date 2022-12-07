@@ -1,15 +1,18 @@
-import type { CSSProperties, FC } from "react";
+import { CSSProperties, FC, useState } from "react";
+import { memo } from "react";
 import { useDrop } from "react-dnd";
 import React from "react";
 //@ts-ignore
 import { Course } from "./DraggableCourse.tsx";
 import { ItemTypes } from "./Constants";
 import { useEffect } from "react";
+import ErrorPopup from "./ErrorPopup";
+import { process_params } from "express/lib/router";
 
 //styling for the semester
 const style: CSSProperties = {
-  height: "12rem",
-  width: "20%",
+  height: "15rem",
+  width: "18.5%",
   marginRight: ".5rem",
   marginBottom: ".5rem",
   color: "white",
@@ -18,7 +21,10 @@ const style: CSSProperties = {
   fontSize: "1rem",
   lineHeight: "normal",
   float: "left",
-  whiteSpace: "pre"
+  whiteSpace: "pre",
+  background: "#004990",
+  borderRadius: ".5rem",
+  overflow: "auto",
 };
 
 export interface SemesterProps {
@@ -51,10 +57,47 @@ export const Semester: FC<SemesterProps> = function Semester({
 
   //Changes the background color when you're hovering over the semester
   const isActive = isOver;
-  let backgroundColor = "#222";
+  var LowWarning = false;
+  var HighWarning = false;
+  var isWarning = false;
+  let backgroundColor = "#004990";
   if (isActive) {
     backgroundColor = "darkgreen";
   }
+
+  // Gets the total number of credits per semester and throws
+  // proper warning dependant on the number of credits
+  // <12 = Low 12 - 18 No Warning 18< High
+  const getTotalCredits = () => {
+    var SemesterCredits = 0;
+    courses.forEach((x) => {
+      SemesterCredits += Number(x.credits);
+    });
+
+    if (SemesterCredits <= 11 && SemesterCredits > 0) {
+      LowWarning = true;
+      isWarning = true;
+    }
+    if (SemesterCredits >= 19) {
+      HighWarning = true;
+      isWarning = true;
+    }
+
+    return SemesterCredits;
+  };
+
+  // Checks if there is a warning, if warning exists select and return proper warning
+  const GetWarning = () => {
+    let warnState: string = "";
+    if (!isWarning) {
+      warnState = "";
+    } else if (isWarning && LowWarning) {
+      warnState = "LOW";
+    } else if (isWarning && HighWarning) {
+      warnState = "HIGH";
+    }
+    return warnState;
+  };
 
   return (
     <div
@@ -62,7 +105,9 @@ export const Semester: FC<SemesterProps> = function Semester({
       style={{ ...style, backgroundColor }}
       data-testid="semester"
     >
-      {isActive ? "Release to drop" : `Semester ${semesterNumber} ${semesterNumber % 2 == 0 ? '\nSpring' : '\nFall'}`}
+      {isActive ? "Release to drop" : `Semester ${semesterNumber} ${semesterNumber % 2 == 0 ? '\nSpring\n' : '\nFall\n'}`}
+      {`Credits ${getTotalCredits()}`}
+      {isWarning ? ` (${GetWarning()})` : `${GetWarning()}`}
 
       {courses &&
         courses.map(

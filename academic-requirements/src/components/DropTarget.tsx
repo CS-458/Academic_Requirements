@@ -14,6 +14,9 @@ import React from "react";
 //@ts-ignore
 import SearchableDropdown from "./SearchableDropdown.tsx";
 import ErrorPopup from "./ErrorPopup";
+//@ts-ignore
+import { Requirement } from "./Requirement.tsx";
+import { TEXT } from "react-dnd-html5-backend/dist/NativeTypes";
 
 //Defines the properties that each type should have
 interface SemesterState {
@@ -53,11 +56,20 @@ export interface ContainerProps {
     category: string;
   }[];
   CompletedCourses: string[];
+  requirements: {
+    courseCount: number;
+    courseReqs: string;
+    creditCount: number;
+    idCategory: number;
+    name: string;
+    parentCategory: number;
+  }[];
 }
 
 export const Container: FC<ContainerProps> = memo(function Container({
   PassedCourseList, //The combination of major, concentration, and gen ed
   CompletedCourses, //List of completed courses in subject-number format
+  requirements, //List of requirements categories
 }) {
   const [semesters, setSemesters] = useState<SemesterState[]>([
     {
@@ -113,6 +125,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
   //The visibility of the error message
   const [visibility, setVisibility] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [titleName, setTitle] = useState("Warning");
   //A master list of all courses for the major, concentration, and gen eds
   const [courses, setCourses] = useState<Course[]>(PassedCourseList);
   // A list of courses that should have a warning color on them
@@ -127,6 +140,10 @@ export const Container: FC<ContainerProps> = memo(function Container({
     { accepts: [ItemTypes.COURSE], unDroppedItem: null, courses: [] },
   ]);
 
+  //The list of requirements and their completion for display
+  const [requirementsDisplay, setRequirementsDisplay] = useState<Requirement[]>(
+    []
+  );
   //Stuff for category dropdown. Hovland 7Nov22
   const [category, setCategory] = useState(""); //category that is selected
   const [categories, setCategories] = useState<string[]>([]); //list of all categories
@@ -184,6 +201,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
         //find the course by name in the master list of all courses
         course = courses.find((item) => item.name === name);
       }
+
+      console.log("Managing Course:", course);
 
       //Could potentially add a duplicate if course is in schedule more than once
       setDroppedCourses(
@@ -402,24 +421,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
     setUpdateWarning({course: undefined, oldSemester: -1, newSemester: -1, draggedOut: true, newCheck: false});
   }, [semesters]);
 
-  /*
-  // This useEffect breaks ties for warningFallvsSpringCourses (prereq takes precedent)
-  useEffect(() => {
-    // Remove spring vs fall courses if they are already in duplication or prereq warnings
-    if (warningFallvsSpringCourses.length > 0) {
-      warningFallvsSpringCourses.forEach((x) => {
-        warningPrerequisiteCourses.forEach((y) => {
-          if (x === y) {
-            let temp = warningFallvsSpringCourses;
-            temp.splice(warningFallvsSpringCourses.find((z) => z === x), 1);
-            setWarningFallvsSpringCourses(temp);
-          }
-        })
-      })
-    }
-  },[warningPrerequisiteCourses])
-  */
-
   // This function checks if every course passes the prerequisite check when moving a course
   // out of a semester
   function preReqCheckAllCoursesPastSemester(
@@ -590,6 +591,22 @@ export const Container: FC<ContainerProps> = memo(function Container({
     return semCourses;
   }
 
+  function checkForCourseInMultipleSemesters(course1) {
+    //Iterate through array of courses dragged and dropped into semester
+    semesters.map((semester, index) => {
+      //If index of the course already dropped in the dropped course array is the same as
+      //the current course being dropped, Display a message.
+      console.log(courses);
+      semester.courses.map((course2, index) => {
+        if (course1 == course2) {
+          setTitle("Warning");
+          setVisibility(true);
+          setErrorMessage("Course already in other semesters.");
+        }
+      });
+    });
+  }
+
   // Get all courses (string) in current semester
   // param semesterIndex -> current semester index
   function getSemesterCoursesNames(semesterIndex: number): Array<string> {
@@ -617,6 +634,17 @@ export const Container: FC<ContainerProps> = memo(function Container({
     setVisibility(false);
   };
 
+  useEffect(() => {
+    let temp: Requirement[] = [];
+    requirements.forEach((x) => {
+      if (!x.parentCategory) {
+        temp.push(x);
+      }
+    });
+    setRequirementsDisplay(temp);
+  }, [requirements]);
+  console.log(requirementsDisplay);
+  console.log(requirements);
   return (
     <div>
       <div className="drag-drop">
@@ -624,7 +652,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
           <ErrorPopup
             onClose={popupCloseHandler}
             show={visibility}
-            title="Error"
+            title={titleName}
             error={errorMessage}
           />
           {semesters.map(
@@ -665,6 +693,34 @@ export const Container: FC<ContainerProps> = memo(function Container({
               key={index}
             />
           ))}
+        </div>
+        <div className="requirements">
+          <p>Requirements</p>
+          {requirementsDisplay?.map(
+            (
+              {
+                name,
+                courseCount,
+                courseReqs,
+                creditCount,
+                idCategory,
+                parentCategory,
+                percentage,
+              },
+              index
+            ) => (
+              <Requirement
+                courseCount={courseCount}
+                courseReqs={courseReqs}
+                creditCount={creditCount}
+                idCategory={idCategory}
+                name={name}
+                parentCategory={parentCategory}
+                percentage={percentage}
+                key={index}
+              />
+            )
+          )}
         </div>
       </div>
     </div>
