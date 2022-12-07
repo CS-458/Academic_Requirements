@@ -1078,7 +1078,10 @@ export const Container: FC<ContainerProps> = memo(function Container({
           </div>
           <div className="right-information-box-content">
             {displayedInformationType == "Requirements (Four Year Plan)" && (
-              <>{JSON.stringify(fourYearPlan["ClassPlan"])}</>
+              <>
+              {/*TODO: Display the requirements by semester verbatium*/}
+              {JSON.stringify(fourYearPlan["ClassPlan"])}
+              </>
             )}
             {displayedInformationType == "Completed Courses" && (
               <>

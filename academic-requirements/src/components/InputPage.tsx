@@ -64,6 +64,7 @@ const InputPage = (props: {
 */
   function selectedMajor(_major) {
     setMajor(_major);
+    setConcentration(""); // reset the concetration when major is updated
     setShowConcentration(true);
     props.onClickMajor(_major);
     setConcentrationOptions(concentrations);
