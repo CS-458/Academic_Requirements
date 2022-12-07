@@ -11,14 +11,14 @@ class StringProcessing {
     compareString: string,
     coursesList: string[],
     concurrentCoursesList: string[] | undefined
-  ) {
+  ) : {returnValue: boolean, failedString: string} {
     // Boundary Conditions
     if (
       compareString === "" ||
       compareString === null ||
       compareString === undefined
     ) {
-      return true; // nothing to compare to, so it must be true (essentially means no prerequisites)
+      return {returnValue: true, failedString: ""}; // nothing to compare to, so it must be true (essentially means no prerequisites)
     }
     if (
       (coursesList && coursesList.length === 0) ||
@@ -27,7 +27,7 @@ class StringProcessing {
     ) {
       // Since there exists at least one course to compare, if coursesList is empty,
       // then the course is not in the list
-      return false;
+      return {returnValue: false, failedString: compareString};
     }
 
     // Force each string to have underscores instead of dashes and remove any duplicates
@@ -42,6 +42,7 @@ class StringProcessing {
     // Every string in splitStringAND must be true
     let splitStringAND = compareString.replace(/-/g, "_").split(",");
     let returnValue = true;
+    let failedString = "";
 
     splitStringAND.forEach((compareAND) => {
       // If the string has a '|' or '&', it is not simplified...
@@ -84,17 +85,27 @@ class StringProcessing {
         // If none of the courses were satisfied in the OR, then return false
         if (!orSatisfied) {
           returnValue = false;
+
+          // Get the OR string that failed and assign it to the failedString
+          let combineString = splitStringOR[0];
+          splitStringOR.forEach((x, index) => {
+            if (index > 0) {
+              combineString = combineString + "|" + x;
+            }
+          })
+          failedString = combineString;
         }
       } else {
         // Check if any of the courses fail to satisfy the AND
         // If one course fails the AND, return false
         if (!this.checkCourses(compareAND, courses, concurrentCourses)) {
           returnValue = false;
+          failedString = compareAND;
         }
       }
     });
 
-    return returnValue;
+    return {returnValue: returnValue, failedString: failedString};
   }
 
   // Replaces the dashes in each string in strings with an underscore and returns the edited array of strings
