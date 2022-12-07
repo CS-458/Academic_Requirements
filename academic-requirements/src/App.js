@@ -226,7 +226,7 @@ function App() {
       if (concentrationDisplayData[i] == concentration) {
         // Sets the concentrationCode to the 'idConcentration' of the selected concentration
         setConcentrationCode(concentrationData[i].idConcentration);
-        setFourYearPlan(concentrationData[i].fourYearPlan);
+        setFourYearPlan(JSON.parse(concentrationData[i].fourYearPlan));
       }
     }
   }, [concentration]);
