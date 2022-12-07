@@ -71,7 +71,7 @@ export const Course: FC<CourseProps> = memo(function Course({
       ref={drag}
       style={{ opacity }}
       data-testid="course"
-      className={clsx("CourseText", warningYellowColor && "CourseWarningYellow", warningOrangeColor && "CourseWarningOrange")}
+      className={clsx("CourseText", warningOrangeColor && !warningYellowColor && "CourseWarningOrange", warningYellowColor && "CourseWarningYellow")}
     >
       {/* {isDropped ? <s>{name}</s> : name}  */}
       {subject}-{number}
