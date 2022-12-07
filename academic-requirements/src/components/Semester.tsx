@@ -7,7 +7,7 @@ import { Course } from "./DraggableCourse.tsx";
 import { ItemTypes } from "./Constants";
 //styling for the semester
 const style: CSSProperties = {
-  height: "11rem",
+  height: "15rem",
   width: "18.5%",
   marginRight: ".5rem",
   marginBottom: ".5rem",
