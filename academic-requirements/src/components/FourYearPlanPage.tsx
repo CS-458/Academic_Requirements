@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import ErrorPopup from "./ErrorPopup";
 //@ts-ignore
 import Example from "./example.ts";
+
 const FourYearPlanPage = (props: {
   showing: boolean;
   majorCourseList: {
@@ -15,6 +16,15 @@ const FourYearPlanPage = (props: {
     category: string;
   }[];
   concentrationCourseList: {
+    credits: number;
+    name: string;
+    number: number;
+    semesters: string;
+    subject: string;
+    preReq: string;
+    category: string;
+  }[];
+  genEdCourseList: {
     credits: number;
     name: string;
     number: number;
@@ -85,7 +95,7 @@ const FourYearPlanPage = (props: {
             <Example
               PassedCourseList={props.majorCourseList.concat(
                 props.concentrationCourseList
-              )}
+              ).concat(props.genEdCourseList)}
               CompletedCourses={props.completedCourses}
               requirements={props.requirements}
             />

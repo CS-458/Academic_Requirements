@@ -16,6 +16,7 @@ import SearchableDropdown from "./SearchableDropdown.tsx";
 import ErrorPopup from "./ErrorPopup";
 //@ts-ignore
 import {Requirement} from "./Requirement.tsx";
+import { TEXT } from "react-dnd-html5-backend/dist/NativeTypes";
 
 //Defines the properties that each type should have
 interface SemesterState {
@@ -173,6 +174,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
 
   //The visibility of the error message
   const [visibility, setVisibility] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [titleName, setTitle] = useState("");
   //A master list of all courses for the major, concentration, and gen eds
   const [courses, setCourses] = useState<Course[]>(PassedCourseList);
   //A list of all courses that have been dropped into a semester
@@ -255,8 +258,9 @@ export const Container: FC<ContainerProps> = memo(function Container({
         //find the course by name in the master list of all courses
         course = courses.find((item) => item.name === name);
       }
-      console.log(course);
-      console.log(dragSource);
+
+      console.log("Managing Course:", course);
+
       //Could potentially add a duplicate if course is in schedule more than once
       setDroppedCourses(
         update(droppedCourses, course ? { $push: [course] } : { $push: [] })
@@ -273,7 +277,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
         currentCourses.push(x.subject + "-" + x.number);
       });
 
-      // Run the prerequisite check on the course
+      // Run the prerequisite check on the course if dragged from the course list
       if (
         dragSource === "CourseList" &&
         !courseAlreadyInSemester(course, index)
@@ -287,6 +291,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
         ) {
           // prereqCheck returned true, so add the course to the semester
           course.dragSource = "Semester " + index;
+          //Run fuction I need to write for checking semesters.
+          checkForCourseInMultipleSemesters(course);
           setSemesters(
             update(semesters, {
               [index]: {
@@ -362,6 +368,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
           }
         }
       }
+      //
     },
     [semesters]
   );
@@ -371,7 +378,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
     (item: { name: string; dragSource: string }) => {
       const { name } = item;
       const { dragSource } = item;
-      console.log(dragSource);
       //ignore all drops from the course list
       if (dragSource !== "CourseList") {
         //get the semester index from the drag source
@@ -381,7 +387,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
         );
         //set the drag source to course list (may be redundant but I'm scared to mess with it)
         found.dragSource = "CourseList";
-        setDroppedCourses(courses.filter((item) => item.name !== name));
+        setDroppedCourses(droppedCourses.splice(droppedCourses.indexOf(found)));
         // If all courses pass the preReq check, then update the course lists
         if (preReqCheckCoursesInSemesterAndBeyond(found, movedFromIndex, -1)) {
           setCourses(
@@ -406,6 +412,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
           setVisibility(true);
         }
       }
+      //Not sure if we still need this.
+      //checkForCourseInMultipleSemesters(courses);
     },
     [courses, semesters]
   );
@@ -512,6 +520,11 @@ export const Container: FC<ContainerProps> = memo(function Container({
       }
     });
 
+    // Append completed courses to the array
+    CompletedCourses.forEach((x) => {
+      previousCourses.push(x);
+    });
+
     return previousCourses;
   }
 
@@ -526,6 +539,21 @@ export const Container: FC<ContainerProps> = memo(function Container({
     return semCourses;
   }
 
+  function checkForCourseInMultipleSemesters(course1) {
+    //Iterate through array of courses dragged and dropped into semester
+    semesters.map((semester, index) => {
+      //If index of the course already dropped in the dropped course array is the same as
+      //the current course being dropped, Display a message.
+      console.log(courses);
+      semester.courses.map((course2, index) => {
+        if (course1 == course2) {
+          setTitle("Warning");
+          setVisibility(true);
+          setErrorMessage("Course already in other semesters.");
+        }
+      });
+    });
+  }
   // Get all courses (string) in current semester
   // param semesterIndex -> current semester index
   function getSemesterCoursesNames(semesterIndex: number): Array<string> {
@@ -578,8 +606,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
           <ErrorPopup
             onClose={popupCloseHandler}
             show={visibility}
-            title="Error"
-            error={"CANNOT MOVE COURSE! FAILS PREREQUISITES"}
+            title={titleName}
+            error={errorMessage}
           />
           <div className="schedule">
             {semesters.map(
