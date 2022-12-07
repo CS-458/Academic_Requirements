@@ -207,10 +207,12 @@ export const Container: FC<ContainerProps> = memo(function Container({
   ]);
 
   //The list of requirements and their completion for display
-  const [requirementsDisplay, setRequirementsDisplay] = useState<Requirement[]>([]);
+  const [requirementsDisplay, setRequirementsDisplay] = useState<Requirement[]>(
+    []
+  );
   //Requirements that are manipulated
-  const [reqList, setReqList]= useState<Requirement[]>(requirements);
-  const [reqGenList, setReqGenList]=useState<Requirement[]>(requirementsGen);
+  const [reqList, setReqList] = useState<Requirement[]>(requirements);
+  const [reqGenList, setReqGenList] = useState<Requirement[]>(requirementsGen);
 
   //A list of all courses that are in more than one categories, for use with requirements
   const [coursesInMultipleCategories, setCoursesInMultipleCategories] =
@@ -433,18 +435,18 @@ export const Container: FC<ContainerProps> = memo(function Container({
             (course) => course !== found
           );
           let count = 0;
-          semesters.forEach(semester =>{
-            semester.courses.forEach(course=>{
-              if(course == found){
+          semesters.forEach((semester) => {
+            semester.courses.forEach((course) => {
+              if (course == found) {
                 console.log(course);
                 count++;
               }
-            })
-          })
-          if(count == 1){ 
+            });
+          });
+          if (count == 1) {
             removeFromRequirements(found);
           }
-         
+
           setSemesters(
             update(semesters, {
               [movedFromIndex]: {
@@ -620,35 +622,50 @@ export const Container: FC<ContainerProps> = memo(function Container({
     setVisibility(false);
   };
 
-  //get all of the requirements and sort through the course list for courses 
+  //get all of the requirements and sort through the course list for courses
   //that can fullfill multiple categories
   useEffect(() => {
     let temp: Requirement[] = [];
-    let tempReqList:Requirement[] = reqList;
+    let tempReqList: Requirement[] = reqList;
     tempReqList.forEach((x) => {
-      if(x.parentCategory == null && !(x.courseReqs == null && x.creditCount == null && x.courseCount == null)){
+      if (
+        x.parentCategory == null &&
+        !(
+          x.courseReqs == null &&
+          x.creditCount == null &&
+          x.courseCount == null
+        )
+      ) {
         temp.push(x);
       } else {
-        tempReqList.forEach((n)=>{
-          if(n.idCategory == x.parentCategory){
-            if(n.courseReqs == null && n.creditCount == null && n.courseCount == null){
+        tempReqList.forEach((n) => {
+          if (n.idCategory == x.parentCategory) {
+            if (
+              n.courseReqs == null &&
+              n.creditCount == null &&
+              n.courseCount == null
+            ) {
               temp.push(x);
-            } 
-        }})       
+            }
+          }
+        });
       }
-  
+
       if (x.parentCategory) {
-        for (var i = 0; i<reqGenList.length; i++){
-          if(reqGenList[i].idCategory == x.parentCategory){
+        for (var i = 0; i < reqGenList.length; i++) {
+          if (reqGenList[i].idCategory == x.parentCategory) {
             reqGenList[i].inheritedCredits = x.creditCount;
-            if(reqGenList[i].courseReqs==null){
+            if (reqGenList[i].courseReqs == null) {
               reqGenList[i].courseReqs = x.courseReqs;
-            } else if (!reqGenList[i].courseReqs.includes(x.courseReqs)){
-              reqGenList[i].courseReqs = reqGenList[i].courseReqs+ ","+(x.courseReqs);
+            } else if (!reqGenList[i].courseReqs.includes(x.courseReqs)) {
+              reqGenList[i].courseReqs =
+                reqGenList[i].courseReqs + "," + x.courseReqs;
             }
             reqGenList[i].inheritedCredits = x.creditCount;
 
-            tempReqList = tempReqList.filter((item)=>item.idCategory !== x.idCategory);
+            tempReqList = tempReqList.filter(
+              (item) => item.idCategory !== x.idCategory
+            );
           }
         }
         setReqList(tempReqList);
@@ -695,471 +712,545 @@ export const Container: FC<ContainerProps> = memo(function Container({
         }
       }
     }
-    
-    setCoursesInMultipleCategories(tempArr);  
+
+    setCoursesInMultipleCategories(tempArr);
   }, [requirements, requirementsGen]);
-  
-  const removeFromRequirements = useCallback((course:Course)=>{
-    console.log("starting remove");
-    let temp1 = 1000;
-    let temp2 = 1000;
-    let temp3 = 1000;
-    for(var i = 0; i< reqList.length; i++){
-      let courseString = course.subject+"-"+course.number;
-      let index = reqList[i].coursesTaken.indexOf(courseString);
-      if(index>-1){
-        reqList[i].coursesTaken.splice(index,1);
-        if(reqList[i].creditCount != null){
-          reqList[i].creditCountTaken = reqList[i].creditCountTaken - course.credits;
-          temp1 = reqList[i].creditCountTaken/reqList[i].creditCount;
-        }
-        if(reqList[i].courseCount != null){
-          reqList[i].courseCountTaken = reqList[i].courseCountTaken - 1;
-          temp2 = reqList[i].courseCountTaken/reqList[i].courseCount;
-        }
-        if(reqList[i].courseReqs != null){
-          let total = reqList[i].courseReqs.split(",").length;
-          temp3 = reqList[i].coursesTaken.length/total;
-        }
-        //set the new percentage
-        console.log(temp1+" "+temp2+" "+temp3);
-        if(temp1<=temp2 && temp1<=temp3){
-          reqList[i].percentage = temp1*100;
-        } else if(temp2<=temp3 && temp2<=temp1){
-          reqList[i].percentage = temp2*100;
-        } else {
-          reqList[i].percentage = temp3*100;
+
+  const removeFromRequirements = useCallback(
+    (course: Course) => {
+      console.log("starting remove");
+      let temp1 = 1000;
+      let temp2 = 1000;
+      let temp3 = 1000;
+      for (var i = 0; i < reqList.length; i++) {
+        let courseString = course.subject + "-" + course.number;
+        let index = reqList[i].coursesTaken.indexOf(courseString);
+        if (index > -1) {
+          reqList[i].coursesTaken.splice(index, 1);
+          if (reqList[i].creditCount != null) {
+            reqList[i].creditCountTaken =
+              reqList[i].creditCountTaken - course.credits;
+            temp1 = reqList[i].creditCountTaken / reqList[i].creditCount;
+          }
+          if (reqList[i].courseCount != null) {
+            reqList[i].courseCountTaken = reqList[i].courseCountTaken - 1;
+            temp2 = reqList[i].courseCountTaken / reqList[i].courseCount;
+          }
+          if (reqList[i].courseReqs != null) {
+            let total = reqList[i].courseReqs.split(",").length;
+            temp3 = reqList[i].coursesTaken.length / total;
+          }
+          //set the new percentage
+          console.log(temp1 + " " + temp2 + " " + temp3);
+          if (temp1 <= temp2 && temp1 <= temp3) {
+            reqList[i].percentage = temp1 * 100;
+          } else if (temp2 <= temp3 && temp2 <= temp1) {
+            reqList[i].percentage = temp2 * 100;
+          } else {
+            reqList[i].percentage = temp3 * 100;
+          }
         }
       }
-    }
-    //check if the course is filling any gen-eds
-    for(var i = 0; i< reqGenList.length; i++){
-      temp1 = 1000;
-      temp2 = 1000;
-      temp3 = 1000;
-      let courseString = course.subject+"-"+course.number;
-      let index = reqGenList[i].coursesTaken.indexOf(courseString);
-      if(index>-1){
-        console.log("removing");
-        console.log(reqGenList[i]);
-        //remove the course from the requirment
-        reqGenList[i].coursesTaken.splice(index,1);
-        if(reqGenList[i].creditCount != null){
-          console.log("Credits");
-          reqGenList[i].creditCountTaken = reqGenList[i].creditCountTaken - course.credits;
-          console.log(reqGenList[i].creditCountTaken);
-          temp1 = reqGenList[i].creditCountTaken/reqGenList[i].creditCount;
-        }
-        if(reqGenList[i].courseCount != null){
-          reqGenList[i].courseCountTaken = reqGenList[i].courseCountTaken - 1;
-          temp2 = reqGenList[i].courseCountTaken/reqGenList[i].courseCount;
-        }
-        if(reqGenList[i].courseReqs != null){
-          console.log("courseReqs");
-          let total = reqGenList[i].courseReqs.split(",").length;
-          temp3 = reqGenList[i].coursesTaken.length/total;
-        }
-        //set the new percentage
-        console.log(temp1+" "+temp2+" "+temp3);
-        if(temp1<=temp2 && temp1<=temp3 && reqGenList[i].creditCount != null){
-          console.log("option 1");
-          reqGenList[i].percentage = temp1*100;
-        } else if(temp2<=temp3 && temp2<=temp1 &&reqGenList[i].courseCount != null){
-          console.log("option 2");
-          reqGenList[i].percentage = temp2*100;
-        } else {
-          console.log("option 3");
-          reqGenList[i].percentage = temp3*100;
-        }
-        console.log(reqGenList[i].percentage);
-        var parentIndex = reqGenList.indexOf(reqGenList.find((item) => item.idCategory === reqGenList[i].parentCategory))
-        console.log("parent index"+parentIndex);
-        if(parentIndex != -1){
-          console.log(reqGenList[parentIndex]);
-          if(reqGenList[parentIndex].idCategory == 25){
-            //ARNS
-            //Must include one nat lab and one math/stat
-            let percents: number[] = [];
-            reqGenList.forEach((y)=>{
-              if(y.parentCategory == 25){
-                if(y.courseReqs != null || y.courseCount != null || y.creditCount != null){
-                  percents.push(y.percentage);
-                }
-              }
-            })
-            console.log(percents);
-            let sum = 0;
-            percents.forEach((y)=>{
-              if(y == undefined){y = 0;}
-              sum = sum + y * 1/percents.length;
-            })
-            console.log(sum);
-            reqGenList[parentIndex].percentage = sum;
+      //check if the course is filling any gen-eds
+      for (var i = 0; i < reqGenList.length; i++) {
+        temp1 = 1000;
+        temp2 = 1000;
+        temp3 = 1000;
+        let courseString = course.subject + "-" + course.number;
+        let index = reqGenList[i].coursesTaken.indexOf(courseString);
+        if (index > -1) {
+          console.log("removing");
+          console.log(reqGenList[i]);
+          //remove the course from the requirment
+          reqGenList[i].coursesTaken.splice(index, 1);
+          if (reqGenList[i].creditCount != null) {
+            console.log("Credits");
+            reqGenList[i].creditCountTaken =
+              reqGenList[i].creditCountTaken - course.credits;
+            console.log(reqGenList[i].creditCountTaken);
+            temp1 = reqGenList[i].creditCountTaken / reqGenList[i].creditCount;
           }
-          if(reqGenList[parentIndex].idCategory == 26 || reqGenList[parentIndex].idCategory == 27){
-            console.log("Running extra check");
-            //ART/HUM or SBSCI
-            //Must come from two different subcategories
-            if(reqGenList[parentIndex].coursesTaken.length > 1){
+          if (reqGenList[i].courseCount != null) {
+            reqGenList[i].courseCountTaken = reqGenList[i].courseCountTaken - 1;
+            temp2 = reqGenList[i].courseCountTaken / reqGenList[i].courseCount;
+          }
+          if (reqGenList[i].courseReqs != null) {
+            console.log("courseReqs");
+            let total = reqGenList[i].courseReqs.split(",").length;
+            temp3 = reqGenList[i].coursesTaken.length / total;
+          }
+          //set the new percentage
+          console.log(temp1 + " " + temp2 + " " + temp3);
+          if (
+            temp1 <= temp2 &&
+            temp1 <= temp3 &&
+            reqGenList[i].creditCount != null
+          ) {
+            console.log("option 1");
+            reqGenList[i].percentage = temp1 * 100;
+          } else if (
+            temp2 <= temp3 &&
+            temp2 <= temp1 &&
+            reqGenList[i].courseCount != null
+          ) {
+            console.log("option 2");
+            reqGenList[i].percentage = temp2 * 100;
+          } else {
+            console.log("option 3");
+            reqGenList[i].percentage = temp3 * 100;
+          }
+          console.log(reqGenList[i].percentage);
+          var parentIndex = reqGenList.indexOf(
+            reqGenList.find(
+              (item) => item.idCategory === reqGenList[i].parentCategory
+            )
+          );
+          console.log("parent index" + parentIndex);
+          if (parentIndex != -1) {
+            console.log(reqGenList[parentIndex]);
+            if (reqGenList[parentIndex].idCategory == 25) {
+              //ARNS
+              //Must include one nat lab and one math/stat
               let percents: number[] = [];
-              reqGenList.forEach((y)=>{    
-                if(y.parentCategory == reqGenList[parentIndex].idCategory){
-                  if(y.courseReqs != null || y.courseCount != null || y.creditCount != null){
-                    console.log(y);
+              reqGenList.forEach((y) => {
+                if (y.parentCategory == 25) {
+                  if (
+                    y.courseReqs != null ||
+                    y.courseCount != null ||
+                    y.creditCount != null
+                  ) {
                     percents.push(y.percentage);
                   }
                 }
-              })
+              });
               console.log(percents);
-              //at least one subcategory has it's own requirments that must
-              //be satisfied as well
-              if(percents.length > 1){
-                let sum = 0;
-                percents.forEach((y)=>{
-                  if(y == undefined){y=0;}
-                  sum = sum + y/percents.length;
-                })
-                reqGenList[parentIndex].percentage = sum;
-              } else {
-                //no req subcat, just fill two different ones
-                let filledCategories = 0;
-                for(var i = 0; i<reqGenList.length; i++){
-                  if(reqGenList[i].parentCategory == reqGenList[parentIndex].idCategory){
-                    if(reqGenList[i].coursesTaken.length > 0 && reqGenList[i].idCategory != reqGenList[parentIndex].idCategory){
-                      filledCategories++;
+              let sum = 0;
+              percents.forEach((y) => {
+                if (y == undefined) {
+                  y = 0;
+                }
+                sum = sum + (y * 1) / percents.length;
+              });
+              console.log(sum);
+              reqGenList[parentIndex].percentage = sum;
+            }
+            if (
+              reqGenList[parentIndex].idCategory == 26 ||
+              reqGenList[parentIndex].idCategory == 27
+            ) {
+              console.log("Running extra check");
+              //ART/HUM or SBSCI
+              //Must come from two different subcategories
+              if (reqGenList[parentIndex].coursesTaken.length > 1) {
+                let percents: number[] = [];
+                reqGenList.forEach((y) => {
+                  if (y.parentCategory == reqGenList[parentIndex].idCategory) {
+                    if (
+                      y.courseReqs != null ||
+                      y.courseCount != null ||
+                      y.creditCount != null
+                    ) {
+                      console.log(y);
+                      percents.push(y.percentage);
                     }
                   }
-                }
-                //the courses are only from one category
-                if(filledCategories == 1){
-                  if(reqGenList[parentIndex].percentage> 50){reqGenList[parentIndex].percentage = 50;}
-                } else if (percents.length == 1){
-                  //courses are from different categories one of which is required
-                  reqGenList[parentIndex].percentage = reqGenList[parentIndex].percentage/2 + percents[0]/2;
+                });
+                console.log(percents);
+                //at least one subcategory has it's own requirments that must
+                //be satisfied as well
+                if (percents.length > 1) {
+                  let sum = 0;
+                  percents.forEach((y) => {
+                    if (y == undefined) {
+                      y = 0;
+                    }
+                    sum = sum + y / percents.length;
+                  });
+                  reqGenList[parentIndex].percentage = sum;
+                } else {
+                  //no req subcat, just fill two different ones
+                  let filledCategories = 0;
+                  for (var i = 0; i < reqGenList.length; i++) {
+                    if (
+                      reqGenList[i].parentCategory ==
+                      reqGenList[parentIndex].idCategory
+                    ) {
+                      if (
+                        reqGenList[i].coursesTaken.length > 0 &&
+                        reqGenList[i].idCategory !=
+                          reqGenList[parentIndex].idCategory
+                      ) {
+                        filledCategories++;
+                      }
+                    }
+                  }
+                  //the courses are only from one category
+                  if (filledCategories == 1) {
+                    if (reqGenList[parentIndex].percentage > 50) {
+                      reqGenList[parentIndex].percentage = 50;
+                    }
+                  } else if (percents.length == 1) {
+                    //courses are from different categories one of which is required
+                    reqGenList[parentIndex].percentage =
+                      reqGenList[parentIndex].percentage / 2 + percents[0] / 2;
+                  }
                 }
               }
             }
           }
         }
       }
-    }
-    
-  },[reqList, reqGenList])
+    },
+    [reqList, reqGenList]
+  );
   //TODO do the requirements define when a course can be taken twice for credit
-  const checkRequirements = useCallback((course: Course, multipleCategories: any) =>{
-    console.log(reqList);
-    console.log(reqGenList);
-    //check for any major/concentration reqs it can fill
-    let Major = checkRequirementsMajor(course);
-    if(!Major){
-    //check if it fills any unfilled gen-ed requirements
-      checkRequirementsGen(course, multipleCategories);
-    }
-  },[reqList, reqGenList]);
+  const checkRequirements = useCallback(
+    (course: Course, multipleCategories: any) => {
+      console.log(reqList);
+      console.log(reqGenList);
+      //check for any major/concentration reqs it can fill
+      let Major = checkRequirementsMajor(course);
+      if (!Major) {
+        //check if it fills any unfilled gen-ed requirements
+        checkRequirementsGen(course, multipleCategories);
+      }
+    },
+    [reqList, reqGenList]
+  );
 
   //Checks and updates major and concentration requirements
-  function checkRequirementsMajor(course:Course): boolean{
+  function checkRequirementsMajor(course: Course): boolean {
     let courseString = course.subject + "-" + course.number;
     //determines whether course has fulfilled a major course and
     //shouldn't be check for a gen-ed req
     let addedCourse = false;
     const reqCheck = new StringProcessing();
     //run once or for each category the course is in
-      for (var i = 0; i < reqList.length; i++){
-        let x = reqList[i];
-        //initialize the variables if they aren't already
-        if(x.coursesTaken == undefined){x.coursesTaken = [];}
-        if(x.creditCountTaken == undefined){x.creditCountTaken=0;}
-        if(x.courseCountTaken == undefined){x.courseCountTaken=0;}
-        if(x.percentage == undefined){x.percentage=0;}
-        //Check if this is the category of the course
-        if (course.idCategory == x.idCategory) {
-          console.log("Matched Category" + x.idCategory);
-          //Check if a course has already been used for this requirement
-          console.log(x.coursesTaken.indexOf(courseString));
-          if (x.coursesTaken.indexOf(courseString)==-1) {
-            console.log("Not already counted");
-            let courseReqArr = x.courseReqs.split(",");
-            //The only requirement is a course count
-            if (x.courseCount && !x.courseReqs && !x.creditCount) {
-              console.log("courses")
-              x.courseCountTaken = x.courseCountTaken + 1;
-              x.percentage =(x.courseCountTaken / x.courseCount)*100;
+    for (var i = 0; i < reqList.length; i++) {
+      let x = reqList[i];
+      //initialize the variables if they aren't already
+      if (x.coursesTaken == undefined) {
+        x.coursesTaken = [];
+      }
+      if (x.creditCountTaken == undefined) {
+        x.creditCountTaken = 0;
+      }
+      if (x.courseCountTaken == undefined) {
+        x.courseCountTaken = 0;
+      }
+      if (x.percentage == undefined) {
+        x.percentage = 0;
+      }
+      //Check if this is the category of the course
+      if (course.idCategory == x.idCategory) {
+        console.log("Matched Category" + x.idCategory);
+        //Check if a course has already been used for this requirement
+        console.log(x.coursesTaken.indexOf(courseString));
+        if (x.coursesTaken.indexOf(courseString) == -1) {
+          console.log("Not already counted");
+          let courseReqArr = x.courseReqs.split(",");
+          //The only requirement is a course count
+          if (x.courseCount && !x.courseReqs && !x.creditCount) {
+            console.log("courses");
+            x.courseCountTaken = x.courseCountTaken + 1;
+            x.percentage = (x.courseCountTaken / x.courseCount) * 100;
+          }
+          //The only requirement is a courses required list
+          if (!x.courseCount && x.courseReqs && !x.creditCount) {
+            console.log("required courses");
+            let validCourse = false;
+            courseReqArr.forEach((item) => {
+              let found = reqCheck.courseInListCheck(item, [courseString]);
+              if (found) {
+                validCourse = true;
+              }
+            });
+            if (validCourse) {
+              x.percentage = x.percentage + (1 / courseReqArr.length) * 100;
+              console.log(x.percentage);
             }
-            //The only requirement is a courses required list
-            if (!x.courseCount && x.courseReqs && !x.creditCount) {
-              console.log("required courses")
+          }
+          //The only requirement is a credit count
+          if (!x.courseCount && !x.courseReqs && x.creditCount) {
+            console.log("credits");
+            x.creditCountTaken = x.creditCountTaken + course.credits;
+            x.percentage = (x.creditCountTaken / x.creditCount) * 100;
+          }
+          //The requirement is a course count and a list of required courses
+          if (x.courseCount && x.courseReqs && !x.creditCount) {
+            console.log("course count with required courses");
+            let validCourse = false;
+            courseReqArr.forEach((item) => {
+              let found = reqCheck.courseInListCheck(item, [courseString]);
+              if (found) {
+                validCourse = true;
+              }
+            });
+            if (validCourse) {
+              x.percentage = x.percentage + (1 / courseReqArr.length) * 100;
+              console.log(x.percentage);
+            }
+          }
+          //The requirement is a credit count and list of required courses
+          if (!x.courseCount && x.courseReqs && x.creditCount) {
+            console.log("credits and list");
+            let temp1 = 1000;
+            x.creditCountTaken = x.creditCountTaken + course.credits;
+            let temp2 = (x.creditCountTaken / x.creditCount) * 100;
+            let validCourse = false;
+            courseReqArr.forEach((item) => {
+              let found = reqCheck.courseInListCheck(item, [courseString]);
+              if (found) {
+                validCourse = true;
+              }
+            });
+            if (validCourse) {
+              temp2 = x.percentage + (1 / courseReqArr.length) * 100;
+            }
+            if (temp1 < temp2) {
+              x.percentage = temp1;
+            } else {
+              x.percentage = temp2;
+            }
+          }
+          //The requirement is a credit count and a course count
+          if (x.courseCount && !x.courseReqs && x.creditCount) {
+            console.log("credits and course count");
+            x.courseCountTaken = x.courseCountTaken + 1;
+            x.creditCountTaken = x.creditCountTaken + course.credits;
+            let temp1 = (x.creditCountTaken / x.creditCount) * 100;
+            let temp2 = (x.courseCountTaken / x.courseCount) * 100;
+            if (temp1 > temp2) {
+              x.percentage = temp2;
+            } else {
+              x.percentage = temp1;
+            }
+          }
+          //The requirement is a credit count, a course count, and a course list
+          if (x.courseCount && x.courseReqs && x.creditCount) {
+            console.log("all three");
+            let validCourse = false;
+            courseReqArr.forEach((item) => {
+              let found = reqCheck.courseInListCheck(item, [courseString]);
+              if (found) {
+                validCourse = true;
+              }
+            });
+            if (validCourse) {
+              x.percentage = x.percentage + (1 / courseReqArr.length) * 100;
+              console.log(x.percentage);
+            }
+          }
+          x.coursesTaken.push(courseString);
+          addedCourse = true;
+          console.log(x.parentCategory);
+          if (x.parentCategory) {
+            console.log("Has a parent");
+            let temp1 = 1000;
+            let temp2 = 1000;
+            let parent = reqList.find(
+              (item) => item.idCategory === x.parentCategory
+            );
+            let parentIndex = reqList.indexOf(parent);
+            //update for credits
+            if (parent.creditCount != null) {
+              if (parent.creditCountTaken == undefined) {
+                reqList[parentIndex].creditCountTaken = 0;
+              }
+              reqList[parentIndex].creditCountTaken += course.credits;
+              temp1 =
+                reqList[parentIndex].creditCountTaken /
+                reqList[parentIndex].creditCount;
+            }
+            //update for number of courses
+            if (parent.courseCount != null) {
+              if (parent.courseCountTaken == undefined) {
+                reqList[parentIndex].courseCountTaken = 0;
+              }
+              reqList[parentIndex].courseCountTaken += 1;
+              temp2 =
+                reqList[parentIndex].courseCountTaken /
+                reqList[parentIndex].courseCount;
+            }
+            if (parent.courseReqs != null) {
+              if (parent.coursesTaken == undefined) {
+                reqList[parentIndex].coursesTaken = "";
+              }
+              reqList[parentIndex].coursesTaken =
+                parent.coursesTaken + "," + courseString;
+              courseReqArr = reqList[parentIndex].split(",");
               let validCourse = false;
-              courseReqArr.forEach(item => {
-                let found = reqCheck.courseInListCheck(item, [courseString])
-                if(found){
+              courseReqArr.forEach((item) => {
+                let found = reqCheck.courseInListCheck(item, [courseString]);
+                if (found) {
                   validCourse = true;
                 }
-              })
-              if(validCourse){
-                x.percentage = x.percentage +(1/courseReqArr.length)*100;
-                console.log(x.percentage)
+              });
+              if (validCourse) {
+                reqList[parentIndex].percentage =
+                  reqList[parentIndex].percentage +
+                  (1 / courseReqArr.length) * 100;
               }
-            }
-            //The only requirement is a credit count
-            if (!x.courseCount && !x.courseReqs && x.creditCount) {
-              console.log("credits")
-              x.creditCountTaken = x.creditCountTaken + course.credits;
-              x.percentage = (x.creditCountTaken/x.creditCount)*100;
-            }
-            //The requirement is a course count and a list of required courses
-            if (x.courseCount && x.courseReqs && !x.creditCount) {
-              console.log("course count with required courses")
-              let validCourse = false;
-              courseReqArr.forEach(item => {
-                let found = reqCheck.courseInListCheck(item, [courseString])
-                if(found){
-                  validCourse = true;
-                }
-              })
-              if(validCourse){
-                x.percentage = x.percentage + (1/courseReqArr.length)*100;
-                console.log(x.percentage)
-              }
-            }
-            //The requirement is a credit count and list of required courses
-            if (!x.courseCount && x.courseReqs && x.creditCount) {
-              console.log("credits and list")
-              let temp1 = 1000;
-              x.creditCountTaken = x.creditCountTaken + course.credits;
-              let temp2 = (x.creditCountTaken/x.creditCount)*100;
-              let validCourse = false;
-              courseReqArr.forEach(item => {
-                let found = reqCheck.courseInListCheck(item, [courseString])
-                if(found){
-                  validCourse = true;
-                }
-              })
-              if(validCourse){
-                temp2 = x.percentage + (1/courseReqArr.length)*100;
-              }
-              if(temp1 <  temp2){
-                x.percentage = temp1;
+            } else {
+              //use the lesser percentage so we don't report complete if it's not
+              if (temp1 >= temp2) {
+                reqList[parentIndex].percentage = temp2 * 100;
+                console.log("percent");
+                console.log(reqList[parentIndex]);
               } else {
-                x.percentage = temp2;
+                reqList[parentIndex].percentage = temp1 * 100;
+                console.log("percent");
+                console.log(reqList[parentIndex]);
               }
             }
-            //The requirement is a credit count and a course count
-            if (x.courseCount && !x.courseReqs && x.creditCount) {
-              console.log("credits and course count")
-              x.courseCountTaken = x.courseCountTaken + 1;
-              x.creditCountTaken = x.creditCountTaken + course.credits;
-              let temp1 = (x.creditCountTaken/x.creditCount)*100;
-              let temp2 = (x.courseCountTaken/x.courseCount)*100;
-              if(temp1>temp2){
-                x.percentage = temp2;
-              }else{
-                x.percentage = temp1;
-              }  
+            if (reqList[parentIndex].percentage > 100) {
+              reqList[parentIndex].percentage = 100;
             }
-            //The requirement is a credit count, a course count, and a course list
-            if (x.courseCount && x.courseReqs && x.creditCount) {
-              console.log("all three")
-              let validCourse = false;
-              courseReqArr.forEach(item => {
-                let found = reqCheck.courseInListCheck(item, [courseString])
-                if(found){
-                  validCourse = true;
-                }
-              })
-              if(validCourse){
-                x.percentage = x.percentage + (1/courseReqArr.length)*100;
-                console.log(x.percentage)
-              }
-            }
-            x.coursesTaken.push(courseString);
-            addedCourse = true;
-            console.log(x.parentCategory);
-            if(x.parentCategory){
-              console.log("Has a parent");
-              let temp1 = 1000;
-              let temp2 = 1000;
-              let parent = reqList.find((item) => item.idCategory === x.parentCategory);
-              let parentIndex = reqList.indexOf(parent);
-              //update for credits
-              if(parent.creditCount != null){
-                if(parent.creditCountTaken == undefined){reqList[parentIndex].creditCountTaken = 0;}
-                reqList[parentIndex].creditCountTaken += course.credits;
-                temp1 = reqList[parentIndex].creditCountTaken/reqList[parentIndex].creditCount;
-              }
-              //update for number of courses
-              if(parent.courseCount != null){
-                if(parent.courseCountTaken == undefined){reqList[parentIndex].courseCountTaken = 0;}
-                reqList[parentIndex].courseCountTaken += 1;
-                temp2 = reqList[parentIndex].courseCountTaken/reqList[parentIndex].courseCount;
-              }
-              if(parent.courseReqs != null){
-                if(parent.coursesTaken == undefined){reqList[parentIndex].coursesTaken = "";}
-                reqList[parentIndex].coursesTaken = parent.coursesTaken + "," + courseString;
-                courseReqArr = reqList[parentIndex].split(",");
-                let validCourse = false;
-                courseReqArr.forEach(item => {
-                  let found = reqCheck.courseInListCheck(item, [courseString])
-                  if(found){
-                    validCourse = true;
-                  }
-                })
-                if(validCourse){
-                  reqList[parentIndex].percentage = reqList[parentIndex].percentage + (1/courseReqArr.length)*100;
-                }
-              } else{
-                //use the lesser percentage so we don't report complete if it's not
-                if(temp1>=temp2){
-                  reqList[parentIndex].percentage = temp2*100;
-                  console.log("percent");
-                  console.log(reqList[parentIndex]);
-                }else{
-                  reqList[parentIndex].percentage = temp1*100;
-                  console.log("percent");
-                  console.log(reqList[parentIndex]);
-                }
-              }
-              if(reqList[parentIndex].percentage >100){
-                reqList[parentIndex].percentage = 100;
-              }
-            }
-            if(x.percentage > 100){
-              x.percentage = 100;
-            }
+          }
+          if (x.percentage > 100) {
+            x.percentage = 100;
           }
         }
       }
-      return addedCourse;
     }
+    return addedCourse;
+  }
 
   //Checks and updates the gen-ed requirements
-  function checkRequirementsGen (course:Course, multipleCategories:any){
+  function checkRequirementsGen(course: Course, multipleCategories: any) {
     let courseString = course.subject + "-" + course.number;
-    console.log(multipleCategories.find((item)=>item.idString === courseString));
-    let categories = multipleCategories.find((item)=>item.idString === courseString)?.categories;
+    console.log(
+      multipleCategories.find((item) => item.idString === courseString)
+    );
+    let categories = multipleCategories.find(
+      (item) => item.idString === courseString
+    )?.categories;
     console.log("categories");
     console.log(categories);
     const reqCheck = new StringProcessing();
     //run once or for each category the course is in
-    for(var n = 0; n<( categories ? categories.length : 1); n++){
-      let courseCategory = categories? categories[n]: course.idCategory;
-      for (var i = 0; i < reqGenList.length; i++){
+    for (var n = 0; n < (categories ? categories.length : 1); n++) {
+      let courseCategory = categories ? categories[n] : course.idCategory;
+      for (var i = 0; i < reqGenList.length; i++) {
         let x = reqGenList[i];
         //initialize the variables if they aren't already
-        if(x.coursesTaken == undefined){x.coursesTaken = [];}
-        if(x.creditCountTaken == undefined){x.creditCountTaken=0;}
-        if(x.courseCountTaken == undefined){x.courseCountTaken=0;}
-        if(x.percentage == undefined){x.percentage=0;}
+        if (x.coursesTaken == undefined) {
+          x.coursesTaken = [];
+        }
+        if (x.creditCountTaken == undefined) {
+          x.creditCountTaken = 0;
+        }
+        if (x.courseCountTaken == undefined) {
+          x.courseCountTaken = 0;
+        }
+        if (x.percentage == undefined) {
+          x.percentage = 0;
+        }
         //Check if this is the category of the course
         if (courseCategory == x.idCategory) {
           console.log("Matched Category" + x.idCategory);
           //Check if a course has already been used for this requirement
-          if (x.coursesTaken.indexOf(courseString)==-1) {
+          if (x.coursesTaken.indexOf(courseString) == -1) {
             console.log("Not already counted");
-            let courseReqArr : String[] =[];
-            if(x.courseReqs){
+            let courseReqArr: String[] = [];
+            if (x.courseReqs) {
               courseReqArr = x.courseReqs.split(",");
             }
             //The only requirement is a course count
             if (x.courseCount && !x.courseReqs && !x.creditCount) {
-              console.log("courses")
+              console.log("courses");
               x.courseCountTaken = x.courseCountTaken + 1;
-              x.percentage = (x.courseCountTaken / x.courseCount)*100;
+              x.percentage = (x.courseCountTaken / x.courseCount) * 100;
             }
             //The only requirement is a courses required list
             if (!x.courseCount && x.courseReqs && !x.creditCount) {
-              console.log("required courses")
+              console.log("required courses");
               //TODO run some string processing
               let validCourse = false;
-              courseReqArr.forEach(item => {
-                let found = reqCheck.courseInListCheck(item, [courseString])
-                if(found){
+              courseReqArr.forEach((item) => {
+                let found = reqCheck.courseInListCheck(item, [courseString]);
+                if (found) {
                   validCourse = true;
                 }
-              })
-              if(validCourse){
-                x.percentage = x.percentage + (1/courseReqArr.length)*100;
-                console.log(x.percentage)
+              });
+              if (validCourse) {
+                x.percentage = x.percentage + (1 / courseReqArr.length) * 100;
+                console.log(x.percentage);
               }
-            
             }
             //The only requirement is a credit count
             if (!x.courseCount && !x.courseReqs && x.creditCount) {
-              console.log("credits")
+              console.log("credits");
               x.creditCountTaken = x.creditCountTaken + course.credits;
-              x.percentage = (x.creditCountTaken/x.creditCount)*100;
-            
-          
+              x.percentage = (x.creditCountTaken / x.creditCount) * 100;
             }
             //The requirement is a course count and a list of required courses
             if (x.courseCount && x.courseReqs && !x.creditCount) {
-              console.log("course count with required courses")
+              console.log("course count with required courses");
               let validCourse = false;
               let temp1 = 0;
               let temp2 = 0;
-              courseReqArr.forEach(item => {
-                let found = reqCheck.courseInListCheck(item, [courseString])
-                if(found){
+              courseReqArr.forEach((item) => {
+                let found = reqCheck.courseInListCheck(item, [courseString]);
+                if (found) {
                   validCourse = true;
                 }
-              })
-              if(validCourse){
+              });
+              if (validCourse) {
                 //use course reqs as percent
-                temp1 = x.percentage + (1/courseReqArr.length)*100;
-              } 
+                temp1 = x.percentage + (1 / courseReqArr.length) * 100;
+              }
               //add credits
               x.courseCountTaken = x.courseCountTaken + 1;
-              temp2 = (x.courseCountTaken / x.courseCount)*100;
-              if(temp1 > temp2){
+              temp2 = (x.courseCountTaken / x.courseCount) * 100;
+              if (temp1 > temp2) {
                 x.percentage = temp2;
               } else {
                 x.percentage = temp1;
-              }  
+              }
             }
             //The requirement is a credit count and list of required courses
             if (!x.courseCount && x.courseReqs && x.creditCount) {
-              console.log("credits and list")
+              console.log("credits and list");
               let validCourse = false;
               let temp1 = 0;
               let temp2 = 0;
-              courseReqArr.forEach(item => {
-                let found = reqCheck.courseInListCheck(item, [courseString])
-                if(found){
+              courseReqArr.forEach((item) => {
+                let found = reqCheck.courseInListCheck(item, [courseString]);
+                if (found) {
                   validCourse = true;
                 }
-              })
-              if(validCourse){
+              });
+              if (validCourse) {
                 //use req courses as percentage
-                temp1 = x.percentage + (1/courseReqArr.length) *100;
+                temp1 = x.percentage + (1 / courseReqArr.length) * 100;
               }
               //add to course count but don't count it yet
               x.creditCountTaken = x.creditCountTaken + course.credits;
-              temp2 = (x.creditCountTaken / x.creditCount)*100;
+              temp2 = (x.creditCountTaken / x.creditCount) * 100;
               //set to lowest so we don't report complete if its not
-              if(temp1 > temp2){
+              if (temp1 > temp2) {
                 x.percentage = temp2;
-              } else{
+              } else {
                 x.percentage = temp1;
               }
-              
-              
             }
             //The requirement is a credit count and a course count
             if (x.courseCount && !x.courseReqs && x.creditCount) {
-              console.log("credits and course count")
+              console.log("credits and course count");
               x.courseCountTaken = x.courseCountTaken + 1;
               x.creditCountTaken = x.creditCountTaken + course.credits;
-              let temp1 = (x.creditCountTaken/x.creditCount)*100;
-              let temp2 = (x.courseCountTaken/x.courseCount)*100;
-              if(temp1>temp2){
+              let temp1 = (x.creditCountTaken / x.creditCount) * 100;
+              let temp2 = (x.courseCountTaken / x.courseCount) * 100;
+              if (temp1 > temp2) {
                 x.percentage = temp2;
-              }else{
+              } else {
                 x.percentage = temp1;
-              }   
+              }
             }
             //The requirement is a credit count, a course count, and a course list
             if (x.courseCount && x.courseReqs && x.creditCount) {
-              console.log("all three")
+              console.log("all three");
               //update taken credits and course count
               x.creditCountTaken = x.creditCountTaken + course.credits;
               x.courseCountTaken = x.courseCountTaken + 1;
@@ -1167,156 +1258,198 @@ export const Container: FC<ContainerProps> = memo(function Container({
               let temp1 = 0;
               let temp2 = 0;
               let temp3 = 0;
-              courseReqArr.forEach(item => {
-                let found = reqCheck.courseInListCheck(item, [courseString])
-                if(found){
+              courseReqArr.forEach((item) => {
+                let found = reqCheck.courseInListCheck(item, [courseString]);
+                if (found) {
                   validCourse = true;
                 }
-              })
-              if(validCourse){
-                 temp1 = x.percentage +(1/courseReqArr.length)*100;
-              } 
-              temp2 = (x.creditCountTaken / x.creditCount)*100;
-              temp3 = (x.courseCountTaken / x.courseCount)*100;
-              if(temp1 <= temp2 && temp1 <= temp3){
+              });
+              if (validCourse) {
+                temp1 = x.percentage + (1 / courseReqArr.length) * 100;
+              }
+              temp2 = (x.creditCountTaken / x.creditCount) * 100;
+              temp3 = (x.courseCountTaken / x.courseCount) * 100;
+              if (temp1 <= temp2 && temp1 <= temp3) {
                 x.percentage = temp1;
-              } else if(temp2 <= temp1 && temp2 <= temp3){
+              } else if (temp2 <= temp1 && temp2 <= temp3) {
                 x.percentage = temp2;
-              } else{
+              } else {
                 x.percentage = temp3;
               }
             }
             x.coursesTaken.push(courseString);
-            if(x.percentage > 100){
+            if (x.percentage > 100) {
               x.percentage = 100;
-            } 
-            if(x.parentCategory){
+            }
+            if (x.parentCategory) {
               console.log("Has a parent");
               let temp1 = 1000;
               let temp2 = 1000;
               let temp3 = 1000;
-              let parent = reqGenList.find((item) => item.idCategory === x.parentCategory);
+              let parent = reqGenList.find(
+                (item) => item.idCategory === x.parentCategory
+              );
               let parentIndex = reqGenList.indexOf(parent);
               reqGenList[parentIndex].coursesTaken.push(courseString);
               //update for credits
-              if(parent.creditCount != null){
-                if(reqGenList[parentIndex].creditCountTaken == undefined){reqGenList[parentIndex].creditCountTaken = 0;}
+              if (parent.creditCount != null) {
+                if (reqGenList[parentIndex].creditCountTaken == undefined) {
+                  reqGenList[parentIndex].creditCountTaken = 0;
+                }
                 reqGenList[parentIndex].creditCountTaken += course.credits;
-                temp1 = reqGenList[parentIndex].creditCountTaken/reqGenList[parentIndex].creditCount;
+                temp1 =
+                  reqGenList[parentIndex].creditCountTaken /
+                  reqGenList[parentIndex].creditCount;
               }
               //update for number of courses
-              if(parent.courseCount != null){
-                if(reqGenList[parentIndex].courseCountTaken == undefined){reqGenList[parentIndex].courseCountTaken = 0;}
+              if (parent.courseCount != null) {
+                if (reqGenList[parentIndex].courseCountTaken == undefined) {
+                  reqGenList[parentIndex].courseCountTaken = 0;
+                }
                 reqGenList[parentIndex].courseCountTaken += 1;
-                temp2 = reqGenList[parentIndex].courseCountTaken/reqGenList[parentIndex].courseCount;
+                temp2 =
+                  reqGenList[parentIndex].courseCountTaken /
+                  reqGenList[parentIndex].courseCount;
               }
-              if(parent.courseReqs != null){
-                if(parent.coursesTaken == undefined){reqGenList[parentIndex].coursesTaken = "";}
-                reqGenList[parentIndex].coursesTaken = parent.coursesTaken + "," + courseString;
+              if (parent.courseReqs != null) {
+                if (parent.coursesTaken == undefined) {
+                  reqGenList[parentIndex].coursesTaken = "";
+                }
+                reqGenList[parentIndex].coursesTaken =
+                  parent.coursesTaken + "," + courseString;
                 courseReqArr = reqGenList[parentIndex].split(",");
                 let validCourse = false;
-                courseReqArr.forEach(item => {
-                  let found = reqCheck.courseInListCheck(item, [courseString])
-                  if(found){
+                courseReqArr.forEach((item) => {
+                  let found = reqCheck.courseInListCheck(item, [courseString]);
+                  if (found) {
                     validCourse = true;
                   }
-                })
-                if(validCourse){
-                    temp3 = reqGenList[parentIndex].percentage + (1/courseReqArr.length);
+                });
+                if (validCourse) {
+                  temp3 =
+                    reqGenList[parentIndex].percentage +
+                    1 / courseReqArr.length;
                 }
-              } 
+              }
               //use the lesser percentage so we don't report complete if it's not
-              if(temp1<=temp2 && temp1 <= temp3){
-                reqGenList[parentIndex].percentage = temp1*100;
-              }else if(temp2<= temp3 && temp2 <= temp1){
-                reqGenList[parentIndex].percentage = temp2*100;
-              } else{
-                reqGenList[parentIndex].percentage = temp3*100;
+              if (temp1 <= temp2 && temp1 <= temp3) {
+                reqGenList[parentIndex].percentage = temp1 * 100;
+              } else if (temp2 <= temp3 && temp2 <= temp1) {
+                reqGenList[parentIndex].percentage = temp2 * 100;
+              } else {
+                reqGenList[parentIndex].percentage = temp3 * 100;
               }
 
               //Make necessary changes for the categories with extra requirements
-              if(parent.idCategory == 23){
+              if (parent.idCategory == 23) {
                 //RES courses
                 //One must be RES A
                 let foundRESA = false;
-                parent.coursesTaken.forEach((y)=>{
+                parent.coursesTaken.forEach((y) => {
                   let tempArr = y.split("-");
                   //find this course where it is RES A (if it exists)
-                  let courseFound = PassedCourseList.find((item)=> item.subject === tempArr[0] && item.number === tempArr[1] && item.idCategory === 30)
+                  let courseFound = PassedCourseList.find(
+                    (item) =>
+                      item.subject === tempArr[0] &&
+                      item.number === tempArr[1] &&
+                      item.idCategory === 30
+                  );
                   console.log("courseFound");
                   console.log(courseFound);
-                  if(courseFound != undefined){
+                  if (courseFound != undefined) {
                     //The course is RES A
                     foundRESA = true;
                   }
-                })
-                if(!foundRESA){
-                  if(reqGenList[parentIndex].percentage > 50){reqGenList[parentIndex].percentage = 50;}
+                });
+                if (!foundRESA) {
+                  if (reqGenList[parentIndex].percentage > 50) {
+                    reqGenList[parentIndex].percentage = 50;
+                  }
                 }
-              } else if(parent.idCategory == 25){
+              } else if (parent.idCategory == 25) {
                 //ARNS
                 //Must include one nat lab and one math/stat
                 let percents: number[] = [];
-                reqGenList.forEach((y)=>{
-                  if(y.parentCategory == 25){
-                    if(y.courseReqs != null || y.courseCount != null || y.creditCount != null){
+                reqGenList.forEach((y) => {
+                  if (y.parentCategory == 25) {
+                    if (
+                      y.courseReqs != null ||
+                      y.courseCount != null ||
+                      y.creditCount != null
+                    ) {
                       percents.push(y.percentage);
                     }
                   }
-                })
+                });
                 console.log(percents);
                 let sum = 0;
-                percents.forEach((y)=>{
-                  if(y == undefined){y = 0;}
-                  sum = sum + y * 1/percents.length;
-                })
+                percents.forEach((y) => {
+                  if (y == undefined) {
+                    y = 0;
+                  }
+                  sum = sum + (y * 1) / percents.length;
+                });
                 console.log(sum);
                 reqGenList[parentIndex].percentage = sum;
-              } else if(parent.idCategory == 26 || parent.idCategory == 27){
+              } else if (parent.idCategory == 26 || parent.idCategory == 27) {
                 //ART/HUM or SBSCI
                 //Must come from two different subcategories
-                if(parent.coursesTaken.length > 1){
+                if (parent.coursesTaken.length > 1) {
                   let percents: number[] = [];
-                  reqGenList.forEach((y)=>{    
-                    if(y.parentCategory == parent.idCategory){
-                      if(y.courseReqs != null || y.courseCount != null || y.creditCount != null){
+                  reqGenList.forEach((y) => {
+                    if (y.parentCategory == parent.idCategory) {
+                      if (
+                        y.courseReqs != null ||
+                        y.courseCount != null ||
+                        y.creditCount != null
+                      ) {
                         console.log(y);
                         percents.push(y.percentage);
                       }
                     }
-                  })
+                  });
                   console.log(percents);
                   //at least one subcategory has it's own requirments that must
                   //be satisfied as well
-                  if(percents.length > 1){
+                  if (percents.length > 1) {
                     let sum = 0;
-                    percents.forEach((y)=>{
-                      if(y == undefined){y=0;}
-                      sum = sum + y/percents.length;
-                    })
+                    percents.forEach((y) => {
+                      if (y == undefined) {
+                        y = 0;
+                      }
+                      sum = sum + y / percents.length;
+                    });
                     reqGenList[parentIndex].percentage = sum;
                   } else {
                     //no req subcat, just fill two different ones
                     let filledCategories = 0;
-                    for(var i = 0; i<reqGenList.length; i++){
-                      if(reqGenList[i].parentCategory == parent.idCategory){
-                        if(reqGenList[i].coursesTaken.length > 0 && reqGenList[i].idCategory != parent.idCategory){
+                    for (var i = 0; i < reqGenList.length; i++) {
+                      if (reqGenList[i].parentCategory == parent.idCategory) {
+                        if (
+                          reqGenList[i].coursesTaken.length > 0 &&
+                          reqGenList[i].idCategory != parent.idCategory
+                        ) {
                           filledCategories++;
                         }
                       }
                     }
                     //the courses are only from one category
-                    if(filledCategories == 1){
-                      if(parent.percentage> 50){parent.percentage = 50;}
-                    } else if (percents.length == 1){
+                    if (filledCategories == 1) {
+                      if (parent.percentage > 50) {
+                        parent.percentage = 50;
+                      }
+                    } else if (percents.length == 1) {
                       //courses are from different categories one of which is required
-                      reqGenList[parentIndex].percentage = parent.percentage/2 + percents[0]/2;
+                      reqGenList[parentIndex].percentage =
+                        parent.percentage / 2 + percents[0] / 2;
                     }
                   }
                 }
               }
-              if(reqGenList[parentIndex].percentage > 100){reqGenList[parentIndex].percentage = 100;}
-            }       
+              if (reqGenList[parentIndex].percentage > 100) {
+                reqGenList[parentIndex].percentage = 100;
+              }
+            }
           }
         }
       }
