@@ -36,7 +36,7 @@ function App() {
 
   // courseSubjects the array of subject strings from the database
   const [courseSubjects, setCourseSubjects] = useState([]);
-    // selectedCourseSubject is the specific course subject selected
+  // selectedCourseSubject is the specific course subject selected
   // On update, a useEffect is called to get the respective numbers
   const [selectedCourseSubject, setSelectedCourseSubject] = useState("");
   // courseSubjectNumbers the array of number (as strings) from the database
@@ -126,7 +126,7 @@ function App() {
       });
   }, []);
 
-    // Runs whenever a course subject has been selected
+  // Runs whenever a course subject has been selected
   // Gets the array of course number for that subject from the API
   useEffect(() => {
     fetch(`/subjects/numbers?sub=${selectedCourseSubject}`)
@@ -214,37 +214,37 @@ function App() {
 
   return (
     <DndProvider backend={HTML5Backend}>
-    <div>
-      <InputPage
-        showing={!clickedGenerate}
-        onClickGenerate={generateSchedule}
-        onClickMajor={selectMajor}
-        onClickConcentration={selectConcentration}
-        concentrationList={concentrationData}
-        majorList={majorData}
-        majorDisplayList={majorDisplayData}
-        concentrationDisplayList={concentrationDisplayData}
-        takenCourses={coursesTaken}
-        setTakenCourses={setCoursesTaken}
-      />
-      <FourYearPlanPage
-        data-testid="FourYearPage"
-        showing={clickedGenerate}
-        concentrationCourseList={concentrationCourseData}
-        majorCourseList={majorCourseData}
-        genEdCourseList={genEdCourseData}
-        selectedMajor={major}
-        selectedConcentration={concentration}
-        completedCourses={coursesTaken}
-        requirements={requirements}
-      />
-      <ErrorPopup
-        onClose={popupCloseHandler}
-        show={visibility}
-        title="Error"
-        error={error}
-      />
-    </div>
+      <div>
+        <InputPage
+          showing={!clickedGenerate}
+          onClickGenerate={generateSchedule}
+          onClickMajor={selectMajor}
+          onClickConcentration={selectConcentration}
+          concentrationList={concentrationData}
+          majorList={majorData}
+          majorDisplayList={majorDisplayData}
+          concentrationDisplayList={concentrationDisplayData}
+          takenCourses={coursesTaken}
+          setTakenCourses={setCoursesTaken}
+        />
+        <FourYearPlanPage
+          data-testid="FourYearPage"
+          showing={clickedGenerate}
+          concentrationCourseList={concentrationCourseData}
+          majorCourseList={majorCourseData}
+          genEdCourseList={genEdCourseData}
+          selectedMajor={major}
+          selectedConcentration={concentration}
+          completedCourses={coursesTaken}
+          requirements={requirements}
+        />
+        <ErrorPopup
+          onClose={popupCloseHandler}
+          show={visibility}
+          title="Error"
+          error={error}
+        />
+      </div>
     </DndProvider>
   );
 }

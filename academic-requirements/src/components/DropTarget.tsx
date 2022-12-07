@@ -15,7 +15,7 @@ import React from "react";
 import SearchableDropdown from "./SearchableDropdown.tsx";
 import ErrorPopup from "./ErrorPopup";
 //@ts-ignore
-import {Requirement} from "./Requirement.tsx";
+import { Requirement } from "./Requirement.tsx";
 import { TEXT } from "react-dnd-html5-backend/dist/NativeTypes";
 
 //Defines the properties that each type should have
@@ -57,13 +57,13 @@ export interface ContainerProps {
   }[];
   CompletedCourses: string[];
   requirements: {
-    courseCount: number
-    courseReqs: string
-    creditCount: number
-    idCategory: number
-    name: string
-    parentCategory: number
-  }[]
+    courseCount: number;
+    courseReqs: string;
+    creditCount: number;
+    idCategory: number;
+    name: string;
+    parentCategory: number;
+  }[];
 }
 
 export const Container: FC<ContainerProps> = memo(function Container({
@@ -186,7 +186,9 @@ export const Container: FC<ContainerProps> = memo(function Container({
   ]);
 
   //The list of requirements and their completion for display
-  const [requirementsDisplay, setRequirementsDisplay] = useState<Requirement[]>([]);
+  const [requirementsDisplay, setRequirementsDisplay] = useState<Requirement[]>(
+    []
+  );
   //Stuff for category dropdown. Hovland 7Nov22
   const [category, setCategory] = useState(""); //category that is selected
   const [categories, setCategories] = useState<string[]>([]); //list of all categories
@@ -588,17 +590,17 @@ export const Container: FC<ContainerProps> = memo(function Container({
     setVisibility(false);
   };
 
-
   useEffect(() => {
-    let temp : Requirement[]=[];
-    requirements.forEach((x) =>{if(!x.parentCategory){
-      temp.push(x);
-    }}
-    );
+    let temp: Requirement[] = [];
+    requirements.forEach((x) => {
+      if (!x.parentCategory) {
+        temp.push(x);
+      }
+    });
     setRequirementsDisplay(temp);
-  },[requirements]);
-  console.log(requirementsDisplay)
-  console.log(requirements)
+  }, [requirements]);
+  console.log(requirementsDisplay);
+  console.log(requirements);
   return (
     <div>
       <div className="drag-drop">
@@ -611,7 +613,10 @@ export const Container: FC<ContainerProps> = memo(function Container({
           />
           <div className="schedule">
             {semesters.map(
-              ({ accepts, lastDroppedItem, semesterNumber, courses }, index) => (
+              (
+                { accepts, lastDroppedItem, semesterNumber, courses },
+                index
+              ) => (
                 <Semester
                   accept={accepts}
                   lastDroppedItem={lastDroppedItem}
@@ -650,18 +655,31 @@ export const Container: FC<ContainerProps> = memo(function Container({
         </div>
         <div className="requirements">
           <p>Requirements</p>
-          {requirementsDisplay?.map(({name, courseCount, courseReqs, creditCount, idCategory, parentCategory, percentage}, index)=>(
-            <Requirement
-              courseCount={courseCount}
-              courseReqs={courseReqs}
-              creditCount={creditCount}
-              idCategory={idCategory}
-              name={name}
-              parentCategory={parentCategory}
-              percentage={percentage} 
-              key={index}
-            />  
-          ))}
+          {requirementsDisplay?.map(
+            (
+              {
+                name,
+                courseCount,
+                courseReqs,
+                creditCount,
+                idCategory,
+                parentCategory,
+                percentage,
+              },
+              index
+            ) => (
+              <Requirement
+                courseCount={courseCount}
+                courseReqs={courseReqs}
+                creditCount={creditCount}
+                idCategory={idCategory}
+                name={name}
+                parentCategory={parentCategory}
+                percentage={percentage}
+                key={index}
+              />
+            )
+          )}
         </div>
       </div>
     </div>

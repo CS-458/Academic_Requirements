@@ -56,9 +56,7 @@ export const Semester: FC<SemesterProps> = memo(function Semester({
   let backgroundColor = "#004990";
   if (isActive) {
     backgroundColor = "darkgreen";
-  } 
-  
-  
+  }
 
   // Gets the total number of credits per semester and throws
   // proper warning dependant on the number of credits
