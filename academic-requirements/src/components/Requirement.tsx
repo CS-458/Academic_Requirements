@@ -2,35 +2,31 @@ import type { FC } from "react";
 import { memo } from "react";
 import React from "react";
 
-
 //defines the expected course properties
 export interface RequirementProps {
-    courseCount: number;
-    courseReqs: string;
-    creditCount: number;
-    idCategory: number;
-    name: string;
-    parentCategory: number;
-    percentage: number;
+  courseCount: number;
+  courseReqs: string;
+  creditCount: number;
+  idCategory: number;
+  name: string;
+  parentCategory: number;
+  percentage: number;
 }
 
 export const Requirement: FC<RequirementProps> = memo(function Requirement({
-    courseCount,
-    courseReqs,
-    creditCount,
-    idCategory,
-    name,
-    parentCategory,
-    percentage,
+  courseCount,
+  courseReqs,
+  creditCount,
+  idCategory,
+  name,
+  parentCategory,
+  percentage,
 }) {
-  
   return (
     <div data-testid="requirement" className="RequirementText">
-      <div className="requirementName">
-        {name}
-      </div>
+      <div className="requirementName">{name}</div>
       <div className="percentage">
-        {percentage? percentage + "%" : 0 + "%"}
+        {percentage ? percentage + "%" : 0 + "%"}
       </div>
     </div>
   );
