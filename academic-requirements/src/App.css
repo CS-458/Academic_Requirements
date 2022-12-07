@@ -87,10 +87,42 @@ body {
   grid-template-rows: auto auto;
   column-gap: 1px;
 }
-.requirements {
-  height: 90%;
+.right-information-box {
   background-color: gainsboro;
   text-align: left;
+}
+.right-information-box-content {
+  padding-top: 1em;
+}
+
+/*
+These styles override the default SearchableDropdown styles.
+It makes only the information box on the second screen look good. 
+*/
+.right-information-box-header > .thinContainer {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  float: none;
+  clear: left;
+  width: unset;
+  padding: 0px 25px;
+}
+.right-information-box-header > .thinContainer > .thinLabel {
+  width: unset;
+  padding: 0px;
+  margin: 15px;
+  align-self: center;
+}
+.info-box-completed-course {
+  font-size: 15px;
+  text-align: center;
+  border: 2px solid #55af00;
+  background-color: gainsboro;
+  border-radius: 5px;
+  padding: 0.5em;
+  margin: 5px;
+  color: black;
 }
 
 .input-grid {

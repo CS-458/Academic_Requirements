@@ -151,7 +151,7 @@ app.get("/requirements", (req, res) => {
   );
 });
 
-//Gets the Requirements for  all "GEN-EDS" 
+//Gets the Requirements for  all "GEN-EDS"
 app.get("/requirements/gen", (req, res) => {
   checkConnection();
   connection.query(
