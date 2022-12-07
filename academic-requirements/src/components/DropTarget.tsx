@@ -1079,8 +1079,26 @@ export const Container: FC<ContainerProps> = memo(function Container({
           <div className="right-information-box-content">
             {displayedInformationType == "Requirements (Four Year Plan)" && (
               <>
-              {/*TODO: Display the requirements by semester verbatium*/}
-              {JSON.stringify(fourYearPlan["ClassPlan"])}
+                <p style={{ fontSize: ".8em", margin: "5px" }}>
+                  At the specified semester, these are the requirements
+                  typically filled.
+                </p>
+                {Object.keys(fourYearPlan["ClassPlan"]).map((key, index) => {
+                  if (
+                    fourYearPlan["ClassPlan"][key]["Requirements"].length > 0
+                  ) {
+                    return (
+                      <div style={{ margin: "5px" }} key={index}>
+                        <p>{key}</p>
+                        <p style={{ marginLeft: "10px", marginBottom: "25px" }}>
+                          {fourYearPlan["ClassPlan"][key][
+                            "Requirements"
+                          ].toString()}
+                        </p>
+                      </div>
+                    );
+                  }
+                })}
               </>
             )}
             {displayedInformationType == "Completed Courses" && (

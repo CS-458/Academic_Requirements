@@ -217,7 +217,7 @@ function App() {
         setMajorCode(majorData[i].idMajor);
 
         // Whenever the major is updated, the existing four year plan and concentration
-        // are potentially invalid, so reset them. 
+        // are potentially invalid, so reset them.
         setFourYearPlan(null);
         setConcentration(null);
       }
