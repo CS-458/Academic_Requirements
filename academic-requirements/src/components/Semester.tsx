@@ -9,8 +9,8 @@ import ErrorPopup from "./ErrorPopup";
 import { process_params } from "express/lib/router";
 //styling for the semester
 const style: CSSProperties = {
-  height: "12rem",
-  width: "20%",
+  height: "15rem",
+  width: "18.5%",
   marginRight: ".5rem",
   marginBottom: ".5rem",
   color: "white",
@@ -19,6 +19,9 @@ const style: CSSProperties = {
   fontSize: "1rem",
   lineHeight: "normal",
   float: "left",
+  background: "#004990",
+  borderRadius: ".5rem",
+  overflow: "auto",
 };
 
 export interface SemesterProps {
@@ -50,7 +53,7 @@ export const Semester: FC<SemesterProps> = memo(function Semester({
   var LowWarning = false;
   var HighWarning = false;
   var isWarning = false;
-  let backgroundColor = "#222";
+  let backgroundColor = "#004990";
   if (isActive) {
     backgroundColor = "darkgreen";
   }

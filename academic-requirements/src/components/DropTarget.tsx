@@ -14,6 +14,8 @@ import React from "react";
 //@ts-ignore
 import SearchableDropdown from "./SearchableDropdown.tsx";
 import ErrorPopup from "./ErrorPopup";
+//@ts-ignore
+import { Requirement } from "./Requirement.tsx";
 import { TEXT } from "react-dnd-html5-backend/dist/NativeTypes";
 
 //Defines the properties that each type should have
@@ -54,11 +56,20 @@ export interface ContainerProps {
     category: string;
   }[];
   CompletedCourses: string[];
+  requirements: {
+    courseCount: number;
+    courseReqs: string;
+    creditCount: number;
+    idCategory: number;
+    name: string;
+    parentCategory: number;
+  }[];
 }
 
 export const Container: FC<ContainerProps> = memo(function Container({
   PassedCourseList, //The combination of major, concentration, and gen ed
   CompletedCourses, //List of completed courses in subject-number format
+  requirements, //List of requirements categories
 }) {
   const [semestersOld, setSemestersOld] = useState<SemesterState[]>([
     {
@@ -174,6 +185,10 @@ export const Container: FC<ContainerProps> = memo(function Container({
     { accepts: [ItemTypes.COURSE], unDroppedItem: null, courses: [] },
   ]);
 
+  //The list of requirements and their completion for display
+  const [requirementsDisplay, setRequirementsDisplay] = useState<Requirement[]>(
+    []
+  );
   //Stuff for category dropdown. Hovland 7Nov22
   const [category, setCategory] = useState(""); //category that is selected
   const [categories, setCategories] = useState<string[]>([]); //list of all categories
@@ -575,6 +590,17 @@ export const Container: FC<ContainerProps> = memo(function Container({
     setVisibility(false);
   };
 
+  useEffect(() => {
+    let temp: Requirement[] = [];
+    requirements.forEach((x) => {
+      if (!x.parentCategory) {
+        temp.push(x);
+      }
+    });
+    setRequirementsDisplay(temp);
+  }, [requirements]);
+  console.log(requirementsDisplay);
+  console.log(requirements);
   return (
     <div>
       <div className="drag-drop">
@@ -585,18 +611,23 @@ export const Container: FC<ContainerProps> = memo(function Container({
             title={titleName}
             error={errorMessage}
           />
-          {semesters.map(
-            ({ accepts, lastDroppedItem, semesterNumber, courses }, index) => (
-              <Semester
-                accept={accepts}
-                lastDroppedItem={lastDroppedItem}
-                onDrop={(item) => handleDrop(index, item)}
-                semesterNumber={semesterNumber}
-                courses={courses}
-                key={index}
-              />
-            )
-          )}
+          <div className="schedule">
+            {semesters.map(
+              (
+                { accepts, lastDroppedItem, semesterNumber, courses },
+                index
+              ) => (
+                <Semester
+                  accept={accepts}
+                  lastDroppedItem={lastDroppedItem}
+                  onDrop={(item) => handleDrop(index, item)}
+                  semesterNumber={semesterNumber}
+                  courses={courses}
+                  key={index}
+                />
+              )
+            )}
+          </div>
         </div>
         <div
           style={{ overflow: "hidden", clear: "both" }}
@@ -621,6 +652,34 @@ export const Container: FC<ContainerProps> = memo(function Container({
               key={index}
             />
           ))}
+        </div>
+        <div className="requirements">
+          <p>Requirements</p>
+          {requirementsDisplay?.map(
+            (
+              {
+                name,
+                courseCount,
+                courseReqs,
+                creditCount,
+                idCategory,
+                parentCategory,
+                percentage,
+              },
+              index
+            ) => (
+              <Requirement
+                courseCount={courseCount}
+                courseReqs={courseReqs}
+                creditCount={creditCount}
+                idCategory={idCategory}
+                name={name}
+                parentCategory={parentCategory}
+                percentage={percentage}
+                key={index}
+              />
+            )
+          )}
         </div>
       </div>
     </div>

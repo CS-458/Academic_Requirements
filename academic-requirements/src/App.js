@@ -42,6 +42,8 @@ function App() {
   // courseSubjectNumbers the array of number (as strings) from the database
   const [courseSubjectNumbers, setCourseSubjectNumbers] = useState([]);
 
+  //requirements for the concentration
+  const [requirements, setRequirementsData] = useState([]);
   const [coursesTaken, setCoursesTaken] = useState([]);
 
   //Functions and variables for controlling an error popup
@@ -178,6 +180,16 @@ function App() {
       });
   }, [concentrationCode]);
 
+  //Gets the requirements related to the major/concentration
+  useEffect(() => {
+    fetch(`/requirements?conid=${concentrationCode}`)
+      .then((res) => res.json())
+      .then((result) => {
+        // Sets concentrationCourseData to the result from the query
+        setRequirementsData(result);
+      });
+  }, [concentrationCode]);
+
   // Gets the 'idMajor' relating to the 'name' of the selected major
   // Runs when major is updated
   useEffect(() => {
@@ -202,16 +214,13 @@ function App() {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="App">
+      <div>
         <InputPage
           showing={!clickedGenerate}
           onClickGenerate={generateSchedule}
           onClickMajor={selectMajor}
           onClickConcentration={selectConcentration}
           concentrationList={concentrationData}
-          courseSubjectAcronyms={courseSubjects}
-          setSelectedCourseSubject={setSelectedCourseSubject}
-          courseSubjectNumbers={courseSubjectNumbers}
           majorList={majorData}
           majorDisplayList={majorDisplayData}
           concentrationDisplayList={concentrationDisplayData}
@@ -227,6 +236,7 @@ function App() {
           selectedMajor={major}
           selectedConcentration={concentration}
           completedCourses={coursesTaken}
+          requirements={requirements}
         />
         <ErrorPopup
           onClose={popupCloseHandler}
