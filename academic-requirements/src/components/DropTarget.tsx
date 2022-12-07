@@ -734,6 +734,9 @@ export const Container: FC<ContainerProps> = memo(function Container({
     }
     //check if the course is filling any gen-eds
     for(var i = 0; i< reqGenList.length; i++){
+      temp1 = 1000;
+      temp2 = 1000;
+      temp3 = 1000;
       let courseString = course.subject+"-"+course.number;
       let index = reqGenList[i].coursesTaken.indexOf(courseString);
       if(index>-1){
@@ -742,7 +745,9 @@ export const Container: FC<ContainerProps> = memo(function Container({
         //remove the course from the requirment
         reqGenList[i].coursesTaken.splice(index,1);
         if(reqGenList[i].creditCount != null){
+          console.log("Credits");
           reqGenList[i].creditCountTaken = reqGenList[i].creditCountTaken - course.credits;
+          console.log(reqGenList[i].creditCountTaken);
           temp1 = reqGenList[i].creditCountTaken/reqGenList[i].creditCount;
         }
         if(reqGenList[i].courseCount != null){
@@ -750,16 +755,20 @@ export const Container: FC<ContainerProps> = memo(function Container({
           temp2 = reqGenList[i].courseCountTaken/reqGenList[i].courseCount;
         }
         if(reqGenList[i].courseReqs != null){
+          console.log("courseReqs");
           let total = reqGenList[i].courseReqs.split(",").length;
           temp3 = reqGenList[i].coursesTaken.length/total;
         }
         //set the new percentage
         console.log(temp1+" "+temp2+" "+temp3);
-        if(temp1<=temp2 && temp1<=temp3){
+        if(temp1<=temp2 && temp1<=temp3 && reqGenList[i].creditCount != null){
+          console.log("option 1");
           reqGenList[i].percentage = temp1*100;
-        } else if(temp2<=temp3 && temp2<=temp1){
+        } else if(temp2<=temp3 && temp2<=temp1 &&reqGenList[i].courseCount != null){
+          console.log("option 2");
           reqGenList[i].percentage = temp2*100;
         } else {
+          console.log("option 3");
           reqGenList[i].percentage = temp3*100;
         }
         console.log(reqGenList[i].percentage);
@@ -767,6 +776,26 @@ export const Container: FC<ContainerProps> = memo(function Container({
         console.log("parent index"+parentIndex);
         if(parentIndex != -1){
           console.log(reqGenList[parentIndex]);
+          if(reqGenList[parentIndex].idCategory == 25){
+            //ARNS
+            //Must include one nat lab and one math/stat
+            let percents: number[] = [];
+            reqGenList.forEach((y)=>{
+              if(y.parentCategory == 25){
+                if(y.courseReqs != null || y.courseCount != null || y.creditCount != null){
+                  percents.push(y.percentage);
+                }
+              }
+            })
+            console.log(percents);
+            let sum = 0;
+            percents.forEach((y)=>{
+              if(y == undefined){y = 0;}
+              sum = sum + y * 1/percents.length;
+            })
+            console.log(sum);
+            reqGenList[parentIndex].percentage = sum;
+          }
           if(reqGenList[parentIndex].idCategory == 26 || reqGenList[parentIndex].idCategory == 27){
             console.log("Running extra check");
             //ART/HUM or SBSCI
