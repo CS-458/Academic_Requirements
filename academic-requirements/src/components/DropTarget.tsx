@@ -223,6 +223,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
       }[]
     >([]);
 
+  //This is a janky way to force a req update
+  const [completedReqRun, setCompletedReqRun] = useState(false);
   //Stuff for category dropdown. Hovland 7Nov22
   const [category, setCategory] = useState(""); //category that is selected
   const [categories, setCategories] = useState<string[]>([]); //list of all categories
@@ -712,9 +714,21 @@ export const Container: FC<ContainerProps> = memo(function Container({
         }
       }
     }
-
     setCoursesInMultipleCategories(tempArr);
+    setCompletedReqRun(true);
   }, [requirements, requirementsGen]);
+
+  useEffect(()=>{
+    console.log("This use effect started");
+    if(completedReqRun){
+      CompletedCourses.forEach((x)=>{
+        console.log(x);
+        let a = x.split("-");
+        let found = PassedCourseList.find(item => item.subject == a[0] && item.number == parseInt(a[1]));
+        checkRequirements(found, coursesInMultipleCategories);
+      })
+    }
+  },[completedReqRun, requirementsDisplay])
 
   const removeFromRequirements = useCallback(
     (course: Course) => {
