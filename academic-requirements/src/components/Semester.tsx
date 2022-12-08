@@ -123,13 +123,15 @@ export const Semester: FC<SemesterProps> = function Semester({
             preReq={course.preReq}
             dragSource={"Semester " + (semesterNumber - 1)}
             key={index}
-            warningYellowColor={warningPrerequisiteCourses.find(
+            warningYellowColor={warningDuplicateCourses.find(
               (x) => x === course
             )}
             warningOrangeColor={warningFallvsSpringCourses.find(
               (x) => x === course
             )}
-            warningRedColor={warningDuplicateCourses.find((x) => x === course)}
+            warningRedColor={warningPrerequisiteCourses.find(
+              (x) => x === course
+            )}
           />
         ))}
     </div>
