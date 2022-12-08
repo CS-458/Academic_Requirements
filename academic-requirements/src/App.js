@@ -252,6 +252,9 @@ function App() {
           setTakenCourses={setCoursesTaken}
           setUseFourYearPlan={setUseFourYearPlan}
           concentrationHasFourYearPlan={fourYearPlan != null}
+          courseSubjectAcronyms={courseSubjects}
+          setSelectedCourseSubject={setSelectedCourseSubject}
+          courseSubjectNumbers={courseSubjectNumbers}
         />
         <FourYearPlanPage
           data-testid="FourYearPage"
