@@ -1068,20 +1068,28 @@ export const Container: FC<ContainerProps> = memo(function Container({
         </div>
         <div className="right-information-box">
           <div className="right-information-box-header">
-            <SearchableDropdown
-              options={informationTypes}
-              label={displayedInformationType}
-              onSelectOption={setDisplayedInformationType}
-              showDropdown={true}
-              thin={true}
-            />
+            <p
+              style={{ textAlign: "center", padding: "0px", fontSize: "1.1em" }}
+            >
+              {displayedInformationType}
+            </p>
+            {informationTypes.length > 1 && (
+              <SearchableDropdown
+                options={informationTypes}
+                label={null}
+                onSelectOption={setDisplayedInformationType}
+                showDropdown={true}
+                thin={true}
+              />
+            )}
           </div>
           <div className="right-information-box-content">
             {displayedInformationType == "Requirements (Four Year Plan)" && (
               <>
-                <p style={{ fontSize: ".8em", margin: "5px" }}>
-                  At the specified semester, these are the requirements
-                  typically filled.
+                <p className="right-information-box-description">
+                  The four year plan for your concentration recommends taking
+                  courses in the following categories in the respective
+                  semesters.
                 </p>
                 {Object.keys(fourYearPlan["ClassPlan"]).map((key, index) => {
                   if (
@@ -1103,6 +1111,9 @@ export const Container: FC<ContainerProps> = memo(function Container({
             )}
             {displayedInformationType == "Completed Courses" && (
               <>
+                <p className="right-information-box-description">
+                  These are courses you marked as complete.
+                </p>
                 {CompletedCourses?.map((completedCourse, index) => {
                   return (
                     <div className="info-box-completed-course">
@@ -1125,6 +1136,10 @@ export const Container: FC<ContainerProps> = memo(function Container({
             )}
             {displayedInformationType == "Requirements (Calculated)" && (
               <>
+                <p className="right-information-box-description">
+                  Select a category and drag a course onto a semester to begin
+                  planning.
+                </p>
                 {requirementsDisplay?.map(
                   (
                     {

@@ -94,6 +94,11 @@ body {
 .right-information-box-content {
   padding-top: 1em;
 }
+.right-information-box-description {
+  font-size: 0.8em;
+  margin: 5px;
+  text-align: center;
+}
 
 /*
 These styles override the default SearchableDropdown styles.
