@@ -196,6 +196,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
 
   //The visibility of the error message
   const [visibility, setVisibility] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [titleName, setTitle] = useState("");
   //A master list of all courses for the major, concentration, and gen eds
   const [courses, setCourses] = useState<Course[]>(PassedCourseList);
   //A list of all courses that have been dropped into a semester
@@ -360,6 +362,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
         ) {
           // prereqCheck returned true, so add the course to the semester
           course.dragSource = "Semester " + index;
+          //Run fuction I need to write for checking semesters.
+          checkForCourseInMultipleSemesters(course);
           setSemesters(
             update(semesters, {
               [index]: {
@@ -435,6 +439,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
           }
         }
       }
+      //
     },
     [semesters]
   );
@@ -478,6 +483,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
           setVisibility(true);
         }
       }
+      //Not sure if we still need this.
+      //checkForCourseInMultipleSemesters(courses);
     },
     [courses, semesters]
   );
@@ -603,6 +610,21 @@ export const Container: FC<ContainerProps> = memo(function Container({
     return semCourses;
   }
 
+  function checkForCourseInMultipleSemesters(course1) {
+    //Iterate through array of courses dragged and dropped into semester
+    semesters.map((semester, index) => {
+      //If index of the course already dropped in the dropped course array is the same as
+      //the current course being dropped, Display a message.
+      console.log(courses);
+      semester.courses.map((course2, index) => {
+        if (course1 == course2) {
+          setTitle("Warning");
+          setVisibility(true);
+          setErrorMessage("Course already in other semesters.");
+        }
+      });
+    });
+  }
   // Get all courses (string) in current semester
   // param semesterIndex -> current semester index
   function getSemesterCoursesNames(semesterIndex: number): Array<string> {
@@ -1021,8 +1043,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
           <ErrorPopup
             onClose={popupCloseHandler}
             show={visibility}
-            title="Error"
-            error={"CANNOT MOVE COURSE! FAILS PREREQUISITES"}
+            title={titleName}
+            error={errorMessage}
           />
           <div className="schedule">
             {semesters.map(

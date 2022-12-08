@@ -17,6 +17,9 @@
 .courseList {
   display: grid;
   border-radius: 15px;
+  border-radius: 7%;
+  align-content: left;
+  overflow: auto;
 }
 
 button {
@@ -43,6 +46,7 @@ body {
   grid-template-columns: 60% auto auto;
   column-gap: 1px;
   row-gap: 50px;
+  background-color: #004990;
 }
 
 .semesters-container {
@@ -51,17 +55,23 @@ body {
   grid-template-columns: 100%;
   column-gap: 1px;
   row-gap: 100px;
+  overflow: auto;
+  background-color: #004990;
 }
 
 .grid-item {
   background-color: gainsboro;
-  height: 200px;
+  height: 20px;
   text-align: center;
 }
 
 .class-dropdown {
   background-color: gainsboro;
   text-align: center;
+  border-radius: 10px;
+  padding: 5px;
+  border-color: black;
+  border-width: 2px;
 }
 
 .drag-drop {
@@ -71,21 +81,19 @@ body {
   column-gap: 1px;
 }
 
-/* .schedule{
-  height: 80%;
+.schedule {
+  height: 100%;
   width: 100%;
-  display: grid;
-  grid-template-columns: 100%;
-  grid-template-rows: 50% 50%;
-  column-gap: 10px;
-  row-gap: 10px;
-} */
+  column-gap: 1px;
+  row-gap: 1px;
+}
 
 .page {
   height: 100%;
   display: grid;
   grid-template-rows: auto auto;
   column-gap: 1px;
+  text-align: center;
 }
 .right-information-box {
   background-color: gainsboro;
@@ -98,6 +106,8 @@ body {
   font-size: 0.8em;
   margin: 5px;
   text-align: center;
+  overflow: auto;
+  border-radius: 2%;
 }
 
 /*
@@ -138,34 +148,72 @@ It makes only the information box on the second screen look good.
   row-gap: 0px;
   justify-items: center;
 }
-
+/* boxes where the import schedule, generate schedule and course subject and number buttons/ elements are held.*/
 .input-grid-item {
   text-align: center;
   height: 100%;
 }
-
+/* both the major and concentration boxes, this is the backgound box*/
 .input-grid-dropdown {
   text-align: center;
   height: 100%;
   display: flex;
   flex-flow: column nowrap;
 }
-
+/* the completed courses box on the first page, on the bottom right */
 .input-grid-item-courses {
   height: 150%;
   display: flex;
   justify-content: center;
   overflow: hidden;
   background-color: #004990;
+  border-color: black;
   color: white;
   border-radius: 15px;
   width: 100%;
 }
-
+/* Text inside the course dropdown menu*/
 .courseDropdowns {
   text-align: center;
   width: 100%;
   float: left;
+}
+/* The words inside of the requirements box in the schedule generator*/
+.RequirementText {
+  width: 100%;
+  padding-bottom: 15px;
+  display: grid;
+  grid-template-columns: 75% 25%;
+  text-align: center;
+}
+/* the percent sign in the requirements category*/
+.percentage {
+  text-align: right;
+}
+
+/* an attempt to reconfigure and fix the semester boxes, doesn't work*/
+.semester {
+  height: 11rem;
+  width: 17%;
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+  color: white;
+  padding: 1rem;
+  text-align: center;
+  font-size: 1rem;
+  line-height: normal;
+  float: left;
+  border-radius: 0.5rem;
+}
+
+.RequirementText {
+  width: 100%;
+  padding-bottom: 15px;
+  display: grid;
+  grid-template-columns: 75% 25%;
+}
+.percentage {
+  text-align: right;
 }
 
 .RequirementText {

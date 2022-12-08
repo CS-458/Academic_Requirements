@@ -238,16 +238,13 @@ function App() {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="App">
+      <div>
         <InputPage
           showing={!clickedGenerate}
           onClickGenerate={generateSchedule}
           onClickMajor={selectMajor}
           onClickConcentration={selectConcentration}
           concentrationList={concentrationData}
-          courseSubjectAcronyms={courseSubjects}
-          setSelectedCourseSubject={setSelectedCourseSubject}
-          courseSubjectNumbers={courseSubjectNumbers}
           majorList={majorData}
           majorDisplayList={majorDisplayData}
           concentrationDisplayList={concentrationDisplayData}
