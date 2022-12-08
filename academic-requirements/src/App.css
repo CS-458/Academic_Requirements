@@ -17,9 +17,6 @@
 .courseList {
   display: grid;
   border-radius: 15px;
-  border-radius: 7%;
-  align-content: left;
-  overflow: auto;
 }
 
 button {

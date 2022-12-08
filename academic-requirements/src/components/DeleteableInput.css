@@ -4,12 +4,11 @@
   justify-content: center;
   margin-top: 2px;
   margin-bottom: 2px;
-  overflow-y: scroll;
 }
 
 .x {
   width: 13px;
-  height: 15px;
+  height: 13px;
   margin-top: 4px;
   margin-right: 5px;
 }
