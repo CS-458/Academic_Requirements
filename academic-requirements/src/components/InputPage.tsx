@@ -266,8 +266,8 @@ const InputPage = (props: {
                       type="checkbox"
                       onChange={handleUseFourYearPlan}
                     />
-                    <label htmlFor="fourYearPlan">
-                      Autoload the four year plan?
+                    <label htmlFor="fourYearPlan" data-testid="fourYearPlanCheckbox">
+                      Load a four year plan?
                     </label>
                   </div>
                 )}
