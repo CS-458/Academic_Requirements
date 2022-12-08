@@ -75,12 +75,12 @@ export const Course: FC<CourseProps> = memo(function Course({
       data-testid="course"
       className={clsx(
         "CourseText",
-        warningRedColor && !warningYellowColor && "CourseWarningRed",
-        warningOrangeColor &&
-          !warningYellowColor &&
+        warningYellowColor &&
           !warningRedColor &&
-          "CourseWarningOrange",
-        warningYellowColor && "CourseWarningYellow"
+          !warningOrangeColor &&
+          "CourseWarningYellow",
+        warningOrangeColor && !warningRedColor && "CourseWarningOrange",
+        warningRedColor && "CourseWarningRed"
       )}
     >
       {/* {isDropped ? <s>{name}</s> : name}  */}
