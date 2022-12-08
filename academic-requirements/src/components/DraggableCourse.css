@@ -28,6 +28,10 @@
   background-color:rgb(231, 159, 77);
 }
 
+.CourseWarningRed {
+  background-color:rgb(214, 53, 53)
+}
+
 .CourseText:first-line {
   font-size: 11pt;
 }

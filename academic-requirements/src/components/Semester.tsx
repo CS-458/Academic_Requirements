@@ -1,13 +1,9 @@
-import { CSSProperties, FC, useState } from "react";
-import { memo } from "react";
+import { CSSProperties, FC } from "react";
 import { useDrop } from "react-dnd";
 import React from "react";
 //@ts-ignore
 import { Course } from "./DraggableCourse.tsx";
 import { ItemTypes } from "./Constants";
-import { useEffect } from "react";
-import ErrorPopup from "./ErrorPopup";
-import { process_params } from "express/lib/router";
 
 //styling for the semester
 const style: CSSProperties = {
@@ -35,6 +31,7 @@ export interface SemesterProps {
   courses: Course[];
   warningPrerequisiteCourses: Course[];
   warningFallvsSpringCourses: Course[];
+  warningDuplicateCourses: Course[];
 }
 
 export const Semester: FC<SemesterProps> = function Semester({
@@ -44,7 +41,8 @@ export const Semester: FC<SemesterProps> = function Semester({
   semesterNumber,
   courses,
   warningPrerequisiteCourses,
-  warningFallvsSpringCourses
+  warningFallvsSpringCourses,
+  warningDuplicateCourses
 }) {
   //defines the drop action
   const [{ isOver }, drop] = useDrop({
@@ -124,6 +122,7 @@ export const Semester: FC<SemesterProps> = function Semester({
               key={index}
               warningYellowColor={warningPrerequisiteCourses.find(x => x === course)}
               warningOrangeColor={warningFallvsSpringCourses.find(x => x === course)}
+              warningRedColor={warningDuplicateCourses.find(x => x === course)}
             />
           )
         )}

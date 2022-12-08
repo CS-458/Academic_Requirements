@@ -105,7 +105,17 @@ class StringProcessing {
       }
     });
 
+    failedString = this.prettyFailedString(failedString);
     return {returnValue: returnValue, failedString: failedString};
+  }
+
+  // Formats the failed string to be more readable
+  prettyFailedString(failedString: string) {
+    let updateString = failedString;
+      updateString = updateString.replace(/\,/g, " and ");
+      updateString = updateString.replace(/\|/g, ' or ');
+      updateString = updateString.replace(/\&/g, " & ");
+    return updateString;
   }
 
   // Replaces the dashes in each string in strings with an underscore and returns the edited array of strings

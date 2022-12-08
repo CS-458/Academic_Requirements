@@ -4,7 +4,6 @@ import { useDrag } from "react-dnd";
 import React from "react";
 import clsx from "clsx";
 import "./DraggableCourse.css";
-import { func } from "prop-types";
 
 //defines the expected course properties
 export interface CourseProps {
@@ -18,6 +17,7 @@ export interface CourseProps {
   dragSource: string;
   warningYellowColor: boolean;
   warningOrangeColor: boolean;
+  warningRedColor: boolean;
 }
 
 export const Course: FC<CourseProps> = memo(function Course({
@@ -30,7 +30,8 @@ export const Course: FC<CourseProps> = memo(function Course({
   preReq,
   dragSource,
   warningYellowColor,
-  warningOrangeColor
+  warningOrangeColor,
+  warningRedColor
 }) {
   //defines the drag action
   const [{ opacity }, drag] = useDrag(
@@ -46,7 +47,8 @@ export const Course: FC<CourseProps> = memo(function Course({
         preReq,
         dragSource,
         warningYellowColor,
-        warningOrangeColor
+        warningOrangeColor,
+        warningRedColor
       },
       collect: (monitor) => ({
         opacity: monitor.isDragging() ? 0.4 : 1,
@@ -71,7 +73,7 @@ export const Course: FC<CourseProps> = memo(function Course({
       ref={drag}
       style={{ opacity }}
       data-testid="course"
-      className={clsx("CourseText", warningOrangeColor && !warningYellowColor && "CourseWarningOrange", warningYellowColor && "CourseWarningYellow")}
+      className={clsx("CourseText", warningRedColor && !warningYellowColor && "CourseWarningRed", warningOrangeColor && !warningYellowColor && !warningRedColor && "CourseWarningOrange", warningYellowColor && "CourseWarningYellow")}
     >
       {/* {isDropped ? <s>{name}</s> : name}  */}
       {subject}-{number}
