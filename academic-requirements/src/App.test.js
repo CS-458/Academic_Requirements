@@ -107,7 +107,7 @@ describe("Testing searchable dropdown", () => {
       label = null;
     }
     expect(label).toBeNull();
-  })
+  });
 });
 
 describe("Test for App", () => {
@@ -271,15 +271,15 @@ describe("Test for App", () => {
         setUseFourYearPlan={setUseFourYearPlan}
         concentrationHasFourYearPlan={true}
       />
-    );   
+    );
     const checkbox = getByTestId("fourYearPlanCheckbox");
     // box should be rendered
     expect(checkbox).toBeVisible();
     // "check" the checkbox
-    fireEvent.click(checkbox); 
+    fireEvent.click(checkbox);
     // verify we want to use the four year plan
-    expect(setUseFourYearPlan).toBeCalledWith(true); 
-  })
+    expect(setUseFourYearPlan).toBeCalledWith(true);
+  });
 
   test("Test four year plan checkbox when concentration has no four year plan", () => {
     let checkbox;
@@ -301,7 +301,7 @@ describe("Test for App", () => {
         setUseFourYearPlan={jest.fn()}
         concentrationHasFourYearPlan={false}
       />
-    );   
+    );
     try {
       // try to get the html element (expect to fail as it shouldn't be rendered)
       checkbox = getByTestId("fourYearPlanCheckbox");
@@ -309,7 +309,7 @@ describe("Test for App", () => {
       checkbox = null;
     }
     expect(checkbox).toBeNull();
-  })
+  });
 
   test("Test String Processing", () => {
     const stringProcess = new StringProcessing();
