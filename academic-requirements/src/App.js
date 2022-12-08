@@ -34,6 +34,16 @@ function App() {
   const [major, setMajor] = useState("");
   const [concentration, setConcentration] = useState("");
 
+  //requirements for the concentration
+  const [requirements, setRequirementsData] = useState([]);
+
+  //general requirements
+  const [requirementsGen, setRequirementsGenData] = useState([]);
+
+  // Flag for using a four year plan
+  const [useFourYearPlan, setUseFourYearPlan] = useState(false);
+  const [fourYearPlan, setFourYearPlan] = useState(null);
+
   // courseSubjects the array of subject strings from the database
   const [courseSubjects, setCourseSubjects] = useState([]);
   // selectedCourseSubject is the specific course subject selected
@@ -42,8 +52,6 @@ function App() {
   // courseSubjectNumbers the array of number (as strings) from the database
   const [courseSubjectNumbers, setCourseSubjectNumbers] = useState([]);
 
-  //requirements for the concentration
-  const [requirements, setRequirementsData] = useState([]);
   const [coursesTaken, setCoursesTaken] = useState([]);
 
   //Functions and variables for controlling an error popup
@@ -190,6 +198,16 @@ function App() {
       });
   }, [concentrationCode]);
 
+  //Gets the requirements related to the major/concentration
+  useEffect(() => {
+    fetch(`/requirements/gen?conid=${concentrationCode}`)
+      .then((res) => res.json())
+      .then((result) => {
+        // Sets concentrationCourseData to the result from the query
+        setRequirementsGenData(result);
+      });
+  }, [concentrationCode]);
+
   // Gets the 'idMajor' relating to the 'name' of the selected major
   // Runs when major is updated
   useEffect(() => {
@@ -197,6 +215,11 @@ function App() {
       if (majorDisplayData[i] == major) {
         // Sets the majorCode to the 'idMajor' of the selected major
         setMajorCode(majorData[i].idMajor);
+
+        // Whenever the major is updated, the existing four year plan and concentration
+        // are potentially invalid, so reset them.
+        setFourYearPlan(null);
+        setConcentration(null);
       }
     }
   }, [major]);
@@ -208,6 +231,7 @@ function App() {
       if (concentrationDisplayData[i] == concentration) {
         // Sets the concentrationCode to the 'idConcentration' of the selected concentration
         setConcentrationCode(concentrationData[i].idConcentration);
+        setFourYearPlan(JSON.parse(concentrationData[i].fourYearPlan));
       }
     }
   }, [concentration]);
@@ -226,6 +250,11 @@ function App() {
           concentrationDisplayList={concentrationDisplayData}
           takenCourses={coursesTaken}
           setTakenCourses={setCoursesTaken}
+          setUseFourYearPlan={setUseFourYearPlan}
+          concentrationHasFourYearPlan={fourYearPlan != null}
+          courseSubjectAcronyms={courseSubjects}
+          setSelectedCourseSubject={setSelectedCourseSubject}
+          courseSubjectNumbers={courseSubjectNumbers}
         />
         <FourYearPlanPage
           data-testid="FourYearPage"
@@ -237,6 +266,8 @@ function App() {
           selectedConcentration={concentration}
           completedCourses={coursesTaken}
           requirements={requirements}
+          requirementsGen={requirementsGen}
+          fourYearPlan={useFourYearPlan ? fourYearPlan : null}
         />
         <ErrorPopup
           onClose={popupCloseHandler}

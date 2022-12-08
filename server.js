@@ -87,7 +87,7 @@ app.get("/concentration", (req, res) => {
 app.get("/courses/major", (req, res) => {
   checkConnection();
   connection.query(
-    `SELECT co.subject, co.number, co.name, co.credits, co.preReq, c.name AS 'category'
+    `SELECT co.subject, co.number, co.name, co.credits, co.preReq, co.idCourse, c.name AS 'category', c.idCategory
 	FROM major m
 	JOIN majorcategory mc ON m.idMajor = mc.majorId
 	JOIN category c ON mc.categoryId = c.idCategory
@@ -106,10 +106,11 @@ app.get("/courses/major", (req, res) => {
   );
 });
 
+//TODO get the category id to match from instead of name
 app.get("/courses/concentration", (req, res) => {
   checkConnection();
   connection.query(
-    `SELECT co.subject, co.number, co.credits, co.semesters, co.name, co.preReq, ca.name AS 'category' 
+    `SELECT co.subject, co.number, co.credits, co.semesters, co.name, co.preReq, co.idCourse, ca.name AS 'category', ca.idCategory
 	FROM concentration c
 	JOIN concentrationcategory cc ON c.idConcentration = cc.concentrationId
 	JOIN category ca ON cc.categoryId = ca.idCategory
@@ -131,7 +132,7 @@ app.get("/courses/concentration", (req, res) => {
 app.get("/courses/geneds", (req, res) => {
   checkConnection();
   connection.query(
-    `SELECT co.subject, co.number, co.credits, co.semesters, co.name, co.preReq, cat.name AS 'category'
+    `SELECT co.subject, co.number, co.credits, co.semesters, co.name, co.preReq, co.idCourse, cat.name AS 'category', cat.idCategory
     FROM category cat
     JOIN coursecategory cc ON cc.categoryId = cat.idCategory
     JOIN course co ON co.idCourse = cc.courseId
@@ -149,7 +150,7 @@ app.get("/courses/geneds", (req, res) => {
   );
 });
 
-/* Gets the Requirements FOR ALL Things, so gets it for the MAJOR CONCENTRATION and all "GEN-EDS" 
+/* Gets the Requirements FOR ALL non-gen-ed Things, so gets it for the MAJOR CONCENTRATION 
    Since there is a union, if there is an update to any ofthe columns we are trying to return
    EVERY "Block" needs to be  modified as well
 */
@@ -169,9 +170,23 @@ app.get("/requirements", (req, res) => {
     FROM category c
     JOIN concentrationCategory cc ON cc.categoryId = c.idCategory
     JOIN categoryrequirements cr ON cr.categoryId = c.idCategory
-    WHERE cc.concentrationId = ?
-    UNION
-    # Get all "gen-ed" categories and respective requirements
+    WHERE cc.concentrationId = ?`,
+    [req.query.conid, req.query.conid],
+    function (err, result) {
+      if (err) {
+        res.send(err);
+        return;
+      }
+      res.send(result);
+    }
+  );
+});
+
+//Gets the Requirements for  all "GEN-EDS"
+app.get("/requirements/gen", (req, res) => {
+  checkConnection();
+  connection.query(
+    `# Get all "gen-ed" categories and respective requirements
     SELECT c.idCategory, c.name, c.parentCategory, cr.creditCount, cr.courseCount, cr.courseReqs
     FROM category c
     JOIN categoryrequirements cr ON cr.categoryId = c.idCategory

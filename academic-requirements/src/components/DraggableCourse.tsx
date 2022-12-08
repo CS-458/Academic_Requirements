@@ -15,6 +15,8 @@ export interface CourseProps {
   type: string;
   preReq: string;
   dragSource: string;
+  id: number;
+  idCategory: number;
 }
 
 export const Course: FC<CourseProps> = memo(function Course({
@@ -26,6 +28,8 @@ export const Course: FC<CourseProps> = memo(function Course({
   semesters,
   preReq,
   dragSource,
+  id,
+  idCategory,
 }) {
   //defines the drag action
   const [{ opacity }, drag] = useDrag(
@@ -40,6 +44,8 @@ export const Course: FC<CourseProps> = memo(function Course({
         semesters,
         preReq,
         dragSource,
+        id,
+        idCategory,
       },
       collect: (monitor) => ({
         opacity: monitor.isDragging() ? 0.4 : 1,
