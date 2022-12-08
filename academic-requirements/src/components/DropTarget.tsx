@@ -127,11 +127,29 @@ export const Container: FC<ContainerProps> = memo(function Container({
   //A master list of all courses for the major, concentration, and gen eds
   const [courses, setCourses] = useState<Course[]>(PassedCourseList);
   // A list of courses that should have a warning color on them
-  const [warningPrerequisiteCourses, setWarningPrerequisiteCourses] = useState<Course[]>([]);
-  const [warningFallvsSpringCourses, setWarningFallvsSpringCourses] = useState<Course[]>([]);
-  const [warningDuplicateCourses, setWarningDuplicateCourses] = useState<Course[]>([]);
+  const [warningPrerequisiteCourses, setWarningPrerequisiteCourses] = useState<
+    Course[]
+  >([]);
+  const [warningFallvsSpringCourses, setWarningFallvsSpringCourses] = useState<
+    Course[]
+  >([]);
+  const [warningDuplicateCourses, setWarningDuplicateCourses] = useState<
+    Course[]
+  >([]);
   // Warning for spring/fall semester
-  const [updateWarning, setUpdateWarning] = useState<{course: Course, oldSemester: number, newSemester: number, draggedOut: boolean, newCheck: boolean}>({course: undefined, oldSemester: -1, newSemester: -1, draggedOut: true, newCheck: false});
+  const [updateWarning, setUpdateWarning] = useState<{
+    course: Course;
+    oldSemester: number;
+    newSemester: number;
+    draggedOut: boolean;
+    newCheck: boolean;
+  }>({
+    course: undefined,
+    oldSemester: -1,
+    newSemester: -1,
+    draggedOut: true,
+    newCheck: false,
+  });
   //A list of all courses that have been dropped into a semester
   const [droppedCourses, setDroppedCourses] = useState<Course[]>([]);
   //The course list element that allows courses to be dragged out
@@ -217,7 +235,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
         dragSource === "CourseList" &&
         !courseAlreadyInSemester(course, index)
       ) {
-        
         // Add the course to the semester
         course.dragSource = "Semester " + index;
         setSemesters(
@@ -235,46 +252,50 @@ export const Container: FC<ContainerProps> = memo(function Container({
       }
       // Course was not found in the courses list, which means it currently occupies a semester
       else {
-          // Only proceed if the course isn't moved to the same semester
-          if (
-            !courseAlreadyInSemester(course, index)
-          ) {
+        // Only proceed if the course isn't moved to the same semester
+        if (!courseAlreadyInSemester(course, index)) {
+          // Update the semester with the new dragged course
+          let pushCourse = semesters[index].courses;
+          pushCourse.push(course);
 
-            // Update the semester with the new dragged course
-            let pushCourse = semesters[index].courses;
-            pushCourse.push(course);
+          setSemesters(
+            update(semesters, {
+              [index]: {
+                courses: {
+                  $set: pushCourse,
+                },
+              },
+            })
+          );
 
-              setSemesters(
-                update(semesters, {
-                  [index]: {
-                    courses: {
-                      $set: pushCourse,
-                    },
-                  },
-                })
-              );
+          // Then remove the course from its previous semester spot
+          let coursesRemove = semesters[movedFromIndex].courses.filter(
+            (item) => item !== course
+          );
 
-              // Then remove the course from its previous semester spot
-              let coursesRemove = semesters[movedFromIndex].courses.filter(
-                (item) => item !== course
-              );
-
-              setSemesters(
-                update(semesters, {
-                  [movedFromIndex]: {
-                    lastDroppedItem: {
-                      $set: item,
-                    },
-                    courses: {
-                      $set: coursesRemove,
-                    },
-                  },
-                })
-              );
-              
-          }
+          setSemesters(
+            update(semesters, {
+              [movedFromIndex]: {
+                lastDroppedItem: {
+                  $set: item,
+                },
+                courses: {
+                  $set: coursesRemove,
+                },
+              },
+            })
+          );
         }
-        setUpdateWarning({course: course, oldSemester: courseAlreadyInSemester(course, index) ? movedFromIndex : -1, newSemester: index, draggedOut: false , newCheck: true});
+      }
+      setUpdateWarning({
+        course: course,
+        oldSemester: courseAlreadyInSemester(course, index)
+          ? movedFromIndex
+          : -1,
+        newSemester: index,
+        draggedOut: false,
+        newCheck: true,
+      });
     },
     [semesters]
   );
@@ -294,156 +315,207 @@ export const Container: FC<ContainerProps> = memo(function Container({
         //set the drag source to course list (may be redundant but I'm scared to mess with it)
         found.dragSource = "CourseList";
         setDroppedCourses(courses.filter((item) => item.name !== name));
-          setCourses(
-            update(courses, found ? { $push: [found] } : { $push: [] })
-          );
+        setCourses(update(courses, found ? { $push: [found] } : { $push: [] }));
 
-          // Update semesters to have the course removed
-          let itemArr = semesters[movedFromIndex].courses.filter(
-            (course) => course !== found
-          );
-          setSemesters(
-            update(semesters, {
-              [movedFromIndex]: {
-                courses: {
-                  $set: itemArr,
-                },
+        // Update semesters to have the course removed
+        let itemArr = semesters[movedFromIndex].courses.filter(
+          (course) => course !== found
+        );
+        setSemesters(
+          update(semesters, {
+            [movedFromIndex]: {
+              courses: {
+                $set: itemArr,
               },
-            })
-          );
-          setUpdateWarning({course: found, oldSemester: movedFromIndex, newSemester: -1, draggedOut: true, newCheck: true});
-        }
+            },
+          })
+        );
+        setUpdateWarning({
+          course: found,
+          oldSemester: movedFromIndex,
+          newSemester: -1,
+          draggedOut: true,
+          newCheck: true,
+        });
+      }
     },
     [courses, semesters]
   );
 
   // This function checks if the course that was moved is in a "valid" fall or spring semester
   function checkCourseSemester(course: Course, semNum: number) {
-    return (course.semesters === 'FA' && semNum % 2 === 1) || (course.semesters === 'SP' && semNum % 2 === 0);
+    return (
+      (course.semesters === "FA" && semNum % 2 === 1) ||
+      (course.semesters === "SP" && semNum % 2 === 0)
+    );
   }
 
   // This useEffect is in charge of checking for duplicate courses
   useEffect(() => {
     if (updateWarning.newCheck) {
-    let duplicateFound = false;
-    // Compare each course to courses in future semesters to see if there are any duplicates
-    semesters.forEach((semester, index) => {
-      semester.courses.forEach((course) => {
-
-        // If the course is found in future semesters, then it has a duplicate
-        if (updateWarning.course === course && updateWarning.newSemester !== index && updateWarning.newSemester !== -1) {
-          // Show the warning
-          setVisibility(true);
-          setErrorMessage("WARNING! " + course.subject + "_" + course.number + " is already in other semesters.");
-
-          // Append the course to the duplicate warning courses list
-          let temp = warningDuplicateCourses;
-          temp.push(course);
-          setWarningDuplicateCourses(temp);
-          duplicateFound = true;
-        }
-      })
-    })
-    // If there was not a duplicate course found
-    if (!duplicateFound) {
-      // Remove the course from the duplicates warning list
-      let temp = new Array<Course>();
-      warningDuplicateCourses.forEach((x) => {
-        if (x !== updateWarning.course) {
-          temp.push(x);
-        }
-      })
-      setWarningDuplicateCourses(temp);
-    }
-  }
-  //Reset the warning
-  setUpdateWarning({course: undefined, oldSemester: -1, newSemester: -1, draggedOut: true, newCheck: false});
-  },[semesters])
-
-     // This useEffect handles fall vs spring course placement
-     useEffect(() => {
-      if (updateWarning.newCheck) {
-        // Check if the course is offered in the semester it was dragged to
-        if (checkCourseSemester(updateWarning.course, updateWarning.newSemester)) {
-          // If the course is not offered during the semester, add it to the warning course list
-          if (!(warningFallvsSpringCourses.find(x => x === updateWarning.course))) {
-            warningFallvsSpringCourses.push(updateWarning.course);
+      let duplicateFound = false;
+      // Compare each course to courses in future semesters to see if there are any duplicates
+      semesters.forEach((semester, index) => {
+        semester.courses.forEach((course) => {
+          // If the course is found in future semesters, then it has a duplicate
+          if (
+            updateWarning.course === course &&
+            updateWarning.newSemester !== index &&
+            updateWarning.newSemester !== -1
+          ) {
+            // Show the warning
             setVisibility(true);
-            setErrorMessage("WARNING! " + updateWarning.course.subject + "_" + updateWarning.course.number + " is not typically offered during the " + ((updateWarning.newSemester % 2 === 0) ? "Fall" : "Spring") + " semester");
-          }
-        }
-        // Otherwise remove it from the warning course list
-        else {
-          let temp = new Array<Course>();
-          let removeCourse = warningFallvsSpringCourses.find((x) => x === updateWarning.course);
-          warningFallvsSpringCourses.forEach((x) => {
-            if (x !== removeCourse) {
-              temp.push(x);
-            }
-          })
-          setWarningFallvsSpringCourses(temp);
-        }
-      } 
-      //Reset the warning
-      setUpdateWarning({course: undefined, oldSemester: -1, newSemester: -1, draggedOut: true, newCheck: false});
-    },[semesters]);
+            setErrorMessage(
+              "WARNING! " +
+                course.subject +
+                "_" +
+                course.number +
+                " is already in other semesters."
+            );
 
+            // Append the course to the duplicate warning courses list
+            let temp = warningDuplicateCourses;
+            temp.push(course);
+            setWarningDuplicateCourses(temp);
+            duplicateFound = true;
+          }
+        });
+      });
+      // If there was not a duplicate course found
+      if (!duplicateFound) {
+        // Remove the course from the duplicates warning list
+        let temp = new Array<Course>();
+        warningDuplicateCourses.forEach((x) => {
+          if (x !== updateWarning.course) {
+            temp.push(x);
+          }
+        });
+        setWarningDuplicateCourses(temp);
+      }
+    }
+    //Reset the warning
+    setUpdateWarning({
+      course: undefined,
+      oldSemester: -1,
+      newSemester: -1,
+      draggedOut: true,
+      newCheck: false,
+    });
+  }, [semesters]);
+
+  // This useEffect handles fall vs spring course placement
+  useEffect(() => {
+    if (updateWarning.newCheck) {
+      // Check if the course is offered in the semester it was dragged to
+      if (
+        checkCourseSemester(updateWarning.course, updateWarning.newSemester)
+      ) {
+        // If the course is not offered during the semester, add it to the warning course list
+        if (
+          !warningFallvsSpringCourses.find((x) => x === updateWarning.course)
+        ) {
+          warningFallvsSpringCourses.push(updateWarning.course);
+          setVisibility(true);
+          setErrorMessage(
+            "WARNING! " +
+              updateWarning.course.subject +
+              "_" +
+              updateWarning.course.number +
+              " is not typically offered during the " +
+              (updateWarning.newSemester % 2 === 0 ? "Fall" : "Spring") +
+              " semester"
+          );
+        }
+      }
+      // Otherwise remove it from the warning course list
+      else {
+        let temp = new Array<Course>();
+        let removeCourse = warningFallvsSpringCourses.find(
+          (x) => x === updateWarning.course
+        );
+        warningFallvsSpringCourses.forEach((x) => {
+          if (x !== removeCourse) {
+            temp.push(x);
+          }
+        });
+        setWarningFallvsSpringCourses(temp);
+      }
+    }
+    //Reset the warning
+    setUpdateWarning({
+      course: undefined,
+      oldSemester: -1,
+      newSemester: -1,
+      draggedOut: true,
+      newCheck: false,
+    });
+  }, [semesters]);
 
   // This useEffect is in charge of checking prerequisites
   useEffect(() => {
     if (updateWarning.newCheck) {
+      // This will store if the prerequisites for the changed course have been satisfied
+      let satisfied;
+      // If the course is not dragged out, check its prerequisites
+      if (!updateWarning.draggedOut) {
+        // Get all courses in current semester and previous semesters
+        let currCourses = new Array<string>();
+        let pastCourses = new Array<string>();
+        semesters.forEach((x, index) => {
+          if (index < updateWarning.newSemester) {
+            x.courses.forEach((y) => {
+              pastCourses.push(y.subject + "-" + y.number);
+            });
+          }
+          if (index === updateWarning.newSemester) {
+            x.courses.forEach((y) => {
+              currCourses.push(y.subject + "-" + y.number);
+            });
+          }
+        });
 
-    // This will store if the prerequisites for the changed course have been satisfied
-    let satisfied;
-    // If the course is not dragged out, check its prerequisites
-    if (!updateWarning.draggedOut) {
-      // Get all courses in current semester and previous semesters
-      let currCourses = new Array<string>();
-      let pastCourses = new Array<string>();
-      semesters.forEach((x, index) => {
-        if (index < updateWarning.newSemester) {
-          x.courses.forEach((y) => {
-            pastCourses.push(y.subject + "-" + y.number);
-          })
+        // Append the already taken courses
+        CompletedCourses.forEach((x) => {
+          pastCourses.push(x);
+        });
+
+        // Find if the course has met its prerequisites
+        let stringProcess = new StringProcessing();
+        satisfied = stringProcess.courseInListCheck(
+          updateWarning.course.preReq,
+          pastCourses,
+          currCourses
+        );
+
+        // If the prereq for that moved course is not satisfied, have that course throw the error
+        if (!satisfied.returnValue) {
+          setVisibility(true);
+          setErrorMessage(
+            "WARNING! " +
+              updateWarning.course.subject +
+              "_" +
+              updateWarning.course.number +
+              " has failed the following prerequisites: " +
+              satisfied.failedString
+          );
+
+          // Update the warning courses to include the just dragged course
+          let temp = warningPrerequisiteCourses;
+          temp.push(updateWarning.course);
+          setWarningPrerequisiteCourses(temp);
         }
-        if (index === updateWarning.newSemester) {
-          x.courses.forEach((y) => {
-            currCourses.push(y.subject + "-" + y.number);
-          })
-        }
-      })
-
-      // Append the already taken courses
-      CompletedCourses.forEach((x) => {
-        pastCourses.push(x);
-    });
-
-    // Find if the course has met its prerequisites
-      let stringProcess = new StringProcessing();
-      satisfied = stringProcess.courseInListCheck(updateWarning.course.preReq, pastCourses, currCourses);
-
-      // If the prereq for that moved course is not satisfied, have that course throw the error
-      if (!satisfied.returnValue) {
-        setVisibility(true);
-        setErrorMessage("WARNING! " + updateWarning.course.subject + "_" + updateWarning.course.number + " has failed the following prerequisites: " + satisfied.failedString);
-        
-        // Update the warning courses to include the just dragged course
-        let temp = warningPrerequisiteCourses;
-        temp.push(updateWarning.course);
-        setWarningPrerequisiteCourses(temp);
       }
-    }
 
-    // If the course has been dragged from earlier to later
-    if (updateWarning.oldSemester < updateWarning.newSemester) {
-      // Check all semesters past the old moved semester
-      preReqCheckAllCoursesPastSemester(
-        updateWarning.course,
-        updateWarning.oldSemester,
-        updateWarning.oldSemester === -1 ? false : satisfied.returnValue,
-        true
-      );
-    } 
+      // If the course has been dragged from earlier to later
+      if (updateWarning.oldSemester < updateWarning.newSemester) {
+        // Check all semesters past the old moved semester
+        preReqCheckAllCoursesPastSemester(
+          updateWarning.course,
+          updateWarning.oldSemester,
+          updateWarning.oldSemester === -1 ? false : satisfied.returnValue,
+          true
+        );
+      }
       // Check all semesters past the new moved semester
       preReqCheckAllCoursesPastSemester(
         updateWarning.course,
@@ -451,9 +523,15 @@ export const Container: FC<ContainerProps> = memo(function Container({
         updateWarning.draggedOut,
         false
       );
-  }
+    }
     //Reset the warning
-    setUpdateWarning({course: undefined, oldSemester: -1, newSemester: -1, draggedOut: true, newCheck: false});
+    setUpdateWarning({
+      course: undefined,
+      oldSemester: -1,
+      newSemester: -1,
+      draggedOut: true,
+      newCheck: false,
+    });
   }, [semesters]);
 
   // This function checks if every course passes the prerequisite check when moving a course
@@ -462,39 +540,45 @@ export const Container: FC<ContainerProps> = memo(function Container({
     courseToRemove: Course,
     courseSemesterIndex: number,
     showMessage: boolean,
-    movedRight: boolean,
+    movedRight: boolean
   ): boolean {
     // prereqCheck will be used to check prerequisites
     const preReqCheck = new StringProcessing();
 
     // Get the course names in the previous semesters
-    const previousCourses = getPreviousSemesterCourses(courseSemesterIndex === -1 ? 0 : courseSemesterIndex);
+    const previousCourses = getPreviousSemesterCourses(
+      courseSemesterIndex === -1 ? 0 : courseSemesterIndex
+    );
 
     // Get the current courses in the current semester
-    let currentCourses = getSemesterCourses(courseSemesterIndex === -1 ? 0 : courseSemesterIndex);
-    let currentCoursesNames = getSemesterCoursesNames(courseSemesterIndex === -1 ? 0 : courseSemesterIndex);
-  
+    let currentCourses = getSemesterCourses(
+      courseSemesterIndex === -1 ? 0 : courseSemesterIndex
+    );
+    let currentCoursesNames = getSemesterCoursesNames(
+      courseSemesterIndex === -1 ? 0 : courseSemesterIndex
+    );
+
     let failedCoursesList = new Array();
 
     semesters.forEach((currSemester, index) => {
-      if (
-        currSemester.semesterNumber - 1 >= courseSemesterIndex
-      ) {
+      if (currSemester.semesterNumber - 1 >= courseSemesterIndex) {
         // Check every course in the current semester passes the prerequisites and push any failed
         // prerequisites to the failedCoursesList
         currentCourses.forEach((x) => {
-            if (!preReqCheck.courseInListCheck(
+          if (
+            !preReqCheck.courseInListCheck(
               x !== undefined ? x.preReq : "",
               previousCourses,
               currentCoursesNames
-            ).returnValue) {
-              failedCoursesList.push(x);
-            }
+            ).returnValue
+          ) {
+            failedCoursesList.push(x);
+          }
         });
 
         // Append the current semester to the previous courses semester
         currentCoursesNames.forEach((x) => {
-            previousCourses.push(x);
+          previousCourses.push(x);
         });
 
         // Update the current course lists to be for the next semester
@@ -518,39 +602,43 @@ export const Container: FC<ContainerProps> = memo(function Container({
       if (index < courseSemesterIndex) {
         x.courses.forEach((y) => {
           initialPreviousCourses.push(y);
-      })
-    }
-    })
+        });
+      }
+    });
 
     //Remove any courses that were marked as warning, but now have resolved prerequisites
     if (!movedRight) {
-    warningPrerequisiteCourses.forEach((currentWarningCourse) => {
-      if (!initialPreviousCourses.find((prevCourse) => prevCourse === currentWarningCourse)) {
-      failedCoursesList.forEach((currentFailedCourse) => {
-        if (currentWarningCourse === currentFailedCourse) {
-          found = true;
-        }
-      })
-
-      // If the currently selected course in the warningCourses now passes the prerequisites
-      if (!found) {
-        let temp = new Array<Course>();
-        // Replace warningCourses with all courses but the currently selected warningCourse
-        tempWarningCourses.forEach((temporaryCurrentWarningCourse) => {
-          // Carry on if the tempWarningCourse is not in a previous semester
-            if (temporaryCurrentWarningCourse !== currentWarningCourse) {
-              temp.push(temporaryCurrentWarningCourse);
+      warningPrerequisiteCourses.forEach((currentWarningCourse) => {
+        if (
+          !initialPreviousCourses.find(
+            (prevCourse) => prevCourse === currentWarningCourse
+          )
+        ) {
+          failedCoursesList.forEach((currentFailedCourse) => {
+            if (currentWarningCourse === currentFailedCourse) {
+              found = true;
             }
-        })
-        tempWarningCourses = temp;
-      }
-      found = false;
-    }
-    })
+          });
 
-    // Update the warning courses to remove the currently now-satisifed prereqs course
-    setWarningPrerequisiteCourses(tempWarningCourses);
-  }
+          // If the currently selected course in the warningCourses now passes the prerequisites
+          if (!found) {
+            let temp = new Array<Course>();
+            // Replace warningCourses with all courses but the currently selected warningCourse
+            tempWarningCourses.forEach((temporaryCurrentWarningCourse) => {
+              // Carry on if the tempWarningCourse is not in a previous semester
+              if (temporaryCurrentWarningCourse !== currentWarningCourse) {
+                temp.push(temporaryCurrentWarningCourse);
+              }
+            });
+            tempWarningCourses = temp;
+          }
+          found = false;
+        }
+      });
+
+      // Update the warning courses to remove the currently now-satisifed prereqs course
+      setWarningPrerequisiteCourses(tempWarningCourses);
+    }
 
     // If any courses have failed, notify the user of each course that failed
     if (showMessage && failedCoursesList.length > 0) {
@@ -562,19 +650,29 @@ export const Container: FC<ContainerProps> = memo(function Container({
           temp.push(x);
           setWarningPrerequisiteCourses(temp);
         }
-        message.length > 0 ?
-        message = message + "," + x.subject + "-" + x.number : message = message + x.subject + "-" + x.number;
+        message.length > 0
+          ? (message = message + "," + x.subject + "-" + x.number)
+          : (message = message + x.subject + "-" + x.number);
       });
 
       // Show a warning stating that the classes failed the prereqs
-      if (!message.includes(courseToRemove.subject + "" + courseToRemove.number)) {
+      if (
+        !message.includes(courseToRemove.subject + "" + courseToRemove.number)
+      ) {
         setVisibility(true);
-        setErrorMessage("WARNING! " + courseToRemove.subject + "_" + courseToRemove.number + " is a prerequisite for the following courses: " + message);
+        setErrorMessage(
+          "WARNING! " +
+            courseToRemove.subject +
+            "_" +
+            courseToRemove.number +
+            " is a prerequisite for the following courses: " +
+            message
+        );
       }
     }
 
     return failedCoursesList.length === 0;
-   }
+  }
 
   // Returns if a course is already in a semester's index
   function courseAlreadyInSemester(
@@ -597,14 +695,14 @@ export const Container: FC<ContainerProps> = memo(function Container({
   function getPreviousSemesterCourses(semesterIndex: number): Array<string> {
     let previousCourses = new Array<string>();
     if (semesterIndex > -1 && semesterIndex < 8) {
-    semesters.forEach((currSemester) => {
-      if (currSemester.semesterNumber - 1 < semesterIndex) {
-        currSemester.courses.forEach((x) => {
-          previousCourses.push(x.subject + "-" + x.number);
-        });
-      }
-    });
-  }
+      semesters.forEach((currSemester) => {
+        if (currSemester.semesterNumber - 1 < semesterIndex) {
+          currSemester.courses.forEach((x) => {
+            previousCourses.push(x.subject + "-" + x.number);
+          });
+        }
+      });
+    }
 
     // Append completed courses to the array
     CompletedCourses.forEach((x) => {
@@ -619,10 +717,10 @@ export const Container: FC<ContainerProps> = memo(function Container({
   function getSemesterCourses(semesterIndex: number): Array<Course> {
     let semCourses = new Array<Course>();
     if (semesterIndex > -1 && semesterIndex < 8) {
-    semesters[semesterIndex].courses.forEach((x) => {
-      semCourses.push(x);
-    });
-  }
+      semesters[semesterIndex].courses.forEach((x) => {
+        semCourses.push(x);
+      });
+    }
     return semCourses;
   }
 
@@ -631,28 +729,12 @@ export const Container: FC<ContainerProps> = memo(function Container({
   function getSemesterCoursesNames(semesterIndex: number): Array<string> {
     let semCourses = new Array<string>();
     if (semesterIndex > -1 && semesterIndex < 8) {
-    semesters[semesterIndex].courses.forEach((x) => {
-      semCourses.push(x.subject + "-" + x.number);
-    });
-  }
+      semesters[semesterIndex].courses.forEach((x) => {
+        semCourses.push(x.subject + "-" + x.number);
+      });
+    }
     return semCourses;
   }
-
-  // THE FOLLOWING USEEFFECTS CAN BE DELETED
-  // Log the prerequisite warning courses (the ones that appear in yellow)
-  useEffect(() => {
-    console.log('Prereqs ' + warningPrerequisiteCourses);
-  },[warningPrerequisiteCourses.length]);
-
-  // Log the fall vs spring warning courses (the ones that appear in orange)
-  useEffect(() => {
-    console.log('FallvsSpring ' + warningFallvsSpringCourses);
-  },[warningFallvsSpringCourses.length]);
-
-  // Log the duplicate warning courses (the ones that appear in orange)
-  useEffect(() => {
-    console.log('Duplicates ' + warningDuplicateCourses);
-  },[warningDuplicateCourses.length]);
 
   const popupCloseHandler = () => {
     setVisibility(false);
@@ -667,6 +749,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
     });
     setRequirementsDisplay(temp);
   }, [requirements]);
+
   return (
     <div>
       <div className="drag-drop">

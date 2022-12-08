@@ -11,14 +11,14 @@ class StringProcessing {
     compareString: string,
     coursesList: string[],
     concurrentCoursesList: string[] | undefined
-  ) : {returnValue: boolean, failedString: string} {
+  ): { returnValue: boolean; failedString: string } {
     // Boundary Conditions
     if (
       compareString === "" ||
       compareString === null ||
       compareString === undefined
     ) {
-      return {returnValue: true, failedString: ""}; // nothing to compare to, so it must be true (essentially means no prerequisites)
+      return { returnValue: true, failedString: "" }; // nothing to compare to, so it must be true (essentially means no prerequisites)
     }
     if (
       (coursesList && coursesList.length === 0) ||
@@ -27,7 +27,7 @@ class StringProcessing {
     ) {
       // Since there exists at least one course to compare, if coursesList is empty,
       // then the course is not in the list
-      return {returnValue: false, failedString: compareString};
+      return { returnValue: false, failedString: compareString };
     }
 
     // Force each string to have underscores instead of dashes and remove any duplicates
@@ -92,7 +92,7 @@ class StringProcessing {
             if (index > 0) {
               combineString = combineString + "|" + x;
             }
-          })
+          });
           failedString = combineString;
         }
       } else {
@@ -106,15 +106,15 @@ class StringProcessing {
     });
 
     failedString = this.prettyFailedString(failedString);
-    return {returnValue: returnValue, failedString: failedString};
+    return { returnValue: returnValue, failedString: failedString };
   }
 
   // Formats the failed string to be more readable
   prettyFailedString(failedString: string) {
     let updateString = failedString;
-      updateString = updateString.replace(/\,/g, " and ");
-      updateString = updateString.replace(/\|/g, ' or ');
-      updateString = updateString.replace(/\&/g, " & ");
+    updateString = updateString.replace(/\,/g, " and ");
+    updateString = updateString.replace(/\|/g, " or ");
+    updateString = updateString.replace(/\&/g, " & ");
     return updateString;
   }
 

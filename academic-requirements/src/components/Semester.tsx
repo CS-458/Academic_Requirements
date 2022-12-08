@@ -42,7 +42,7 @@ export const Semester: FC<SemesterProps> = function Semester({
   courses,
   warningPrerequisiteCourses,
   warningFallvsSpringCourses,
-  warningDuplicateCourses
+  warningDuplicateCourses,
 }) {
   //defines the drop action
   const [{ isOver }, drop] = useDrop({
@@ -103,29 +103,35 @@ export const Semester: FC<SemesterProps> = function Semester({
       style={{ ...style, backgroundColor }}
       data-testid="semester"
     >
-      {isActive ? "Release to drop" : `Semester ${semesterNumber} ${semesterNumber % 2 == 0 ? '\nSpring\n' : '\nFall\n'}`}
+      {isActive
+        ? "Release to drop"
+        : `Semester ${semesterNumber} ${
+            semesterNumber % 2 == 0 ? "\nSpring\n" : "\nFall\n"
+          }`}
       {`Credits ${getTotalCredits()}`}
       {isWarning ? ` (${GetWarning()})` : `${GetWarning()}`}
 
       {courses &&
-        courses.map(
-          (course, index) => (
-            <Course
-              name={course.name}
-              subject={course.subject}
-              number={course.number}
-              semesters={course.semesters}
-              type={ItemTypes.COURSE}
-              credits={course.credits}
-              preReq={course.preReq}
-              dragSource={"Semester " + (semesterNumber - 1)}
-              key={index}
-              warningYellowColor={warningPrerequisiteCourses.find(x => x === course)}
-              warningOrangeColor={warningFallvsSpringCourses.find(x => x === course)}
-              warningRedColor={warningDuplicateCourses.find(x => x === course)}
-            />
-          )
-        )}
+        courses.map((course, index) => (
+          <Course
+            name={course.name}
+            subject={course.subject}
+            number={course.number}
+            semesters={course.semesters}
+            type={ItemTypes.COURSE}
+            credits={course.credits}
+            preReq={course.preReq}
+            dragSource={"Semester " + (semesterNumber - 1)}
+            key={index}
+            warningYellowColor={warningPrerequisiteCourses.find(
+              (x) => x === course
+            )}
+            warningOrangeColor={warningFallvsSpringCourses.find(
+              (x) => x === course
+            )}
+            warningRedColor={warningDuplicateCourses.find((x) => x === course)}
+          />
+        ))}
     </div>
   );
 };
