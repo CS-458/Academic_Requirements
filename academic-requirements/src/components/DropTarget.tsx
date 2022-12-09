@@ -93,7 +93,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
   requirementsGen, //List of requirements for gen-eds
   fourYearPlan, // The four year plan if requested on Input page, or null
 }) {
-  
   const [semesters, setSemesters] = useState<SemesterState[]>([
     {
       accepts: [ItemTypes.COURSE],
@@ -695,17 +694,19 @@ export const Container: FC<ContainerProps> = memo(function Container({
     setCoursesInMultipleCategories(tempArr);
   }, [requirements, requirementsGen]);
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log("This use effect started");
-    if(completedReqRun){
-      CompletedCourses.forEach((x)=>{
+    if (completedReqRun) {
+      CompletedCourses.forEach((x) => {
         console.log(x);
         let a = x.split("-");
-        let found = PassedCourseList.find(item => item.subject == a[0] && item.number == parseInt(a[1]));
+        let found = PassedCourseList.find(
+          (item) => item.subject == a[0] && item.number == parseInt(a[1])
+        );
         checkRequirements(found, coursesInMultipleCategories);
-      })
+      });
     }
-  },[coursesInMultipleCategories])
+  }, [coursesInMultipleCategories]);
 
   const removeFromRequirements = useCallback(
     (course: Course) => {
