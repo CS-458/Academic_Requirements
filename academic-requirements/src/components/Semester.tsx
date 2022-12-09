@@ -8,7 +8,7 @@ import { ItemTypes } from "./Constants";
 //styling for the semester
 const style: CSSProperties = {
   height: "15rem",
-  width: "18.5%",
+  width: "19%",
   marginRight: ".5rem",
   marginBottom: ".5rem",
   color: "white",
@@ -107,8 +107,7 @@ export const Semester: FC<SemesterProps> = function Semester({
         ? "Release to drop"
         : `Semester ${semesterNumber} ${
             semesterNumber % 2 == 0 ? "\nSpring\n" : "\nFall\n"
-          }`}
-      {`Credits ${getTotalCredits()}`}
+          }Credits ${getTotalCredits()}`}
       {isWarning ? ` (${GetWarning()})` : `${GetWarning()}`}
 
       {courses &&
