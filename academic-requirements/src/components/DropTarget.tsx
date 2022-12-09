@@ -983,8 +983,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
                 validCourse = true;
               }
             });
-            if(validCourse){
-              temp3 = reqGenList[i].percentage - (1/total)*100; 
+            if (validCourse) {
+              temp3 = reqGenList[i].percentage - (1 / total) * 100;
             }
           }
           //set the new percentage
