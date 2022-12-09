@@ -1091,8 +1091,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
   //TODO do the requirements define when a course can be taken twice for credit
   const checkRequirements = useCallback(
     (course: Course, multipleCategories: any) => {
-      console.log(reqList);
-      console.log(reqGenList);
       //check for any major/concentration reqs it can fill
       let Major = checkRequirementsMajor(course);
       if (!Major) {
@@ -1138,11 +1136,9 @@ export const Container: FC<ContainerProps> = memo(function Container({
           }
           //The only requirement is a courses required list
           if (!x.courseCount && x.courseReqs && !x.creditCount) {
-            console.log("req list");
             let validCourse = false;
             courseReqArr.forEach((item) => {
               let found = reqCheck.courseInListCheck(item, [courseString]);
-              console.log(found);
               if (found.returnValue) {
                 validCourse = true;
               }
@@ -1408,9 +1404,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
               x.creditCountTaken = x.creditCountTaken + course.credits;
               x.courseCountTaken = x.courseCountTaken + 1;
               let validCourse = false;
-              let temp1 = 0;
-              let temp2 = 0;
-              let temp3 = 0;
+              let temp1 = x.percentage;
               courseReqArr.forEach((item) => {
                 let found = reqCheck.courseInListCheck(item, [courseString]);
                 if (found.returnValue) {
@@ -1420,8 +1414,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
               if (validCourse) {
                 temp1 = x.percentage + (1 / courseReqArr.length) * 100;
               }
-              temp2 = (x.creditCountTaken / x.creditCount) * 100;
-              temp3 = (x.courseCountTaken / x.courseCount) * 100;
+              let temp2 = (x.creditCountTaken / x.creditCount) * 100;
+              let temp3 = (x.courseCountTaken / x.courseCount) * 100;
               if (temp1 <= temp2 && temp1 <= temp3) {
                 x.percentage = temp1;
               } else if (temp2 <= temp1 && temp2 <= temp3) {
