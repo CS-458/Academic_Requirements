@@ -88,6 +88,26 @@ describe("Testing searchable dropdown", () => {
     await selectEvent.select(temp, "Mocked option 3");
     expect(mockedOnChange).toBeCalledTimes(3);
   });
+
+  test("Searchable dropdown label can be null", () => {
+    let label;
+    const { getByTestId } = render(
+      <SearchableDropdown
+        options={mockedOptions}
+        onSelectOption={jest.fn()}
+        showDropdown={true}
+        thin={false}
+        label={null}
+      />
+    );
+    try {
+      // try to get the html element (expect to fail as it shouldn't be rendered)
+      label = getByTestId("searchableDropdownLabel");
+    } catch {
+      label = null;
+    }
+    expect(label).toBeNull();
+  });
 });
 
 describe("Test for App", () => {
@@ -229,6 +249,66 @@ describe("Test for App", () => {
     expect(uploadButton.textContent).toBe("Upload");
     fireEvent.click(uploadButton);
     expect(getByTestId("uploaderPage")).not.toBeVisible();
+  });
+
+  test("Test four year plan checkbox displaying and calls setUseFourYearPlan() when checked", () => {
+    let setUseFourYearPlan = jest.fn();
+    const { getByTestId } = render(
+      <InputPage
+        showing={true}
+        onClickGenerate={jest.fn()}
+        onClickMajor={jest.fn()}
+        onClickConcentration={jest.fn()}
+        concentrationList={[]}
+        courseSubjectAcronyms={[]}
+        majorList={[]}
+        majorDisplayList={[]}
+        concentrationDisplayList={[]}
+        takenCourses={[]}
+        setTakenCourses={jest.fn()}
+        setSelectedCourseSubject={jest.fn()}
+        courseSubjectNumbers={[]}
+        setUseFourYearPlan={setUseFourYearPlan}
+        concentrationHasFourYearPlan={true}
+      />
+    );
+    const checkbox = getByTestId("fourYearPlanCheckbox");
+    // box should be rendered
+    expect(checkbox).toBeVisible();
+    // "check" the checkbox
+    fireEvent.click(checkbox);
+    // verify we want to use the four year plan
+    expect(setUseFourYearPlan).toBeCalledWith(true);
+  });
+
+  test("Test four year plan checkbox when concentration has no four year plan", () => {
+    let checkbox;
+    const { getByTestId } = render(
+      <InputPage
+        showing={true}
+        onClickGenerate={jest.fn()}
+        onClickMajor={jest.fn()}
+        onClickConcentration={jest.fn()}
+        concentrationList={[]}
+        courseSubjectAcronyms={[]}
+        majorList={[]}
+        majorDisplayList={[]}
+        concentrationDisplayList={[]}
+        takenCourses={[]}
+        setTakenCourses={jest.fn()}
+        setSelectedCourseSubject={jest.fn()}
+        courseSubjectNumbers={[]}
+        setUseFourYearPlan={jest.fn()}
+        concentrationHasFourYearPlan={false}
+      />
+    );
+    try {
+      // try to get the html element (expect to fail as it shouldn't be rendered)
+      checkbox = getByTestId("fourYearPlanCheckbox");
+    } catch {
+      checkbox = null;
+    }
+    expect(checkbox).toBeNull();
   });
 
   test("Test String Processing", () => {

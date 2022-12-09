@@ -16,7 +16,6 @@ import SearchableDropdown from "./SearchableDropdown.tsx";
 import ErrorPopup from "./ErrorPopup";
 //@ts-ignore
 import { Requirement } from "./Requirement.tsx";
-import { TEXT } from "react-dnd-html5-backend/dist/NativeTypes";
 
 //Defines the properties that each type should have
 interface SemesterState {
@@ -84,6 +83,7 @@ export interface ContainerProps {
     courseCountTaken: number;
     creditCountTaken: number;
   }[];
+  fourYearPlan: {};
 }
 
 export const Container: FC<ContainerProps> = memo(function Container({
@@ -91,57 +91,9 @@ export const Container: FC<ContainerProps> = memo(function Container({
   CompletedCourses, //List of completed courses in subject-number format
   requirements, //List of requirements for major/concentration
   requirementsGen, //List of requirements for gen-eds
+  fourYearPlan, // The four year plan if requested on Input page, or null
 }) {
-  const [semestersOld, setSemestersOld] = useState<SemesterState[]>([
-    {
-      accepts: [ItemTypes.COURSE],
-      lastDroppedItem: null,
-      semesterNumber: 1,
-      courses: [],
-    },
-    {
-      accepts: [ItemTypes.COURSE],
-      lastDroppedItem: null,
-      semesterNumber: 2,
-      courses: [],
-    },
-    {
-      accepts: [ItemTypes.COURSE],
-      lastDroppedItem: null,
-      semesterNumber: 3,
-      courses: [],
-    },
-    {
-      accepts: [ItemTypes.COURSE],
-      lastDroppedItem: null,
-      semesterNumber: 4,
-      courses: [],
-    },
-    {
-      accepts: [ItemTypes.COURSE],
-      lastDroppedItem: null,
-      semesterNumber: 5,
-      courses: [],
-    },
-    {
-      accepts: [ItemTypes.COURSE],
-      lastDroppedItem: null,
-      semesterNumber: 6,
-      courses: [],
-    },
-    {
-      accepts: [ItemTypes.COURSE],
-      lastDroppedItem: null,
-      semesterNumber: 7,
-      courses: [],
-    },
-    {
-      accepts: [ItemTypes.COURSE],
-      lastDroppedItem: null,
-      semesterNumber: 8,
-      courses: [],
-    },
-  ]);
+  
   const [semesters, setSemesters] = useState<SemesterState[]>([
     {
       accepts: [ItemTypes.COURSE],
@@ -229,6 +181,40 @@ export const Container: FC<ContainerProps> = memo(function Container({
   const [category, setCategory] = useState(""); //category that is selected
   const [categories, setCategories] = useState<string[]>([]); //list of all categories
   const [coursesInCategory, setcoursesInCategory] = useState<Course[]>([]); //courses in category that is selected
+
+  // Used to keep track of which information to display in the far right area
+  const defaultInformationType = "Requirements (Calculated)"; // The default
+  const [informationTypes, setInformationTypes] = useState<string[]>([
+    defaultInformationType,
+  ]);
+  const [displayedInformationType, setDisplayedInformationType] =
+    useState<string>(defaultInformationType);
+
+  useEffect(() => {
+    // Whenever completed courses may update, determine
+    // whether we need to display it in the dropdown
+    if (CompletedCourses.length > 0) {
+      setInformationTypes((prevInformationTypes) => {
+        // the ... is a spread operator and essentially means "take everything up to this point"
+        if (!prevInformationTypes.includes("Completed Courses")) {
+          return [...prevInformationTypes, "Completed Courses"];
+        }
+        return [...prevInformationTypes];
+      });
+    }
+  }, [CompletedCourses]);
+
+  useEffect(() => {
+    if (fourYearPlan) {
+      setInformationTypes((prevInformationTypes) => {
+        // the ... is a spread operator and essentially means "take everything up to this point"
+        if (!prevInformationTypes.includes("Requirements (Four Year Plan)")) {
+          return [...prevInformationTypes, "Requirements (Four Year Plan)"];
+        }
+        return [...prevInformationTypes];
+      });
+    }
+  }, [fourYearPlan]);
 
   //SelectedCategory function. Hovland7Nov7
   function selectedCategory(_category) {
@@ -394,9 +380,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
 
               updateSemester[movedFromIndex].courses = coursesRemove;
 
-              // Update the semester
-              setSemestersOld(updateSemester);
-
               // Remove the course from the list, in case it did exist there too
               //handleRemoveItem(course);
             } else {
@@ -425,7 +408,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
         );
         //set the drag source to course list (may be redundant but I'm scared to mess with it)
         found.dragSource = "CourseList";
-        setDroppedCourses(droppedCourses.splice(droppedCourses.indexOf(found)));
+        setDroppedCourses(droppedCourses.filter((item) => item.name !== name));
         // If all courses pass the preReq check, then update the course lists
         if (preReqCheckCoursesInSemesterAndBeyond(found, movedFromIndex, -1)) {
           setCourses(
@@ -615,11 +598,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
     return semCourses;
   }
 
-  // If the semesters needs to be updated, we will force update the semesters
-  useEffect(() => {
-    setSemesters(semestersOld);
-  }, [semestersOld]);
-
   const popupCloseHandler = () => {
     setVisibility(false);
   };
@@ -715,7 +693,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
       }
     }
     setCoursesInMultipleCategories(tempArr);
-    setCompletedReqRun(true);
   }, [requirements, requirementsGen]);
 
   useEffect(()=>{
@@ -728,7 +705,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
         checkRequirements(found, coursesInMultipleCategories);
       })
     }
-  },[completedReqRun, requirementsDisplay])
+  },[coursesInMultipleCategories])
 
   const removeFromRequirements = useCallback(
     (course: Course) => {
@@ -1124,6 +1101,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
           if (x.percentage > 100) {
             x.percentage = 100;
           }
+          console.log("Courses taken " + x.coursesTaken);
         }
       }
     }
@@ -1522,41 +1500,116 @@ export const Container: FC<ContainerProps> = memo(function Container({
             />
           ))}
         </div>
-        <div className="requirements">
-          <p>Requirements</p>
-          {requirementsDisplay?.map(
-            (
-              {
-                name,
-                courseCount,
-                courseReqs,
-                creditCount,
-                idCategory,
-                parentCategory,
-                percentage,
-                inheritedCredits,
-                coursesTaken,
-                courseCountTaken,
-                creditCountTaken,
-              },
-              index
-            ) => (
-              <Requirement
-                courseCount={courseCount}
-                courseReqs={courseReqs}
-                creditCount={creditCount}
-                idCategory={idCategory}
-                name={name}
-                parentCategory={parentCategory}
-                percentage={percentage}
-                inheritedCredits={inheritedCredits}
-                coursesTaken={coursesTaken}
-                courseCountTaken={courseCountTaken}
-                creditCountTaken={creditCountTaken}
-                key={index}
+        <div className="right-information-box">
+          <div className="right-information-box-header">
+            <p
+              style={{ textAlign: "center", padding: "0px", fontSize: "1.1em" }}
+            >
+              {displayedInformationType}
+            </p>
+            {informationTypes.length > 1 && (
+              <SearchableDropdown
+                options={informationTypes}
+                label={null}
+                onSelectOption={setDisplayedInformationType}
+                showDropdown={true}
+                thin={true}
               />
-            )
-          )}
+            )}
+          </div>
+          <div className="right-information-box-content">
+            {displayedInformationType == "Requirements (Four Year Plan)" && (
+              <>
+                <p className="right-information-box-description">
+                  The four year plan for your concentration recommends taking
+                  courses in the following categories in the respective
+                  semesters.
+                </p>
+                {Object.keys(fourYearPlan["ClassPlan"]).map((key, index) => {
+                  if (
+                    fourYearPlan["ClassPlan"][key]["Requirements"].length > 0
+                  ) {
+                    return (
+                      <div style={{ margin: "5px" }} key={index}>
+                        <p>{key}</p>
+                        <p style={{ marginLeft: "10px", marginBottom: "25px" }}>
+                          {fourYearPlan["ClassPlan"][key][
+                            "Requirements"
+                          ].toString()}
+                        </p>
+                      </div>
+                    );
+                  }
+                })}
+              </>
+            )}
+            {displayedInformationType == "Completed Courses" && (
+              <>
+                <p className="right-information-box-description">
+                  These are courses you marked as complete.
+                </p>
+                {CompletedCourses?.map((completedCourse, index) => {
+                  return (
+                    <div className="info-box-completed-course">
+                      <a
+                        href={
+                          "https://bulletin.uwstout.edu/content.php?filter%5B27%5D=" +
+                          completedCourse.split("-")[0] +
+                          "&filter%5B29%5D=" +
+                          completedCourse.split("-")[1] +
+                          "&filter%5Bcourse_type%5D=-1&filter%5Bkeyword%5D=&filter%5B32%5D=1&filter%5Bcpage%5D=1&cur_cat_oid=21&expand=&navoid=544&search_database=Filter#acalog_template_course_filter"
+                        }
+                        target="_blank"
+                      >
+                        {completedCourse}
+                      </a>
+                    </div>
+                  );
+                })}
+              </>
+            )}
+            {displayedInformationType == "Requirements (Calculated)" && (
+              <>
+                <p className="right-information-box-description">
+                  Select a category and drag a course onto a semester to begin
+                  planning.
+                </p>
+                {requirementsDisplay?.map(
+                  (
+                    {
+                      name,
+                      courseCount,
+                      courseReqs,
+                      creditCount,
+                      idCategory,
+                      parentCategory,
+                      percentage,
+                      inheritedCredits,
+                      coursesTaken,
+                      courseCountTaken,
+                      creditCountTaken,
+                    },
+                    index
+                  ) => (
+                    <Requirement
+                      courseCount={courseCount}
+                      courseReqs={courseReqs}
+                      creditCount={creditCount}
+                      idCategory={idCategory}
+                      name={name}
+                      parentCategory={parentCategory}
+                      percentage={percentage}
+                      inheritedCredits={inheritedCredits}
+                      coursesTaken={coursesTaken}
+                      courseCountTaken={courseCountTaken}
+                      creditCountTaken={creditCountTaken}
+                      key={index}
+                    />
+                  )
+                )}
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>
