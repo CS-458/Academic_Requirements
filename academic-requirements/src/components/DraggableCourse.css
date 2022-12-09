@@ -10,12 +10,28 @@
   outline-width: 2px;
   outline-color: #004990;
   outline-style: auto;
-  background-color: gainsboro;
   border-radius: 5px;
   padding: "5rem 1rem";
   margin: 5px;
   color: black;
 }
+
+.CourseText {
+  background-color: gainsboro;
+}
+
+.CourseWarningYellow {
+  background-color: rgb(219, 248, 90);
+}
+
+.CourseWarningOrange {
+  background-color: rgb(231, 159, 77);
+}
+
+.CourseWarningRed {
+  background-color: rgb(214, 53, 53);
+}
+
 .CourseText:first-line {
   font-size: 11pt;
 }
