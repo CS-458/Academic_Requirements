@@ -1,16 +1,14 @@
-import { CSSProperties, FC, useState } from "react";
-import { memo } from "react";
+import { CSSProperties, FC } from "react";
 import { useDrop } from "react-dnd";
 import React from "react";
 //@ts-ignore
 import { Course } from "./DraggableCourse.tsx";
 import { ItemTypes } from "./Constants";
-import ErrorPopup from "./ErrorPopup";
-import { process_params } from "express/lib/router";
+
 //styling for the semester
 const style: CSSProperties = {
   height: "15rem",
-  width: "18.5%",
+  width: "19%",
   marginRight: ".5rem",
   marginBottom: ".5rem",
   color: "white",
@@ -19,6 +17,7 @@ const style: CSSProperties = {
   fontSize: "1rem",
   lineHeight: "normal",
   float: "left",
+  whiteSpace: "pre",
   background: "#004990",
   borderRadius: ".5rem",
   overflow: "auto",
@@ -30,14 +29,20 @@ export interface SemesterProps {
   onDrop: (item: any) => void;
   semesterNumber: number;
   courses: Course[];
+  warningPrerequisiteCourses: Course[];
+  warningFallvsSpringCourses: Course[];
+  warningDuplicateCourses: Course[];
 }
 
-export const Semester: FC<SemesterProps> = memo(function Semester({
+export const Semester: FC<SemesterProps> = function Semester({
   accept,
   lastDroppedItem,
   onDrop,
   semesterNumber,
   courses,
+  warningPrerequisiteCourses,
+  warningFallvsSpringCourses,
+  warningDuplicateCourses,
 }) {
   //defines the drop action
   const [{ isOver }, drop] = useDrop({
@@ -98,27 +103,36 @@ export const Semester: FC<SemesterProps> = memo(function Semester({
       style={{ ...style, backgroundColor }}
       data-testid="semester"
     >
-      {isActive ? "Release to drop" : `Semester ${semesterNumber}`}
-      <br />
-      {`Credits ${getTotalCredits()}`}
+      {isActive
+        ? "Release to drop"
+        : `Semester ${semesterNumber} ${
+            semesterNumber % 2 == 0 ? "\nSpring\n" : "\nFall\n"
+          }Credits ${getTotalCredits()}`}
       {isWarning ? ` (${GetWarning()})` : `${GetWarning()}`}
 
       {courses &&
-        courses.map(
-          ({ name, subject, number, semesters, credits, preReq }, index) => (
-            <Course
-              name={name}
-              subject={subject}
-              number={number}
-              semesters={semesters}
-              type={ItemTypes.COURSE}
-              credits={credits}
-              preReq={preReq}
-              dragSource={"Semester " + (semesterNumber - 1)}
-              key={index}
-            />
-          )
-        )}
+        courses.map((course, index) => (
+          <Course
+            name={course.name}
+            subject={course.subject}
+            number={course.number}
+            semesters={course.semesters}
+            type={ItemTypes.COURSE}
+            credits={course.credits}
+            preReq={course.preReq}
+            dragSource={"Semester " + (semesterNumber - 1)}
+            key={index}
+            warningYellowColor={warningDuplicateCourses.find(
+              (x) => x === course
+            )}
+            warningOrangeColor={warningFallvsSpringCourses.find(
+              (x) => x === course
+            )}
+            warningRedColor={warningPrerequisiteCourses.find(
+              (x) => x === course
+            )}
+          />
+        ))}
     </div>
   );
-});
+};
