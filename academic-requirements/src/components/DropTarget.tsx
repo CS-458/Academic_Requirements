@@ -692,7 +692,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
   }, [requirements, requirementsGen]);
 
   useEffect(() => {
-    if(coursesInMultipleCategories.length != 0 ){
+    if (coursesInMultipleCategories.length != 0) {
       CompletedCourses.forEach((x) => {
         let a = x.split("-");
         let found = PassedCourseList.find(
@@ -1049,7 +1049,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
                 reqList[parentIndex].percentage = temp2 * 100;
               } else {
                 reqList[parentIndex].percentage = temp1 * 100;
-               
               }
             }
             if (reqList[parentIndex].percentage > 100) {
