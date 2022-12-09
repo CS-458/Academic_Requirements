@@ -916,7 +916,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
         );
         checkRequirements(found, coursesInMultipleCategories);
       });
-      setReqList([ ...reqList ]);
+      setReqList([...reqList]);
     }
   }, [coursesInMultipleCategories]);
 
