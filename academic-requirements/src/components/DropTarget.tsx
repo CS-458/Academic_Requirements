@@ -925,6 +925,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
       let temp1 = 1000;
       let temp2 = 1000;
       let temp3 = 1000;
+      let reqCheck = new StringProcessing();
       for (var i = 0; i < reqList.length; i++) {
         let courseString = course.subject + "-" + course.number;
         let index = reqList[i].coursesTaken.indexOf(courseString);
@@ -974,7 +975,17 @@ export const Container: FC<ContainerProps> = memo(function Container({
           }
           if (reqGenList[i].courseReqs != null) {
             let total = reqGenList[i].courseReqs.split(",").length;
-            temp3 = reqGenList[i].coursesTaken.length / total;
+            let courseReqArr = reqGenList[i].courseReqs.split(",");
+            let validCourse = false;
+            courseReqArr.forEach((item) => {
+              let found = reqCheck.courseInListCheck(item, [courseString]);
+              if (found.returnValue) {
+                validCourse = true;
+              }
+            });
+            if(validCourse){
+              temp3 = reqGenList[i].percentage - (1/total)*100; 
+            }
           }
           //set the new percentage
           if (
