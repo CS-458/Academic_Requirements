@@ -404,22 +404,24 @@ export const Container: FC<ContainerProps> = memo(function Container({
         );
         let noRemove = false;
         let count = 0;
-        semesters.forEach(x =>
-          x.courses.forEach(y=>{
-            if(y.name == found.name){
+        semesters.forEach((x) =>
+          x.courses.forEach((y) => {
+            if (y.name == found.name) {
               count++;
-            }}))
-        if(count > 1){
+            }
+          })
+        );
+        if (count > 1) {
           noRemove = true;
         }
-        CompletedCourses.forEach(x => {
+        CompletedCourses.forEach((x) => {
           let subject = x.split("-")[0];
           let number = x.split("-")[1];
-          if(subject == found.subject && number == found.number){
+          if (subject == found.subject && number == found.number) {
             noRemove = true;
           }
-        })
-        if(!noRemove){
+        });
+        if (!noRemove) {
           removeFromRequirements(found);
         }
         setUpdateWarning({
