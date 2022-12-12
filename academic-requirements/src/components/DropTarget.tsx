@@ -1662,7 +1662,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
             <div onClick={() => extractCategories()}>
               <SearchableDropdown
                 options={categories}
-                label="Category"
+                label={null}
                 onSelectOption={selectedCategory} //If option chosen, selected Category activated.
                 showDropdown={true}
                 thin={true}
