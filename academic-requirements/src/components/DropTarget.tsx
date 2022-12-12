@@ -360,7 +360,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
           let newSemesterCount2 = getSemesterTotalCredits(index);
           console.log(newSemesterCount2);
           console.log(course);
-          let newWarningState2 = getWarning(newSemesterCount);
+          let newWarningState2 = getWarning(newSemesterCount2);
           setSemesters(
             update(semesters, {
               [index]: {
@@ -382,6 +382,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
 
           let tempSemesters = semesters;
           tempSemesters[index].SemesterCredits = newSemesterCount2;
+          tempSemesters[index].Warning = newWarningState2;
           setSemesters(tempSemesters);
 
           // Then remove the course from its previous semester spot
