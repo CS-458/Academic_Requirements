@@ -28,9 +28,21 @@ function App() {
   const [majorCourseData, setMajorCourseData] = useState([]);
   //concentrationCourseData is an array of the course object related to the concentration
   const [concentrationCourseData, setConcentrationCourseData] = useState([]);
+  // genEdCourseData is an array of the course object for general education courses
+  const [genEdCourseData, setGenEdCourseData] = useState([]);
 
   const [major, setMajor] = useState("");
   const [concentration, setConcentration] = useState("");
+
+  //requirements for the concentration
+  const [requirements, setRequirementsData] = useState([]);
+
+  //general requirements
+  const [requirementsGen, setRequirementsGenData] = useState([]);
+
+  // Flag for using a four year plan
+  const [useFourYearPlan, setUseFourYearPlan] = useState(false);
+  const [fourYearPlan, setFourYearPlan] = useState(null);
 
   // courseSubjects the array of subject strings from the database
   const [courseSubjects, setCourseSubjects] = useState([]);
@@ -89,7 +101,8 @@ function App() {
     setConcentration(selectedConcentration);
   }
 
-  // Gets the majors from the database, runs on start-up
+  // Runs on startup
+  // Get all the data that doesn't need user input
   useEffect(() => {
     fetch("/major") // create similar
       .then((res) => res.json())
@@ -107,13 +120,17 @@ function App() {
     fetch("/subjects")
       .then((res) => res.json())
       .then((result) => {
-        console.log(result);
         let temp = [];
         result.forEach((x) => {
           temp.push(x.subject);
         });
         //get Course subject data, pass in the result
         setCourseSubjects(temp);
+      });
+    fetch("/courses/geneds")
+      .then((res) => res.json())
+      .then((result) => {
+        setGenEdCourseData(result);
       });
   }, []);
 
@@ -171,6 +188,26 @@ function App() {
       });
   }, [concentrationCode]);
 
+  //Gets the requirements related to the major/concentration
+  useEffect(() => {
+    fetch(`/requirements?conid=${concentrationCode}`)
+      .then((res) => res.json())
+      .then((result) => {
+        // Sets concentrationCourseData to the result from the query
+        setRequirementsData(result);
+      });
+  }, [concentrationCode]);
+
+  //Gets the requirements related to the major/concentration
+  useEffect(() => {
+    fetch(`/requirements/gen?conid=${concentrationCode}`)
+      .then((res) => res.json())
+      .then((result) => {
+        // Sets concentrationCourseData to the result from the query
+        setRequirementsGenData(result);
+      });
+  }, [concentrationCode]);
+
   // Gets the 'idMajor' relating to the 'name' of the selected major
   // Runs when major is updated
   useEffect(() => {
@@ -178,6 +215,11 @@ function App() {
       if (majorDisplayData[i] == major) {
         // Sets the majorCode to the 'idMajor' of the selected major
         setMajorCode(majorData[i].idMajor);
+
+        // Whenever the major is updated, the existing four year plan and concentration
+        // are potentially invalid, so reset them.
+        setFourYearPlan(null);
+        setConcentration(null);
       }
     }
   }, [major]);
@@ -189,36 +231,43 @@ function App() {
       if (concentrationDisplayData[i] == concentration) {
         // Sets the concentrationCode to the 'idConcentration' of the selected concentration
         setConcentrationCode(concentrationData[i].idConcentration);
+        setFourYearPlan(JSON.parse(concentrationData[i].fourYearPlan));
       }
     }
   }, [concentration]);
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="App">
+      <div>
         <InputPage
           showing={!clickedGenerate}
           onClickGenerate={generateSchedule}
           onClickMajor={selectMajor}
           onClickConcentration={selectConcentration}
           concentrationList={concentrationData}
-          courseSubjectAcronyms={courseSubjects}
-          setSelectedCourseSubject={setSelectedCourseSubject}
-          courseSubjectNumbers={courseSubjectNumbers}
           majorList={majorData}
           majorDisplayList={majorDisplayData}
           concentrationDisplayList={concentrationDisplayData}
           takenCourses={coursesTaken}
           setTakenCourses={setCoursesTaken}
+          setUseFourYearPlan={setUseFourYearPlan}
+          concentrationHasFourYearPlan={fourYearPlan != null}
+          courseSubjectAcronyms={courseSubjects}
+          setSelectedCourseSubject={setSelectedCourseSubject}
+          courseSubjectNumbers={courseSubjectNumbers}
         />
         <FourYearPlanPage
           data-testid="FourYearPage"
           showing={clickedGenerate}
           concentrationCourseList={concentrationCourseData}
           majorCourseList={majorCourseData}
+          genEdCourseList={genEdCourseData}
           selectedMajor={major}
           selectedConcentration={concentration}
           completedCourses={coursesTaken}
+          requirements={requirements}
+          requirementsGen={requirementsGen}
+          fourYearPlan={useFourYearPlan ? fourYearPlan : null}
         />
         <ErrorPopup
           onClose={popupCloseHandler}
