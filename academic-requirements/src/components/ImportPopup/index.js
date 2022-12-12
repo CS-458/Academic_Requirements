@@ -56,13 +56,34 @@ const ImportPopup = (props) => {
       let fileReader = new FileReader();
       fileReader.readAsText(file);
       fileReader.onload = function () {
-        data = fileReader.result;
-        props.returnJSON(JSON.parse(data).FourYearPlans);
-        console.log("upload");
+        data = JSON.parse(fileReader.result);
+        if(checkJSON(data)) {
+          props.returnMajor(data.major)
+          props.returnConcentration(data.concentration)
+          props.returnCompleted(data.completed)
+          props.returnSemester1(data.semester1)
+          props.returnSemester2(data.semester2)
+          props.returnSemester3(data.semester3)
+          props.returnSemester4(data.semester4)
+          props.returnSemester5(data.semester5)
+          props.returnSemester6(data.semester6)
+          props.returnSemester7(data.semester7)
+          props.returnSemester8(data.semester8)
+        }
       }
       closeHandler();
     }
   };
+
+  function checkJSON(thisData) {
+    if(!thisData.hasOwnProperty("major") || !thisData.hasOwnProperty("concentration") || !thisData.hasOwnProperty("completed") ||
+       !thisData.hasOwnProperty("semester1") || !thisData.hasOwnProperty("semester2") || !thisData.hasOwnProperty("semester3") ||
+       !thisData.hasOwnProperty("semester4") || !thisData.hasOwnProperty("semester5") || !thisData.hasOwnProperty("semester6") ||
+       !thisData.hasOwnProperty("semester7") || !thisData.hasOwnProperty("semester8")) {
+      return false;
+    }
+    return true;
+  }
 
   useEffect(() => {
     setShow(props.show);
@@ -104,7 +125,17 @@ ImportPopup.propTypes = {
   title: PropTypes.string.isRequired,
   show: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  returnJSON: PropTypes.func.isRequired,
+  returnMajor: PropTypes.func.isRequired,
+  returnConcentration: PropTypes.func.isRequired,
+  returnCompleted: PropTypes.func.isRequired,
+  returnSemester1: PropTypes.func.isRequired,
+  returnSemester2: PropTypes.func.isRequired,
+  returnSemester3: PropTypes.func.isRequired,
+  returnSemester4: PropTypes.func.isRequired,
+  returnSemester5: PropTypes.func.isRequired,
+  returnSemester6: PropTypes.func.isRequired,
+  returnSemester7: PropTypes.func.isRequired,
+  returnSemester8: PropTypes.func.isRequired
 };
 
 export default ImportPopup;

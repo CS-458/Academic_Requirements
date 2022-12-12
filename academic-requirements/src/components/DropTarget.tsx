@@ -14,6 +14,8 @@ import React from "react";
 //@ts-ignore
 import SearchableDropdown from "./SearchableDropdown.tsx";
 import ErrorPopup from "./ErrorPopup";
+import uploadedData from "./InputPage";
+import isUploaded from "./InputPage";
 
 
 //Defines the properties that each type should have
@@ -54,13 +56,43 @@ export interface ContainerProps {
     category: string;
   }[];
   CompletedCourses: string[];
+  semester1: string[];
+  semester2: string[];
+  semester3: string[];
+  semester4: string[];
+  semester5: string[];
+  semester6: string[];
+  semester7: string[];
+  semester8: string[];
 }
+
 
 export const Container: FC<ContainerProps> = memo(function Container({
   PassedCourseList, //The combination of major, concentration, and gen ed
   CompletedCourses, //List of completed courses in subject-number format
+  semester1,
+  semester2,
+  semester3,
+  semester4,
+  semester5,
+  semester6,
+  semester7,
+  semester8,
 }) {
-  console.log(CompletedCourses);
+
+  // useEffect(() => {
+  //   for(let i = 0; i < semester1.length; i++) {
+  //     console.log("THIS")
+  //     for(let j = 0; j < PassedCourseList.length; j++) {
+  //       if(semester1[i] == PassedCourseList[j].subject + "-" + PassedCourseList[j].number) {
+  //         let tempSemester = semesters;
+  //         tempSemester[0].courses.push(PassedCourseList[j]);
+  //         setSemesters(tempSemester);
+  //       }
+  //     }
+  //   }
+  // },[PassedCourseList]);
+
   const [semestersOld, setSemestersOld] = useState<SemesterState[]>([
     {
       accepts: [ItemTypes.COURSE],
@@ -244,8 +276,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
         //find the course by name in the master list of all courses
         course = courses.find((item) => item.name === name);
       }
-      console.log(course);
-      console.log(dragSource);
       //Could potentially add a duplicate if course is in schedule more than once
       setDroppedCourses(
         update(droppedCourses, course ? { $push: [course] } : { $push: [] })
@@ -360,7 +390,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
     (item: { name: string; dragSource: string }) => {
       const { name } = item;
       const { dragSource } = item;
-      console.log(dragSource);
       //ignore all drops from the course list
       if (dragSource !== "CourseList") {
         //get the semester index from the drag source
@@ -525,20 +554,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
 
     return semCourses;
   }
-
-  // Displays in console the courses in each semester upon update
-  // Feel free to comment this out to reduce spam in the console
-  // useEffect(() => {
-  //   semesters.forEach((x) => {
-  //     console.log("Semester number:" + x.semesterNumber);
-  //     if (x.courses) {
-  //       x.courses.forEach((y) => {
-  //         console.log("Course: " + y.name);
-  //       });
-  //     }
-  //   });
-  //   console.log("--------------");
-  // }, [semesters]);
 
   // If the semesters needs to be updated, we will force update the semesters
   useEffect(() => {

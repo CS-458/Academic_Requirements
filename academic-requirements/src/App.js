@@ -55,7 +55,6 @@ function App() {
 
   // Processes when the user clicks to generate the schedule
   function generateSchedule(major, concentration, previousCourses) {
-    console.log("Generate Schedule Pressed");
     if (major != "" && concentration != "") {
       setClickedGenerate(true);
       setPreviouslyTakenCourses(previousCourses);
@@ -193,6 +192,26 @@ function App() {
     }
   }, [concentration]);
 
+  const [semester1, setSemester1] = useState([]);
+  const [semester2, setSemester2] = useState([]);
+  const [semester3, setSemester3] = useState([]);
+  const [semester4, setSemester4] = useState([]);
+  const [semester5, setSemester5] = useState([]);
+  const [semester6, setSemester6] = useState([]);
+  const [semester7, setSemester7] = useState([]);
+  const [semester8, setSemester8] = useState([]);
+
+  function importData(sem1, sem2, sem3, sem4, sem5, sem6, sem7, sem8) {
+    setSemester1(sem1)
+    setSemester2(sem2)
+    setSemester3(sem3)
+    setSemester4(sem4)
+    setSemester5(sem5)
+    setSemester6(sem6)
+    setSemester7(sem7)
+    setSemester8(sem8)
+  }
+
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="App">
@@ -210,6 +229,7 @@ function App() {
           concentrationDisplayList={concentrationDisplayData}
           takenCourses={coursesTaken}
           setTakenCourses={setCoursesTaken}
+          importData={importData}
         />
         <FourYearPlanPage
           data-testid="FourYearPage"
@@ -219,6 +239,14 @@ function App() {
           selectedMajor={major}
           selectedConcentration={concentration}
           completedCourses={coursesTaken}
+          semester1={semester1}
+          semester2={semester2}
+          semester3={semester3}
+          semester4={semester4}
+          semester5={semester5}
+          semester6={semester6}
+          semester7={semester7}
+          semester8={semester8}
         />
         <ErrorPopup
           onClose={popupCloseHandler}

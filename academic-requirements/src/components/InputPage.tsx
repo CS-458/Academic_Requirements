@@ -22,6 +22,7 @@ const InputPage = (props: {
   majorDisplayList: [];
   concentrationList: [];
   concentrationDisplayList: [];
+  importData(sem1, sem2, sem3, sem4, sem5, sem6, sem7, sem8): void;
 
   courseSubjectAcronyms: string[];
   setSelectedCourseSubject(subject: string): void;
@@ -48,14 +49,40 @@ const InputPage = (props: {
   const [concentrationOptions, setConcentrationOptions] =
     useState<Array<string>>(); // all available concentrations
 
-  const [jsonData, setJSONData] = useState([]);
+  //JSON that is imported
+  const [importMajor, setImportMajor] = useState("");
+  const [importConcentration, setImportConcentration] = useState("");
+  const [importCompleted, setImportCompleted] = useState([]);
+  const [importSemester1, setImportSemester1] = useState([]);
+  const [importSemester2, setImportSemester2] = useState([]);
+  const [importSemester3, setImportSemester3] = useState([]);
+  const [importSemester4, setImportSemester4] = useState([]);
+  const [importSemester5, setImportSemester5] = useState([]);
+  const [importSemester6, setImportSemester6] = useState([]);
+  const [importSemester7, setImportSemester7] = useState([]);
+  const [importSemester8, setImportSemester8] = useState([]);
 
   useEffect(() => {
-    if(jsonData != undefined)
-    {
-      console.log(jsonData[0]);
-    }
-  },[jsonData])
+    setMajor(importMajor)
+  },[importMajor])
+
+  useEffect(() => {
+    setConcentration(importConcentration)
+  },[importConcentration])
+
+  useEffect(() => {
+    setCoursesTaken(importCompleted)
+  },[importCompleted])
+
+  useEffect(() => {
+    props.importData(importSemester1, importSemester2, importSemester3, importSemester4, 
+      importSemester5, importSemester6, importSemester7, importSemester8)
+      if(importSemester1.length > 0 || importSemester2.length > 0 || importSemester3.length > 0 || importSemester4.length > 0
+        || importSemester5.length > 0 || importSemester6.length > 0 || importSemester7.length > 0 || importSemester8.length > 0
+        || importCompleted.length > 0) {
+          props.onClickGenerate(importMajor, importConcentration, importCompleted)
+        }
+  },[importSemester8])
 
   const [coursesTaken, setCoursesTaken] = useState<Array<string>>(
     props.takenCourses
@@ -201,7 +228,17 @@ const InputPage = (props: {
             title="Upload"
             show={uploaderVisibility}
             onClose={popupCloseHandlerUp}
-            returnJSON={setJSONData}
+            returnMajor={setImportMajor}
+            returnConcentration={setImportConcentration}
+            returnCompleted={setImportCompleted}
+            returnSemester1={setImportSemester1}
+            returnSemester2={setImportSemester2}
+            returnSemester3={setImportSemester3}
+            returnSemester4={setImportSemester4}
+            returnSemester5={setImportSemester5}
+            returnSemester6={setImportSemester6}
+            returnSemester7={setImportSemester7}
+            returnSemester8={setImportSemester8}
           />
           <div className="screen">
             <div className="input-grid">
