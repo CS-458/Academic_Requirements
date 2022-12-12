@@ -23,6 +23,8 @@ interface SemesterState {
   lastDroppedItem: any;
   semesterNumber: number;
   courses: Course[];
+  SemesterCredits: number;
+  Warning: string;
 }
 
 interface CourseListState {
@@ -57,6 +59,8 @@ export interface ContainerProps {
     idCategory: number;
   }[];
   CompletedCourses: string[];
+  selectedMajor: string;
+  selectedConcentration: string;
   requirements: {
     courseCount: number;
     courseReqs: string;
@@ -89,6 +93,8 @@ export interface ContainerProps {
 export const Container: FC<ContainerProps> = memo(function Container({
   PassedCourseList, //The combination of major, concentration, and gen ed
   CompletedCourses, //List of completed courses in subject-number format
+  selectedMajor,
+  selectedConcentration,
   requirements, //List of requirements for major/concentration
   requirementsGen, //List of requirements for gen-eds
   fourYearPlan, // The four year plan if requested on Input page, or null
@@ -99,48 +105,64 @@ export const Container: FC<ContainerProps> = memo(function Container({
       lastDroppedItem: null,
       semesterNumber: 1,
       courses: [],
+      SemesterCredits: 0,
+      Warning: "",
     },
     {
       accepts: [ItemTypes.COURSE],
       lastDroppedItem: null,
       semesterNumber: 2,
       courses: [],
+      SemesterCredits: 0,
+      Warning: "",
     },
     {
       accepts: [ItemTypes.COURSE],
       lastDroppedItem: null,
       semesterNumber: 3,
       courses: [],
+      SemesterCredits: 0,
+      Warning: "",
     },
     {
       accepts: [ItemTypes.COURSE],
       lastDroppedItem: null,
       semesterNumber: 4,
       courses: [],
+      SemesterCredits: 0,
+      Warning: "",
     },
     {
       accepts: [ItemTypes.COURSE],
       lastDroppedItem: null,
       semesterNumber: 5,
       courses: [],
+      SemesterCredits: 0,
+      Warning: "",
     },
     {
       accepts: [ItemTypes.COURSE],
       lastDroppedItem: null,
       semesterNumber: 6,
       courses: [],
+      SemesterCredits: 0,
+      Warning: "",
     },
     {
       accepts: [ItemTypes.COURSE],
       lastDroppedItem: null,
       semesterNumber: 7,
       courses: [],
+      SemesterCredits: 0,
+      Warning: "",
     },
     {
       accepts: [ItemTypes.COURSE],
       lastDroppedItem: null,
       semesterNumber: 8,
       courses: [],
+      SemesterCredits: 0,
+      Warning: "",
     },
   ]);
 
@@ -300,11 +322,12 @@ export const Container: FC<ContainerProps> = memo(function Container({
         currentCourses.push(x.subject + "-" + x.number);
       });
 
-      // Run the prerequisite check on the course if dragged from the course list
       if (
         dragSource === "CourseList" &&
         !courseAlreadyInSemester(course, index)
       ) {
+        var newSemesterCount = getSemesterTotalCredits(index) + course.credits;
+        var newWarningState = getWarning(newSemesterCount);
         // Add the course to the semester
         course.dragSource = "Semester " + index;
         checkRequirements(course, coursesInMultipleCategories);
@@ -317,6 +340,12 @@ export const Container: FC<ContainerProps> = memo(function Container({
               courses: {
                 $push: [course],
               },
+              Warning: {
+                $set: newWarningState,
+              },
+              SemesterCredits: {
+                $set: newSemesterCount,
+              },
             },
           })
         );
@@ -328,22 +357,41 @@ export const Container: FC<ContainerProps> = memo(function Container({
           // Update the semester with the new dragged course
           let pushCourse = semesters[index].courses;
           pushCourse.push(course);
-
+          let newSemesterCount2 = getSemesterTotalCredits(index);
+          console.log(newSemesterCount2);
+          console.log(course);
+          let newWarningState2 = getWarning(newSemesterCount2);
           setSemesters(
             update(semesters, {
               [index]: {
+                lastDroppedItem: {
+                  $set: item,
+                },
                 courses: {
-                  $set: pushCourse,
+                  $push: [course],
+                },
+                Warning: {
+                  $set: newWarningState2,
+                },
+                SemesterCredits: {
+                  $set: newSemesterCount2,
                 },
               },
             })
           );
 
+          let tempSemesters = semesters;
+          tempSemesters[index].SemesterCredits = newSemesterCount2;
+          tempSemesters[index].Warning = newWarningState2;
+          setSemesters(tempSemesters);
+
           // Then remove the course from its previous semester spot
           let coursesRemove = semesters[movedFromIndex].courses.filter(
             (item) => item !== course
           );
-
+          var removedNewCredits =
+            getSemesterTotalCredits(movedFromIndex) - course.credits;
+          var updatedWarning = getWarning(removedNewCredits);
           setSemesters(
             update(semesters, {
               [movedFromIndex]: {
@@ -352,6 +400,12 @@ export const Container: FC<ContainerProps> = memo(function Container({
                 },
                 courses: {
                   $set: coursesRemove,
+                },
+                SemesterCredits: {
+                  $set: removedNewCredits,
+                },
+                Warning: {
+                  $set: updatedWarning,
                 },
               },
             })
@@ -370,7 +424,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
     },
     [semesters]
   );
-
+  console.log(semesters);
   //handle a drop into the course list from a semester
   const handleReturnDrop = useCallback(
     (item: { name: string; dragSource: string }) => {
@@ -386,22 +440,29 @@ export const Container: FC<ContainerProps> = memo(function Container({
         //set the drag source to course list (may be redundant but I'm scared to mess with it)
         found.dragSource = "CourseList";
 
-        setDroppedCourses(courses.filter((item) => item.name !== name));
-        setCourses(update(courses, found ? { $push: [found] } : { $push: [] }));
-
         // Update semesters to have the course removed
         let itemArr = semesters[movedFromIndex].courses.filter(
           (course) => course !== found
         );
+        var newSemsterCount =
+          getSemesterTotalCredits(movedFromIndex) - found.credits;
+        var updatedWarning = getWarning(newSemsterCount);
         setSemesters(
           update(semesters, {
             [movedFromIndex]: {
               courses: {
                 $set: itemArr,
               },
+              SemesterCredits: {
+                $set: newSemsterCount,
+              },
+              Warning: {
+                $set: updatedWarning,
+              },
             },
           })
         );
+
         let noRemove = false;
         let count = 0;
         semesters.forEach((x) =>
@@ -834,6 +895,77 @@ export const Container: FC<ContainerProps> = memo(function Container({
     setVisibility(false);
   };
 
+  // JSON Data for the Courses
+  let info = {
+    Major: selectedMajor,
+    Concentration: selectedConcentration,
+    "Completed Courses": CompletedCourses,
+    ClassPlan: {
+      Semester1: getSemesterCoursesNames(0),
+      Semester2: getSemesterCoursesNames(1),
+      Semester3: getSemesterCoursesNames(2),
+      Semester4: getSemesterCoursesNames(3),
+      Semester5: getSemesterCoursesNames(4),
+      Semester6: getSemesterCoursesNames(5),
+      Semester7: getSemesterCoursesNames(6),
+      Semester8: getSemesterCoursesNames(7),
+    },
+  };
+
+  // This function sets the correct warning for the semester
+  const getWarning = (SemesterCredits) => {
+    var Warning = "";
+    if (SemesterCredits <= 11 && SemesterCredits > 0) {
+      Warning = " (Low)";
+    } else if (SemesterCredits >= 19) {
+      Warning = " (High)";
+    } else {
+      Warning = "";
+    }
+    return Warning;
+  };
+
+  // A Function that grabs the total credits for the semester
+  const getSemesterTotalCredits = (semesterIndex: number) => {
+    var SemesterCredits = 0;
+    semesters[semesterIndex].courses.forEach((x) => {
+      SemesterCredits += Number(x.credits);
+    });
+    return SemesterCredits;
+  };
+
+  // Checks for a warning in semester and then throws a warning popup
+  const checkWarnings = () => {
+    const semestersWithWarnings: string[] = [];
+    for (var i = 0; i < semesters.length; i++) {
+      if (semesters[i].Warning != "") {
+        semestersWithWarnings.push(
+          " Semester " + (i + 1) + " is " + semesters[i].Warning
+        );
+      }
+    }
+    semestersWithWarnings.push(" Schedule still exported.");
+
+    for (var i = 0; i < semesters.length; i++) {
+      if (semesters[i].Warning != "") {
+        setVisibility(true);
+        setErrorMessage(semestersWithWarnings + "");
+      }
+    }
+  };
+
+  // Creates the File and downloads it to user PC
+  function exportSchedule() {
+    checkWarnings();
+
+    const fileData = JSON.stringify(info);
+    const blob = new Blob([fileData], { type: "json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.download = "schedule.json";
+    link.href = url;
+    link.click();
+  }
   //get all of the requirements and sort through the course list for courses
   //that can fullfill multiple categories
   useEffect(() => {
@@ -1639,7 +1771,17 @@ export const Container: FC<ContainerProps> = memo(function Container({
             error={errorMessage}
           />
           {semesters.map(
-            ({ accepts, lastDroppedItem, semesterNumber, courses }, index) => (
+            (
+              {
+                accepts,
+                lastDroppedItem,
+                semesterNumber,
+                courses,
+                SemesterCredits,
+                Warning,
+              },
+              index
+            ) => (
               <Semester
                 accept={accepts}
                 lastDroppedItem={lastDroppedItem}
@@ -1647,12 +1789,17 @@ export const Container: FC<ContainerProps> = memo(function Container({
                 semesterNumber={semesterNumber}
                 courses={courses}
                 key={index}
+                SemesterCredits={SemesterCredits}
+                Warning={Warning}
                 warningPrerequisiteCourses={warningPrerequisiteCourses}
                 warningFallvsSpringCourses={warningFallvsSpringCourses}
                 warningDuplicateCourses={warningDuplicateCourses}
               />
             )
           )}
+          <button data-testid="ExportButton" onClick={exportSchedule}>
+            Export Schedule
+          </button>
         </div>
         <div
           style={{ overflow: "hidden", clear: "both" }}
