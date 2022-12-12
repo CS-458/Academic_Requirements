@@ -2,8 +2,8 @@ import type { FC } from "react";
 import { memo } from "react";
 import { useDrag } from "react-dnd";
 import React from "react";
+import clsx from "clsx";
 import "./DraggableCourse.css";
-import { func } from "prop-types";
 
 //defines the expected course properties
 export interface CourseProps {
@@ -15,6 +15,11 @@ export interface CourseProps {
   type: string;
   preReq: string;
   dragSource: string;
+  warningYellowColor: boolean;
+  warningOrangeColor: boolean;
+  warningRedColor: boolean;
+  id: number;
+  idCategory: number;
 }
 
 export const Course: FC<CourseProps> = memo(function Course({
@@ -26,6 +31,11 @@ export const Course: FC<CourseProps> = memo(function Course({
   semesters,
   preReq,
   dragSource,
+  warningYellowColor,
+  warningOrangeColor,
+  warningRedColor,
+  id,
+  idCategory,
 }) {
   //defines the drag action
   const [{ opacity }, drag] = useDrag(
@@ -40,6 +50,11 @@ export const Course: FC<CourseProps> = memo(function Course({
         semesters,
         preReq,
         dragSource,
+        warningYellowColor,
+        warningOrangeColor,
+        warningRedColor,
+        id,
+        idCategory,
       },
       collect: (monitor) => ({
         opacity: monitor.isDragging() ? 0.4 : 1,
@@ -64,7 +79,15 @@ export const Course: FC<CourseProps> = memo(function Course({
       ref={drag}
       style={{ opacity }}
       data-testid="course"
-      className="CourseText"
+      className={clsx(
+        "CourseText",
+        warningYellowColor &&
+          !warningRedColor &&
+          !warningOrangeColor &&
+          "CourseWarningYellow",
+        warningOrangeColor && !warningRedColor && "CourseWarningOrange",
+        warningRedColor && "CourseWarningRed"
+      )}
     >
       {/* {isDropped ? <s>{name}</s> : name}  */}
       {subject}-{number}

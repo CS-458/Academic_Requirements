@@ -49,7 +49,14 @@ const SearchableDropdown = (props: {
   return (
     <div className={props.thin ? "thinContainer" : "container"}>
       {/* Text that labels the search box*/}
-      <div className={props.thin ? "thinLabel" : "label"}>{props.label}</div>
+      {props.label && (
+        <div
+          className={props.thin ? "thinLabel" : "label"}
+          data-testid="searchableDropdownLabel"
+        >
+          {props.label}
+        </div>
+      )}
       {/* Dropdown box */}
       {props.showDropdown && (
         <Select

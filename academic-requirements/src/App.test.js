@@ -88,6 +88,26 @@ describe("Testing searchable dropdown", () => {
     await selectEvent.select(temp, "Mocked option 3");
     expect(mockedOnChange).toBeCalledTimes(3);
   });
+
+  test("Searchable dropdown label can be null", () => {
+    let label;
+    const { getByTestId } = render(
+      <SearchableDropdown
+        options={mockedOptions}
+        onSelectOption={jest.fn()}
+        showDropdown={true}
+        thin={false}
+        label={null}
+      />
+    );
+    try {
+      // try to get the html element (expect to fail as it shouldn't be rendered)
+      label = getByTestId("searchableDropdownLabel");
+    } catch {
+      label = null;
+    }
+    expect(label).toBeNull();
+  });
 });
 
 describe("Test for App", () => {
@@ -231,265 +251,432 @@ describe("Test for App", () => {
     expect(getByTestId("uploaderPage")).not.toBeVisible();
   });
 
+  test("Test four year plan checkbox displaying and calls setUseFourYearPlan() when checked", () => {
+    let setUseFourYearPlan = jest.fn();
+    const { getByTestId } = render(
+      <InputPage
+        showing={true}
+        onClickGenerate={jest.fn()}
+        onClickMajor={jest.fn()}
+        onClickConcentration={jest.fn()}
+        concentrationList={[]}
+        courseSubjectAcronyms={[]}
+        majorList={[]}
+        majorDisplayList={[]}
+        concentrationDisplayList={[]}
+        takenCourses={[]}
+        setTakenCourses={jest.fn()}
+        setSelectedCourseSubject={jest.fn()}
+        courseSubjectNumbers={[]}
+        setUseFourYearPlan={setUseFourYearPlan}
+        concentrationHasFourYearPlan={true}
+      />
+    );
+    const checkbox = getByTestId("fourYearPlanCheckbox");
+    // box should be rendered
+    expect(checkbox).toBeVisible();
+    // "check" the checkbox
+    fireEvent.click(checkbox);
+    // verify we want to use the four year plan
+    expect(setUseFourYearPlan).toBeCalledWith(true);
+  });
+
+  test("Test four year plan checkbox when concentration has no four year plan", () => {
+    let checkbox;
+    const { getByTestId } = render(
+      <InputPage
+        showing={true}
+        onClickGenerate={jest.fn()}
+        onClickMajor={jest.fn()}
+        onClickConcentration={jest.fn()}
+        concentrationList={[]}
+        courseSubjectAcronyms={[]}
+        majorList={[]}
+        majorDisplayList={[]}
+        concentrationDisplayList={[]}
+        takenCourses={[]}
+        setTakenCourses={jest.fn()}
+        setSelectedCourseSubject={jest.fn()}
+        courseSubjectNumbers={[]}
+        setUseFourYearPlan={jest.fn()}
+        concentrationHasFourYearPlan={false}
+      />
+    );
+    try {
+      // try to get the html element (expect to fail as it shouldn't be rendered)
+      checkbox = getByTestId("fourYearPlanCheckbox");
+    } catch {
+      checkbox = null;
+    }
+    expect(checkbox).toBeNull();
+  });
+
   test("Test String Processing", () => {
     const stringProcess = new StringProcessing();
 
     // Base & Edge Cases Testing:
 
     // true -> string compare is blank, so always true
-    expect(stringProcess.courseInListCheck("", ["CS-144"])).toBe(true);
+    if (stringProcess.courseInListCheck("", ["CS-144"]).returnValue !== true) {
+      throw new Error("");
+    }
 
     // true -> string compare is null, so always true
-    expect(stringProcess.courseInListCheck(null, ["CS-144"])).toBe(true);
+    if (
+      stringProcess.courseInListCheck(null, ["CS-144"]).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // true -> string compare is undefined, so always true
-    expect(stringProcess.courseInListCheck(undefined, ["CS-144"])).toBe(true);
+    if (
+      stringProcess.courseInListCheck(undefined, ["CS-144"]).returnValue !==
+      true
+    ) {
+      throw new Error("");
+    }
 
     // false -> course array is empty, so cannot be satisfied
-    expect(stringProcess.courseInListCheck("CS-144", [])).toBe(false);
+    if (stringProcess.courseInListCheck("CS-144", []).returnValue !== false) {
+      throw new Error("");
+    }
 
     // false -> course array is null, so cannot be satisfied
-    expect(stringProcess.courseInListCheck("CS-144", null)).toBe(false);
+    if (stringProcess.courseInListCheck("CS-144", null).returnValue !== false) {
+      throw new Error("");
+    }
 
     // false -> course array is undefined, so cannot be satisfied
-    expect(stringProcess.courseInListCheck("CS-144", undefined)).toBe(false);
+    if (
+      stringProcess.courseInListCheck("CS-144", undefined).returnValue !== false
+    ) {
+      throw new Error("");
+    }
 
     // true -> one course comparison matches
-    expect(stringProcess.courseInListCheck("CS-144", ["CS-144"])).toBe(true);
+    if (
+      stringProcess.courseInListCheck("CS-144", ["CS-144"]).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // false -> one course comparison not matches
-    expect(stringProcess.courseInListCheck("CS-144", ["CS-145"])).toBe(false);
+    if (
+      stringProcess.courseInListCheck("CS-144", ["CS-145"]).returnValue !==
+      false
+    ) {
+      throw new Error("");
+    }
 
     // false -> one course missing from AND
-    expect(
+    if (
       stringProcess.courseInListCheck("CS-144,CS-145", ["CS-144", "CS-146"])
-    ).toBe(false);
+        .returnValue !== false
+    ) {
+      throw new Error("");
+    }
 
     // true -> both courses match AND
-    expect(
+    if (
       stringProcess.courseInListCheck("CS-144,CS-145", ["CS-144", "CS-145"])
-    ).toBe(true);
+        .returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // false -> one course missing from AND
-    expect(
+    if (
       stringProcess.courseInListCheck("CS-144,CS-145", ["CS-144", "CS-146"])
-    ).toBe(false);
+        .returnValue !== false
+    ) {
+      throw new Error("");
+    }
 
     // true -> one course matches OR
-    expect(
+    if (
       stringProcess.courseInListCheck("CS-144|CS-145", ["CS-144", "CS-147"])
-    ).toBe(true);
+        .returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // true -> other course matches OR
-    expect(
+    if (
       stringProcess.courseInListCheck("CS-144|CS-145", ["CS-145", "CS-147"])
-    ).toBe(true);
+        .returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // true -> both courses matches OR
-    expect(
+    if (
       stringProcess.courseInListCheck("CS-144|CS-145", ["CS-144", "CS-145"])
-    ).toBe(true);
+        .returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // false -> no courses match OR
-    expect(
+    if (
       stringProcess.courseInListCheck("CS-144|CS-145", ["CS-148", "CS-142"])
-    ).toBe(false);
+        .returnValue !== false
+    ) {
+      throw new Error("");
+    }
 
     // true -> both courses match SUBAND
-    expect(
+    if (
       stringProcess.courseInListCheck("CS-144&CS-145", ["CS-144", "CS-145"])
-    ).toBe(true);
+        .returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // false -> one course missing from SUBAND
-    expect(
+    if (
       stringProcess.courseInListCheck("CS-144&CS-145", ["CS-144", "CS-146"])
-    ).toBe(false);
+        .returnValue !== false
+    ) {
+      throw new Error("");
+    }
 
     // false -> garbage put in for course compare
-    expect(
+    if (
       stringProcess.courseInListCheck("gibberish", ["CS-144", "CS-146"])
-    ).toBe(false);
+        .returnValue !== false
+    ) {
+      throw new Error("");
+    }
 
     // false -> garbage put in for course compare
-    expect(stringProcess.courseInListCheck("CS-144", ["garbage", "icky"])).toBe(
-      false
-    );
+    if (
+      stringProcess.courseInListCheck("CS-144", ["garbage", "icky"])
+        .returnValue !== false
+    ) {
+      throw new Error("");
+    }
 
     // true -> garbage put in for one course, but rest match
-    expect(
+    if (
       stringProcess.courseInListCheck("CS-144,CS-145", [
         "CS_144",
         "garbage",
         "CS-145",
         "icky",
-      ])
-    ).toBe(true);
+      ]).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // true -> compare if string has a - or _ in it, still compares correctly
-    expect(
+    if (
       stringProcess.courseInListCheck("CS-144,CS_145,CS-146", [
         "CS_144",
         "CS-145",
         "CS_146",
-      ])
-    ).toBe(true);
+      ]).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // true -> one course is taken concurrently
-    expect(
+    if (
       stringProcess.courseInListCheck(
         "!CS-144,CS-130",
         ["CS-130", "CS-180"],
         ["CS-144"]
-      )
-    ).toBe(true);
+      ).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // false -> one course is not taken currently nor concurrently
-    expect(
+    if (
       stringProcess.courseInListCheck(
         "!CS-144,CS-130",
         ["CS-130", "CS-180"],
         ["CS-145"]
-      )
-    ).toBe(false);
+      ).returnValue !== false
+    ) {
+      throw new Error("");
+    }
 
     // true -> checking for dash and underline difference in concurrent courses
-    expect(
+    if (
       stringProcess.courseInListCheck(
         "!CS-144,CS-130",
         ["CS-130", "CS-180"],
         ["CS_144"]
-      )
-    ).toBe(true);
+      ).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // true -> checking for OR course taken concurrently
-    expect(
+    if (
       stringProcess.courseInListCheck(
         "!CS-144|CS-130",
         ["CS-129", "CS-180"],
         ["CS-144"]
-      )
-    ).toBe(true);
+      ).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // true -> checking for SUBAND course taken concurrently
-    expect(
+    if (
       stringProcess.courseInListCheck(
         "!CS-144&CS-130",
         ["CS-130", "CS-180"],
         ["CS-144"]
-      )
-    ).toBe(true);
+      ).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // false -> SUBAND course is taken concurrently but not both
-    expect(
+    if (
       stringProcess.courseInListCheck(
         "!CS-144&CS-130",
         ["CS-129", "CS-180"],
         ["CS-144"]
-      )
-    ).toBe(false);
+      ).returnValue !== false
+    ) {
+      throw new Error("");
+    }
 
     // true -> both courses are taken concurrently
-    expect(
+    if (
       stringProcess.courseInListCheck(
         "!CS-144,!CS-130",
         ["CS-129", "CS-180"],
         ["CS-144", "CS_130"]
-      )
-    ).toBe(true);
+      ).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // true -> one of the two courses are taken concurrently
-    expect(
+    if (
       stringProcess.courseInListCheck(
         "!CS-144|!CS-130",
         ["CS-129", "CS-180"],
         ["CS-145", "CS_130"]
-      )
-    ).toBe(true);
+      ).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // true -> real example with concurrent taken course
-    expect(
+    if (
       stringProcess.courseInListCheck(
         "!BIO_332|CHEM_311|CS_244",
         ["CS-244", "CHEM-311"],
         ["BIO-332"]
-      )
-    ).toBe(true);
+      ).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // true -> check all courses in SUBANDs are satisfied
-    expect(
+    if (
       stringProcess.courseInListCheck("CS-100&CS_101&CS-102", [
         "CS-102",
         "CS-101",
         "CS-100",
-      ])
-    ).toBe(true);
+      ]).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // true -> course above minimum is taken
-    expect(stringProcess.courseInListCheck(">CS-101", ["CS-102"])).toBe(true);
+    if (
+      stringProcess.courseInListCheck(">CS-101", ["CS-102"]).returnValue !==
+      true
+    ) {
+      throw new Error("");
+    }
 
     // false -> course above minimum is not taken
-    expect(stringProcess.courseInListCheck(">CS-101", ["CS-100"])).toBe(false);
+    if (
+      stringProcess.courseInListCheck(">CS-101", ["CS-100"]).returnValue !==
+      false
+    ) {
+      throw new Error("");
+    }
 
     // true -> course above minimum is taken with an AND
-    expect(
+    if (
       stringProcess.courseInListCheck("CS-101,>CS-102", [
         "CS-100",
         "CS-101",
         "CS-103",
-      ])
-    ).toBe(true);
+      ]).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // true -> course above minimum is taken with an OR
-    expect(
+    if (
       stringProcess.courseInListCheck("CS-101|>MSCS-102", [
         "MSCS-100",
         "CS-101",
         "MSCS-103",
-      ])
-    ).toBe(true);
+      ]).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // false -> course above minimum is not taken with an OR
-    expect(
+    if (
       stringProcess.courseInListCheck("CS-103|>MSCS-102", [
         "MSCS-100",
         "CS-101",
         "MSCS-101",
-      ])
-    ).toBe(false);
+      ]).returnValue !== false
+    ) {
+      throw new Error("");
+    }
 
     // true -> concrete course above minimum is taken with an OR
-    expect(
+    if (
       stringProcess.courseInListCheck("CS-101|>MSCS-102", [
         "MSCS-100",
         "CS-101",
         "MSCS-102",
-      ])
-    ).toBe(true);
+      ]).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // false -> duplicate entry means course above minimum is false
-    expect(
+    if (
       stringProcess.courseInListCheck("CS-101,>CS100", [
         "CS-101",
         "CS-101",
         "CS-101",
-      ])
-    ).toBe(false);
+      ]).returnValue !== false
+    ) {
+      throw new Error("");
+    }
 
     // false -> duplicate entry means course above minimum is false (with an &)
-    expect(
+    if (
       stringProcess.courseInListCheck("CS-101&>CS100", [
         "CS-101",
         "CS-101",
         "CS-101",
-      ])
-    ).toBe(false);
+      ]).returnValue !== false
+    ) {
+      throw new Error("");
+    }
 
     //REAL EXAMPLES:
 
     /* GDD450 Prerequisites */
 
     // true (SUBAND is satisfied)
-    expect(
+    if (
       stringProcess.courseInListCheck("GDD_325,CS-326&CS_358|DES-350", [
         "GDD_101",
         "CS-358",
@@ -498,11 +685,13 @@ describe("Test for App", () => {
         "GDD_325",
         "DES-349",
         "CS-326",
-      ])
-    ).toBe(true);
+      ]).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // false (SUBAND not satisfied)
-    expect(
+    if (
       stringProcess.courseInListCheck("GDD_325,CS-326&CS_358|DES-350", [
         "GDD_101",
         "CS-134",
@@ -511,11 +700,13 @@ describe("Test for App", () => {
         "DES-349",
         "CS-326",
         "CS-369",
-      ])
-    ).toBe(false);
+      ]).returnValue !== false
+    ) {
+      throw new Error("");
+    }
 
     // true (SUBAND not satisfied; OR satisfied)
-    expect(
+    if (
       stringProcess.courseInListCheck("GDD_325,CS-326&CS_358|DES-350", [
         "GDD_101",
         "CS-134",
@@ -524,11 +715,13 @@ describe("Test for App", () => {
         "DES-350",
         "CS-326",
         "CS-369",
-      ])
-    ).toBe(true);
+      ]).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // false (SUBAND satisfied; AND not satisfied)
-    expect(
+    if (
       stringProcess.courseInListCheck("GDD_325,CS-326&CS_358|DES-350", [
         "CS-326",
         "GDD_101",
@@ -536,22 +729,26 @@ describe("Test for App", () => {
         "CS_123",
         "DES-349",
         "CS-358",
-      ])
-    ).toBe(false);
+      ]).returnValue !== false
+    ) {
+      throw new Error("");
+    }
 
     // false (OR satisfied; AND not satisfied)
-    expect(
+    if (
       stringProcess.courseInListCheck("GDD_325,CS-326&CS_358|DES-350", [
         "GDD_101",
         "CS-134",
         "CS_123",
         "DES-350",
         "CS-358",
-      ])
-    ).toBe(false);
+      ]).returnValue !== false
+    ) {
+      throw new Error("");
+    }
 
     // true (AND satisifed; OR satisfied; SUBAND satisfied)
-    expect(
+    if (
       stringProcess.courseInListCheck("GDD_325,CS-326&CS_358|DES-350", [
         "GDD_325",
         "GDD_101",
@@ -560,13 +757,15 @@ describe("Test for App", () => {
         "CS_123",
         "DES-350",
         "CS-358",
-      ])
-    ).toBe(true);
+      ]).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     /* Long psychology requirements */
 
     // true (all courses are taken)
-    expect(
+    if (
       stringProcess.courseInListCheck(
         "PSYC-100,PSYC-110,PSYC-190,PSYC-233,PSYC-242,PSYC-251,PSYC-270,PSYC-290,PSYC-300,PSYC-320,PSYC-350,PSYC-490",
         [
@@ -583,11 +782,13 @@ describe("Test for App", () => {
           "PSYC-350",
           "PSYC-490",
         ]
-      )
-    ).toBe(true);
+      ).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // true (all courses are taken, but in a different order as above test)
-    expect(
+    if (
       stringProcess.courseInListCheck(
         "PSYC-100,PSYC-110,PSYC-190,PSYC-233,PSYC-242,PSYC-251,PSYC-270,PSYC-290,PSYC-300,PSYC-320,PSYC-350,PSYC-490",
         [
@@ -604,11 +805,13 @@ describe("Test for App", () => {
           "PSYC-320",
           "PSYC-300",
         ]
-      )
-    ).toBe(true);
+      ).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // false (one course is missing)
-    expect(
+    if (
       stringProcess.courseInListCheck(
         "PSYC-100,PSYC-110,PSYC-190,PSYC-233,PSYC-242,PSYC-251,PSYC-270,PSYC-290,PSYC-300,PSYC-320,PSYC-350,PSYC-490",
         [
@@ -624,11 +827,13 @@ describe("Test for App", () => {
           "PSYC-320",
           "PSYC-300",
         ]
-      )
-    ).toBe(false);
+      ).returnValue !== false
+    ) {
+      throw new Error("");
+    }
 
     // false (many courses are missing)
-    expect(
+    if (
       stringProcess.courseInListCheck(
         "PSYC-100,PSYC-110,PSYC-190,PSYC-233,PSYC-242,PSYC-251,PSYC-270,PSYC-290,PSYC-300,PSYC-320,PSYC-350,PSYC-490",
         [
@@ -640,11 +845,13 @@ describe("Test for App", () => {
           "PSYC-320",
           "PSYC-300",
         ]
-      )
-    ).toBe(false);
+      ).returnValue !== false
+    ) {
+      throw new Error("");
+    }
 
     // true (all course are present in OR)
-    expect(
+    if (
       stringProcess.courseInListCheck(
         "PSYC-121|PSYC-225|PSYC-280|PSYC-333|PSYC-355|PSYC-370|PSYC-371|PSYC-377|PSYC-381|PSYC-382|PSYC-291",
         [
@@ -660,154 +867,190 @@ describe("Test for App", () => {
           "PSYC-382",
           "PSYC-291",
         ]
-      )
-    ).toBe(true);
+      ).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // true (one course is present in OR)
-    expect(
+    if (
       stringProcess.courseInListCheck(
         "PSYC-121|PSYC-225|PSYC-280|PSYC-333|PSYC-355|PSYC-370|PSYC-371|PSYC-377|PSYC-381|PSYC-382|PSYC-291",
         ["PSYC-371"]
-      )
-    ).toBe(true);
+      ).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // true (another one course is present in OR)
-    expect(
+    if (
       stringProcess.courseInListCheck(
         "PSYC-121|PSYC-225|PSYC-280|PSYC-333|PSYC-355|PSYC-370|PSYC-371|PSYC-377|PSYC-381|PSYC-382|PSYC-291",
         ["PSYC-382"]
-      )
-    ).toBe(true);
+      ).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // true (two long ORs joined by an AND)
-    expect(
+    if (
       stringProcess.courseInListCheck(
         "PSYC-121|PSYC-225|PSYC-280|PSYC-333|PSYC-355,PSYC-370|PSYC-371|PSYC-377|PSYC-381|PSYC-382|PSYC-291",
         ["PSYC-377", "PSYC_280"]
-      )
-    ).toBe(true);
+      ).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // false (two long ORs joined by an AND, but one of the ANDs is false)
-    expect(
+    if (
       stringProcess.courseInListCheck(
         "PSYC-121|PSYC-225|PSYC-280|PSYC-333|PSYC-355,PSYC-370|PSYC-371|PSYC-377|PSYC-381|PSYC-382|PSYC-291",
         ["PSYC-377", "PSYC_283"]
-      )
-    ).toBe(false);
+      ).returnValue !== false
+    ) {
+      throw new Error("");
+    }
 
     // true (another one course is present in OR; all are concurrent)
-    expect(
+    if (
       stringProcess.courseInListCheck(
         "!PSYC-121|!PSYC-225|!PSYC-280|!PSYC-333|!PSYC-355|!PSYC-370|!PSYC-371|!PSYC-377|!PSYC-381|!PSYC-382|!PSYC-291",
         ["PSYC-382"]
-      )
-    ).toBe(true);
+      ).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // true (two long ORs joined by an AND; all are concurrent)
-    expect(
+    if (
       stringProcess.courseInListCheck(
         "!PSYC-121|!PSYC-225|!PSYC-280|!PSYC-333|!PSYC-355,!PSYC-370|!PSYC-371|!PSYC-377|!PSYC-381|!PSYC-382|!PSYC-291",
         ["PSYC-377", "PSYC-333"]
-      )
-    ).toBe(true);
+      ).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     /* Strings with greater than specific courses */
 
     // true (all 'concrete' courses are taken)
-    expect(
+    if (
       stringProcess.courseInListCheck(
         "MATH-154|MATH-157,MATH-270,MATH-275,MATH-158|>MSCS-200|>STAT-300",
         ["MATH-270", "MATH-157", "MATH-275", "MATH-158"]
-      )
-    ).toBe(true);
+      ).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // true (a greater than course is taken)
-    expect(
+    if (
       stringProcess.courseInListCheck(
         "MATH-154|MATH-157,MATH-270,MATH-275,MATH-158|>MSCS-200|>STAT-300",
         ["MATH-270", "MATH-157", "MATH-275", "MSCS-209"]
-      )
-    ).toBe(true);
+      ).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // true (a greater than course is taken)
-    expect(
+    if (
       stringProcess.courseInListCheck(
         "MATH-154|MATH-157,MATH-270,MATH-275,MATH-158|>MSCS-200|>STAT-300",
         ["MATH-270", "MATH-157", "MATH-275", "STAT-300"]
-      )
-    ).toBe(true);
+      ).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // false (no greater than courses are taken)
-    expect(
+    if (
       stringProcess.courseInListCheck(
         "MATH-154|MATH-157,MATH-270,MATH-275,MATH-158|>MSCS-200|>STAT-300",
         ["MATH-270", "MATH-157", "MATH-275", "MSCS-170", "STAT-201"]
-      )
-    ).toBe(false);
+      ).returnValue !== false
+    ) {
+      throw new Error("");
+    }
 
     // true (no greater than courses are taken but concurrent course is taken)
-    expect(
+    if (
       stringProcess.courseInListCheck(
         "MATH-154|MATH-157,MATH-270,MATH-275,!MATH-158|>MSCS-200|>STAT-300",
         ["MATH-270", "MATH-157", "MATH-275", "MSCS-170", "STAT-201"],
         ["MATH-158"]
-      )
-    ).toBe(true);
+      ).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // true (concrete course is taken)
-    expect(
+    if (
       stringProcess.courseInListCheck("NANO_230|>CHEM_200|>PHYS_281", [
         "MATH-270",
         "NANO-230",
-      ])
-    ).toBe(true);
+      ]).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // true (greater than course is taken)
-    expect(
+    if (
       stringProcess.courseInListCheck("NANO_230|>CHEM_200|>PHYS_281", [
         "MATH-270",
         "PHYS-290",
         "NANO-229",
-      ])
-    ).toBe(true);
+      ]).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // true (another greater than course is taken)
-    expect(
+    if (
       stringProcess.courseInListCheck("NANO_230|>CHEM_200|>PHYS_281", [
         "MATH-270",
         "CHEM-200",
         "NANO-229",
-      ])
-    ).toBe(true);
+      ]).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // false (no greater than course or concrete course is taken)
-    expect(
+    if (
       stringProcess.courseInListCheck("NANO_230|>CHEM_200|>PHYS_281", [
         "MATH-270",
         "PHYS-280",
         "NANO-229",
-      ])
-    ).toBe(false);
+      ]).returnValue !== false
+    ) {
+      throw new Error("");
+    }
 
     // true (all greater than courses are taken)
-    expect(
+    if (
       stringProcess.courseInListCheck("NANO_230,>CHEM_200,>PHYS_281", [
         "PHYS-290",
         "NANO-230",
         "CHEM-199",
         "CHEM-201",
-      ])
-    ).toBe(true);
+      ]).returnValue !== true
+    ) {
+      throw new Error("");
+    }
 
     // false (not all greater than courses are taken)
-    expect(
+    if (
       stringProcess.courseInListCheck("NANO_230,>CHEM_200,>PHYS_281", [
         "PHYS-290",
         "NANO-230",
         "CHEM-199",
         "CHEM-198",
-      ])
-    ).toBe(false);
+      ]).returnValue !== false
+    ) {
+      throw new Error("");
+    }
   });
 
   /* COMMENTED OUT FOR NOW UNTIL backendFactory problem is resolved
