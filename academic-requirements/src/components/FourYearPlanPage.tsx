@@ -74,25 +74,6 @@ const FourYearPlanPage = (props: {
     setError(error);
   }
 
-  // JSON Data for the Courses
-  let info = {
-    Major: props.selectedMajor,
-    Concentration: props.selectedConcentration,
-    "Completed Courses": props.completedCourses,
-  };
-
-  // Creates the File and downloads it to user PC
-  function exportSchedule() {
-    console.log("export");
-    const fileData = JSON.stringify(info);
-    const blob = new Blob([fileData], { type: "json" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.download = "schedule.json";
-    link.href = url;
-    link.click();
-  }
-
   return (
     <div>
       {props.showing && (
@@ -112,13 +93,12 @@ const FourYearPlanPage = (props: {
                 .concat(props.concentrationCourseList)
                 .concat(props.genEdCourseList)}
               CompletedCourses={props.completedCourses}
+              selectedMajor={props.selectedMajor}
+              selectedConcentration={props.selectedConcentration}
               requirements={props.requirements}
               requirementsGen={props.requirementsGen}
               fourYearPlan={props.fourYearPlan}
             />
-            <button data-testid="ExportButton" onClick={exportSchedule}>
-              Export Schedule
-            </button>
           </div>
         </div>
       )}
