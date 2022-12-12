@@ -393,7 +393,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
         let itemArr = semesters[movedFromIndex].courses.filter(
           (course) => course !== found
         );
-        removeFromRequirements(found);
         setSemesters(
           update(semesters, {
             [movedFromIndex]: {
@@ -403,6 +402,26 @@ export const Container: FC<ContainerProps> = memo(function Container({
             },
           })
         );
+        let noRemove = false;
+        let count = 0;
+        semesters.forEach(x =>
+          x.courses.forEach(y=>{
+            if(y.name == found.name){
+              count++;
+            }}))
+        if(count > 1){
+          noRemove = true;
+        }
+        CompletedCourses.forEach(x => {
+          let subject = x.split("-")[0];
+          let number = x.split("-")[1];
+          if(subject == found.subject && number == found.number){
+            noRemove = true;
+          }
+        })
+        if(!noRemove){
+          removeFromRequirements(found);
+        }
         setUpdateWarning({
           course: found,
           oldSemester: movedFromIndex,
