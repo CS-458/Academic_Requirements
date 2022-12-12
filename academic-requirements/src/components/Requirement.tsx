@@ -34,7 +34,7 @@ export const Requirement: FC<RequirementProps> = memo(function Requirement({
     <div data-testid="requirement" className="RequirementText">
       <div className="requirementName">{name}</div>
       <div className="percentage">
-        {percentage ? percentage + "%" : 0 + "%"}
+        {percentage ? Math.round(percentage * 100) / 100 + "%" : 0 + "%"}
       </div>
     </div>
   );
