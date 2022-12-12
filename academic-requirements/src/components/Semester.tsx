@@ -27,6 +27,8 @@ export interface SemesterProps {
   onDrop: (item: any) => void;
   semesterNumber: number;
   courses: Course[];
+  SemesterCredits: number;
+  Warning: string;
 }
 
 export const Semester: FC<SemesterProps> = memo(function Semester({
@@ -35,6 +37,8 @@ export const Semester: FC<SemesterProps> = memo(function Semester({
   onDrop,
   semesterNumber,
   courses,
+  SemesterCredits,
+  Warning,
 }) {
   //defines the drop action
   const [{ isOver }, drop] = useDrop({
@@ -47,47 +51,10 @@ export const Semester: FC<SemesterProps> = memo(function Semester({
 
   //Changes the background color when you're hovering over the semester
   const isActive = isOver;
-  var LowWarning = false;
-  var HighWarning = false;
-  var isWarning = false;
   let backgroundColor = "#222";
   if (isActive) {
     backgroundColor = "darkgreen";
   }
-
-  // Gets the total number of credits per semester and throws
-  // proper warning dependant on the number of credits
-  // <12 = Low 12 - 18 No Warning 18< High
-  const getTotalCredits = () => {
-    var SemesterCredits = 0;
-    courses.forEach((x) => {
-      SemesterCredits += Number(x.credits);
-    });
-
-    if (SemesterCredits <= 11 && SemesterCredits > 0) {
-      LowWarning = true;
-      isWarning = true;
-    }
-    if (SemesterCredits >= 19) {
-      HighWarning = true;
-      isWarning = true;
-    }
-
-    return SemesterCredits;
-  };
-
-  // Checks if there is a warning, if warning exists select and return proper warning
-  const GetWarning = () => {
-    let warnState: string = "";
-    if (!isWarning) {
-      warnState = "";
-    } else if (isWarning && LowWarning) {
-      warnState = "LOW";
-    } else if (isWarning && HighWarning) {
-      warnState = "HIGH";
-    }
-    return warnState;
-  };
 
   return (
     <div
@@ -97,8 +64,8 @@ export const Semester: FC<SemesterProps> = memo(function Semester({
     >
       {isActive ? "Release to drop" : `Semester ${semesterNumber}`}
       <br />
-      {`Credits ${getTotalCredits()}`}
-      {isWarning ? ` (${GetWarning()})` : `${GetWarning()}`}
+      {`Credits ${SemesterCredits}`}
+      {`${Warning}`}
 
       {courses &&
         courses.map(
