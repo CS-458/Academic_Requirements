@@ -1528,8 +1528,12 @@ export const Container: FC<ContainerProps> = memo(function Container({
         }
         //Check if this is the category of the course
         if (courseCategory == x.idCategory) {
+          console.log(courseCategory);
           //Check if a course has already been used for this requirement
           if (x.coursesTaken.indexOf(courseString) == -1) {
+            console.log("Adding reqs");
+            console.log(x);
+            console.log(course);
             let courseReqArr: String[] = [];
             if (x.courseReqs) {
               courseReqArr = x.courseReqs.split(",");
@@ -1540,7 +1544,9 @@ export const Container: FC<ContainerProps> = memo(function Container({
               x.percentage = (x.courseCountTaken / x.courseCount) * 100;
             }
             //The only requirement is a courses required list
+            console.log(x.courseReqs);
             if (!x.courseCount && x.courseReqs && !x.creditCount) {
+              console.log("This thing started")
               let validCourse = false;
               courseReqArr.forEach((item) => {
                 let found = reqCheck.courseInListCheck(item, [courseString]);
@@ -1645,6 +1651,9 @@ export const Container: FC<ContainerProps> = memo(function Container({
               } else {
                 x.percentage = temp3;
               }
+            }
+            if (!x.courseCount && !x.courseReqs && !x.creditCount){
+              x.percentage = 100;
             }
             x.coursesTaken.push(courseString);
             if (x.percentage > 100) {
