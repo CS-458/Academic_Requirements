@@ -675,8 +675,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
       // Check all semesters past the new moved semester
       preReqCheckAllCoursesPastSemester(
         updateWarning.course,
-        updateWarning.oldSemester,
-        updateWarning.draggedOut,
+        updateWarning.newSemester,
+        true,
         false,
         updateWarning.draggedOut
       );
