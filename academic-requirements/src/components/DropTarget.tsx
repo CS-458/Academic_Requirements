@@ -255,7 +255,55 @@ export const Container: FC<ContainerProps> = memo(function Container({
         }
         return [...prevInformationTypes];
       });
+
+      //fill in the schedule
+      semesters.forEach((semester) => {
+        let tempArr: Course[] = [];
+        //Get the semester data from the json
+        let courseStringArr =
+          fourYearPlan["ClassPlan"]["Semester" + semester.semesterNumber][
+            "Courses"
+          ];
+        let credits = 0;
+        //loop through each course in the list
+        courseStringArr.forEach((courseString) => {
+          let subject = courseString.split("-")[0];
+          let number = courseString.split("-")[1];
+          var course;
+          //This variable prevents the course being added twice if it is in
+          //more than one category
+          let foundOnce = false;
+          //Find the course in the master list of courses
+          PassedCourseList.forEach((x) => {
+            if (
+              x.subject === subject &&
+              x.number === number &&
+              !CompletedCourses.find((y) => y === x.subject + "-" + x.number)
+            ) {
+              if (!foundOnce) {
+                //define the course and update it as needed
+                course = x;
+                course.dragSource = "Semester" + semester.semesterNumber;
+                checkRequirements(course, coursesInMultipleCategories);
+                foundOnce = true;
+              }
+            }
+          });
+          //If there is a course add it to the temporary array for the semester
+          if (course) {
+            tempArr.push(course);
+            credits += course.credits;
+          }
+        });
+        //update the necessary semester values
+        semester.courses = tempArr;
+        semester.SemesterCredits = credits;
+        var newWarningState = getWarning(credits);
+        semester.Warning = newWarningState;
+      });
     }
+    console.log(reqList);
+    console.log(reqGenList);
   }, [fourYearPlan]);
 
   //SelectedCategory function. Hovland7Nov7
@@ -358,8 +406,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
           let pushCourse = semesters[index].courses;
           pushCourse.push(course);
           let newSemesterCount2 = getSemesterTotalCredits(index);
-          console.log(newSemesterCount2);
-          console.log(course);
           let newWarningState2 = getWarning(newSemesterCount2);
           setSemesters(
             update(semesters, {
@@ -424,7 +470,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
     },
     [semesters]
   );
-  console.log(semesters);
+
   //handle a drop into the course list from a semester
   const handleReturnDrop = useCallback(
     (item: { name: string; dragSource: string }) => {
@@ -462,7 +508,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
             },
           })
         );
-
         let noRemove = false;
         let count = 0;
         semesters.forEach((x) =>
@@ -1070,6 +1115,54 @@ export const Container: FC<ContainerProps> = memo(function Container({
         checkRequirements(found, coursesInMultipleCategories);
       });
       setReqList([...reqList]);
+      setReqGenList([...reqGenList]);
+      if (fourYearPlan) {
+        //fill in the schedule
+        semesters.forEach((semester) => {
+          let tempArr: Course[] = [];
+          //Get the semester data from the json
+          let courseStringArr =
+            fourYearPlan["ClassPlan"]["Semester" + semester.semesterNumber][
+              "Courses"
+            ];
+          let credits = 0;
+          //loop through each course in the list
+          courseStringArr.forEach((courseString) => {
+            let subject = courseString.split("-")[0];
+            let number = courseString.split("-")[1];
+            var course;
+            //This variable prevents the course being added twice if it is in
+            //more than one category
+            let foundOnce = false;
+            //Find the course in the master list of courses
+            PassedCourseList.forEach((x) => {
+              if (
+                x.subject === subject &&
+                x.number === number &&
+                !CompletedCourses.find((y) => y === x.subject + "-" + x.number)
+              ) {
+                if (!foundOnce) {
+                  //define the course and update it as needed
+                  course = x;
+                  course.dragSource = "Semester" + semester.semesterNumber;
+                  checkRequirements(course, coursesInMultipleCategories);
+                  foundOnce = true;
+                }
+              }
+            });
+            //If there is a course add it to the temporary array for the semester
+            if (course) {
+              tempArr.push(course);
+              credits += course.credits;
+            }
+          });
+          //update the necessary semester values
+          semester.courses = tempArr;
+          semester.SemesterCredits = credits;
+          var newWarningState = getWarning(credits);
+          semester.Warning = newWarningState;
+        });
+      }
     }
   }, [coursesInMultipleCategories]);
 
@@ -1105,6 +1198,9 @@ export const Container: FC<ContainerProps> = memo(function Container({
           } else {
             reqList[i].percentage = temp3 * 100;
           }
+          if (reqGenList[i].percentage > 100) {
+            reqGenList[i].percentage = 100;
+          }
         }
       }
       //check if the course is filling any gen-eds
@@ -1113,8 +1209,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
         temp2 = 1000;
         temp3 = 1000;
         let courseString = course.subject + "-" + course.number;
-        let index = reqGenList[i].coursesTaken.indexOf(courseString);
-        if (index > -1) {
+        let index = reqGenList[i].coursesTaken?.indexOf(courseString);
+        if (index > -1 && index != undefined) {
           //remove the course from the requirment
           reqGenList[i].coursesTaken.splice(index, 1);
           if (reqGenList[i].creditCount != null) {
@@ -1246,6 +1342,12 @@ export const Container: FC<ContainerProps> = memo(function Container({
                 }
               }
             }
+            if (reqGenList[parentIndex].percentage > 100) {
+              reqGenList[parentIndex].percentage = 100;
+            }
+          }
+          if (reqGenList[i].percentage > 100) {
+            reqGenList[i].percentage = 100;
           }
         }
       }
@@ -1364,7 +1466,11 @@ export const Container: FC<ContainerProps> = memo(function Container({
           }
           //The requirement is a credit count, a course count, and a course list
           if (x.courseCount && x.courseReqs && x.creditCount) {
+            //update taken credits and course count
+            x.creditCountTaken = x.creditCountTaken + course.credits;
+            x.courseCountTaken = x.courseCountTaken + 1;
             let validCourse = false;
+            let temp1 = x.percentage;
             courseReqArr.forEach((item) => {
               let found = reqCheck.courseInListCheck(item, [courseString]);
               if (found.returnValue) {
@@ -1372,7 +1478,16 @@ export const Container: FC<ContainerProps> = memo(function Container({
               }
             });
             if (validCourse) {
-              x.percentage = x.percentage + (1 / courseReqArr.length) * 100;
+              temp1 = x.percentage + (1 / courseReqArr.length) * 100;
+            }
+            let temp2 = (x.creditCountTaken / x.creditCount) * 100;
+            let temp3 = (x.courseCountTaken / x.courseCount) * 100;
+            if (temp1 <= temp2 && temp1 <= temp3) {
+              x.percentage = temp1;
+            } else if (temp2 <= temp1 && temp2 <= temp3) {
+              x.percentage = temp2;
+            } else {
+              x.percentage = temp3;
             }
           }
           x.coursesTaken.push(courseString);
@@ -1483,8 +1598,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
               x.percentage = (x.courseCountTaken / x.courseCount) * 100;
             }
             //The only requirement is a courses required list
+
             if (!x.courseCount && x.courseReqs && !x.creditCount) {
-              //TODO run some string processing
               let validCourse = false;
               courseReqArr.forEach((item) => {
                 let found = reqCheck.courseInListCheck(item, [courseString]);
@@ -1504,7 +1619,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
             //The requirement is a course count and a list of required courses
             if (x.courseCount && x.courseReqs && !x.creditCount) {
               let validCourse = false;
-              let temp1 = 0;
+              let temp1 = x.percentage;
               let temp2 = 0;
               courseReqArr.forEach((item) => {
                 let found = reqCheck.courseInListCheck(item, [courseString]);
@@ -1587,6 +1702,9 @@ export const Container: FC<ContainerProps> = memo(function Container({
               } else {
                 x.percentage = temp3;
               }
+            }
+            if (!x.courseCount && !x.courseReqs && !x.creditCount) {
+              x.percentage = 100;
             }
             x.coursesTaken.push(courseString);
             if (x.percentage > 100) {
@@ -1809,7 +1927,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
             <div onClick={() => extractCategories()}>
               <SearchableDropdown
                 options={categories}
-                label="Category"
+                label={null}
                 onSelectOption={selectedCategory} //If option chosen, selected Category activated.
                 showDropdown={true}
                 thin={true}
