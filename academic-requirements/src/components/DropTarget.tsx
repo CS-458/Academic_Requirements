@@ -275,7 +275,11 @@ export const Container: FC<ContainerProps> = memo(function Container({
           let foundOnce = false;
           //Find the course in the master list of courses
           PassedCourseList.forEach((x) => {
-            if (x.subject === subject && x.number === number) {
+            if (
+              x.subject === subject &&
+              x.number === number &&
+              !CompletedCourses.find((y) => y === x.subject + "-" + x.number)
+            ) {
               if (!foundOnce) {
                 //define the course and update it as needed
                 course = x;
@@ -286,14 +290,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
             }
           });
           //If there is a course add it to the temporary array for the semester
-          if (
-            course &&
-            !CompletedCourses.find(
-              (x) =>
-                x === course.subject + "-" + course.number ||
-                x === course.subject + "_" + course.number
-            )
-          ) {
+          if (course) {
             tempArr.push(course);
             credits += course.credits;
           }
@@ -305,6 +302,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
         semester.Warning = newWarningState;
       });
     }
+    console.log(reqList);
+    console.log(reqGenList);
   }, [fourYearPlan]);
 
   //SelectedCategory function. Hovland7Nov7
@@ -473,7 +472,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
     },
     [semesters]
   );
-  console.log(semesters);
+
   //handle a drop into the course list from a semester
   const handleReturnDrop = useCallback(
     (item: { name: string; dragSource: string }) => {
@@ -1118,6 +1117,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
         checkRequirements(found, coursesInMultipleCategories);
       });
       setReqList([...reqList]);
+      setReqGenList([...reqGenList]);
     }
   }, [coursesInMultipleCategories]);
 
@@ -1532,10 +1532,11 @@ export const Container: FC<ContainerProps> = memo(function Container({
             }
             //The only requirement is a courses required list
             if (!x.courseCount && x.courseReqs && !x.creditCount) {
-              //TODO run some string processing
               let validCourse = false;
               courseReqArr.forEach((item) => {
                 let found = reqCheck.courseInListCheck(item, [courseString]);
+                console.log(x);
+                console.log(found);
                 if (found.returnValue) {
                   validCourse = true;
                 }
