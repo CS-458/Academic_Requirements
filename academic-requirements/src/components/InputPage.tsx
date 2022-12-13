@@ -9,12 +9,6 @@ import ErrorPopup from "./ErrorPopup";
 
 import ImportPopup from "./ImportPopup";
 
-// Temporary imports until we get the real data (can be deleted later)
-// @ts-ignore
-import majors from "../mockDataLists/majors.tsx";
-// @ts-ignore
-import concentrations from "../mockDataLists/concentrations.tsx";
-
 // Input page is the page where the user inputs all of their information
 const InputPage = (props: {
   showing: boolean;
@@ -89,7 +83,6 @@ const InputPage = (props: {
   const [coursesTaken, setCoursesTaken] = useState<Array<string>>(
     props.takenCourses
   ); // courses taken list of strings
-  const tableRef = useRef<HTMLTableElement>(null);
 
   function handleUseFourYearPlan(e) {
     props.setUseFourYearPlan(e.target.checked);
@@ -103,7 +96,7 @@ const InputPage = (props: {
     setConcentration(""); // reset the concetration when major is updated
     setShowConcentration(true);
     props.onClickMajor(_major);
-    setConcentrationOptions(concentrations);
+    setConcentrationOptions(concentrationOptions);
   }
 
   //function selectedMinor(_minor) { setMinor(_minor); }

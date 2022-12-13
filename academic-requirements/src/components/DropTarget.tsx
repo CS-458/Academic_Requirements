@@ -289,6 +289,29 @@ export const Container: FC<ContainerProps> = memo(function Container({
         }
         return [...prevInformationTypes];
       });
+
+      //fill in the schedule
+      semesters.forEach((semester)=>{
+        let tempArr : Course[] =[];
+        let courseStringArr = fourYearPlan["ClassPlan"]["Semester"+semester.semesterNumber]["Courses"];
+        console.log(courseStringArr);
+        courseStringArr.forEach((courseString)=>{
+          let subject = courseString.split("-")[0];
+          let number = courseString.split("-")[1];
+          var course;
+          PassedCourseList.forEach((x)=>{
+            if(x.subject === subject && x.number === number){
+              course = x;
+              checkRequirements(course, coursesInMultipleCategories);
+            }
+          })
+          if(course){
+            tempArr.push(course);
+          }
+        })
+        semester.courses = tempArr
+      })
+      
     }
   }, [fourYearPlan]);
 

@@ -66,9 +66,10 @@ function App() {
 
   // Processes when the user clicks to generate the schedule
   function generateSchedule(major, concentration, previousCourses) {
+    console.log("generate schedule")
     if (major != "" && concentration != "") {
       setClickedGenerate(true);
-      setPreviouslyTakenCourses(previousCourses);
+      setCoursesTaken(previousCourses);
       setMajor(major);
       setConcentration(concentration);
     } else {
