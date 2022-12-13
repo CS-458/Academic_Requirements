@@ -27,7 +27,10 @@ class StringProcessing {
     ) {
       // Since there exists at least one course to compare, if coursesList is empty,
       // then the course is not in the list
-      return { returnValue: false, failedString: compareString };
+      return {
+        returnValue: false,
+        failedString: this.prettyFailedString(compareString),
+      };
     }
 
     // Force each string to have underscores instead of dashes and remove any duplicates
@@ -111,7 +114,7 @@ class StringProcessing {
 
   // Formats the failed string to be more readable
   prettyFailedString(failedString: string) {
-    let updateString = failedString;
+    let updateString = failedString.replace(/-/g, "_");
     updateString = updateString.replace(/\,/g, " and ");
     updateString = updateString.replace(/\|/g, " or ");
     updateString = updateString.replace(/\&/g, " & ");
