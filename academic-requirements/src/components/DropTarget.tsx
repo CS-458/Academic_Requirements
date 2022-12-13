@@ -290,7 +290,9 @@ export const Container: FC<ContainerProps> = memo(function Container({
           if (
             course &&
             !CompletedCourses.find(
-              (x) => x === course.subject + "-" + course.number
+              (x) =>
+                x === course.subject + "-" + course.number ||
+                x === course.subject + "_" + course.number
             )
           ) {
             tempArr.push(course);
