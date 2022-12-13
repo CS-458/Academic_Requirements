@@ -1153,6 +1153,9 @@ export const Container: FC<ContainerProps> = memo(function Container({
           } else {
             reqList[i].percentage = temp3 * 100;
           }
+          if(reqGenList[i].percentage > 100){
+            reqGenList[i].percentage =100;
+          }
         }
       }
       //check if the course is filling any gen-eds
@@ -1294,6 +1297,12 @@ export const Container: FC<ContainerProps> = memo(function Container({
                 }
               }
             }
+            if(reqGenList[parentIndex].percentage >100){
+              reqGenList[parentIndex].percentage  = 100;
+            }
+          }
+          if(reqGenList[i].percentage >100){
+            reqGenList[i].percentage =100;
           }
         }
       }
@@ -1553,7 +1562,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
             //The requirement is a course count and a list of required courses
             if (x.courseCount && x.courseReqs && !x.creditCount) {
               let validCourse = false;
-              let temp1 = 0;
+              let temp1 = x.percentage;
               let temp2 = 0;
               courseReqArr.forEach((item) => {
                 let found = reqCheck.courseInListCheck(item, [courseString]);
