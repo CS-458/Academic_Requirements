@@ -744,7 +744,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
               )
               .failedString.includes(
                 courseToRemove.subject + "_" + courseToRemove.number
-              ) 
+              )
           ) {
             failedCoursesNoWarning.push(x);
           }
