@@ -668,15 +668,17 @@ export const Container: FC<ContainerProps> = memo(function Container({
           updateWarning.course,
           updateWarning.oldSemester,
           updateWarning.oldSemester === -1 ? false : satisfied.returnValue,
-          true
+          true,
+          false
         );
       }
       // Check all semesters past the new moved semester
       preReqCheckAllCoursesPastSemester(
         updateWarning.course,
-        updateWarning.newSemester,
+        updateWarning.oldSemester,
         updateWarning.draggedOut,
-        false
+        false,
+        updateWarning.draggedOut,
       );
     }
     //Reset the warning
@@ -695,7 +697,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
     courseToRemove: Course,
     courseSemesterIndex: number,
     showMessage: boolean,
-    movedRight: boolean
+    movedRight: boolean,
+    draggedOut: boolean,
   ): boolean {
     // prereqCheck will be used to check prerequisites
     const preReqCheck = new StringProcessing();
@@ -713,7 +716,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
       courseSemesterIndex === -1 ? 0 : courseSemesterIndex
     );
 
-    let failedCoursesList = new Array();
+    let failedCoursesList = new Array<Course>();
+    let failedCoursesNoWarning = new Array<Course>();
 
     semesters.forEach((currSemester, index) => {
       if (currSemester.semesterNumber - 1 >= courseSemesterIndex) {
@@ -728,6 +732,17 @@ export const Container: FC<ContainerProps> = memo(function Container({
             ).returnValue
           ) {
             failedCoursesList.push(x);
+          }
+          // If the course prereq fails, but not due to moving the course, 
+          // add it to the failedCoursesNoWarning list
+          if (
+            !preReqCheck.courseInListCheck(
+              x !== undefined ? x.preReq : "",
+              previousCourses,
+              currentCoursesNames
+            ).failedString.includes(courseToRemove.subject + "_" + courseToRemove.number) && (draggedOut || movedRight)
+          ) {
+            failedCoursesNoWarning.push(x);
           }
         });
 
@@ -798,21 +813,24 @@ export const Container: FC<ContainerProps> = memo(function Container({
     // If any courses have failed, notify the user of each course that failed
     if (showMessage && failedCoursesList.length > 0) {
       let message = "";
-      // Push each failed course to the warningCourses and modify the warning message
+      // Push each failed course to the warningCourses
       failedCoursesList.forEach((x) => {
         if (!warningPrerequisiteCourses.find((z) => z === x)) {
           let temp = warningPrerequisiteCourses;
           temp.push(x);
           setWarningPrerequisiteCourses(temp);
         }
+        // If the course is failing, but not due to the latest course move, modify the warning message
+        if (!failedCoursesNoWarning.find((z) => z === x)) {
         message.length > 0
           ? (message = message + "," + x.subject + "-" + x.number)
           : (message = message + x.subject + "-" + x.number);
+        }
       });
 
       // Show a warning stating that the classes failed the prereqs
       if (
-        !message.includes(courseToRemove.subject + "" + courseToRemove.number)
+        !message.includes(courseToRemove.subject + "" + courseToRemove.number) && message.length > 0
       ) {
         setVisibility(true);
         setErrorMessage(

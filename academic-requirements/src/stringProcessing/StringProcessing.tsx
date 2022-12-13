@@ -27,7 +27,7 @@ class StringProcessing {
     ) {
       // Since there exists at least one course to compare, if coursesList is empty,
       // then the course is not in the list
-      return { returnValue: false, failedString: compareString };
+      return { returnValue: false, failedString: this.prettyFailedString(compareString) };
     }
 
     // Force each string to have underscores instead of dashes and remove any duplicates
