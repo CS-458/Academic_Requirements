@@ -194,10 +194,10 @@ It makes only the information box on the second screen look good.
   float: left;
   border-radius: 0.5rem;
 }
-.CourseList{
+.CourseList {
   height: 400px;
   overflow-y: auto;
-  background-color:#004990;
+  background-color: #004990;
 }
 .RequirementText {
   width: 100%;
