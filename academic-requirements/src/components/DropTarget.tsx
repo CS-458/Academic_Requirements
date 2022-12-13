@@ -736,7 +736,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
           // If the course prereq fails, but not due to moving the course,
           // add it to the failedCoursesNoWarning list
           if (
-            !(preReqCheck
+            !preReqCheck
               .courseInListCheck(
                 x !== undefined ? x.preReq : "",
                 previousCourses,
@@ -744,7 +744,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
               )
               .failedString.includes(
                 courseToRemove.subject + "_" + courseToRemove.number
-              ))
+              )
           ) {
             failedCoursesNoWarning.push(x);
           }
