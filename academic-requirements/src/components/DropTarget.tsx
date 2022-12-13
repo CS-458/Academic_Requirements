@@ -255,6 +255,46 @@ export const Container: FC<ContainerProps> = memo(function Container({
         }
         return [...prevInformationTypes];
       });
+
+       //fill in the schedule
+       semesters.forEach((semester)=>{
+        let tempArr : Course[] =[];
+        //Get the semester data from the json
+        let courseStringArr = fourYearPlan["ClassPlan"]["Semester"+semester.semesterNumber]["Courses"];
+        let credits = 0;
+        //loop through each course in the list
+        courseStringArr.forEach((courseString)=>{
+          let subject = courseString.split("-")[0];
+          let number = courseString.split("-")[1];
+          var course;
+          //This variable prevents the course being added twice if it is in 
+          //more than one category
+          let foundOnce = false;
+          //Find the course in the master list of courses
+          PassedCourseList.forEach((x)=>{
+            if(x.subject === subject && x.number === number){
+              if(!foundOnce){
+                //define the course and update it as needed
+                course = x;
+                course.dragSource = "Semester"+semester.semesterNumber;
+                credits += course.credits;
+                checkRequirements(course, coursesInMultipleCategories);
+                foundOnce = true;
+              }
+            }
+          })
+          //If there is a course add it to the temporary array for the semester
+          if(course){
+            tempArr.push(course);
+          }
+        })
+        //update the necessary semester values
+        semester.courses = tempArr
+        semester.SemesterCredits=credits;
+        var newWarningState = getWarning(credits);
+        semester.Warning = newWarningState;
+
+      })
     }
   }, [fourYearPlan]);
 
