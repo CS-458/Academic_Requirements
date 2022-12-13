@@ -280,7 +280,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
                 //define the course and update it as needed
                 course = x;
                 course.dragSource = "Semester" + semester.semesterNumber;
-                credits += course.credits;
                 checkRequirements(course, coursesInMultipleCategories);
                 foundOnce = true;
               }
@@ -296,6 +295,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
             )
           ) {
             tempArr.push(course);
+            credits += course.credits;
           }
         });
         //update the necessary semester values
