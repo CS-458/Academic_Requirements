@@ -1209,8 +1209,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
         temp2 = 1000;
         temp3 = 1000;
         let courseString = course.subject + "-" + course.number;
-        let index = reqGenList[i].coursesTaken.indexOf(courseString);
-        if (index > -1) {
+        let index = reqGenList[i].coursesTaken?.indexOf(courseString);
+        if (index > -1 && index != undefined) {
           //remove the course from the requirment
           reqGenList[i].coursesTaken.splice(index, 1);
           if (reqGenList[i].creditCount != null) {
@@ -1466,16 +1466,29 @@ export const Container: FC<ContainerProps> = memo(function Container({
           }
           //The requirement is a credit count, a course count, and a course list
           if (x.courseCount && x.courseReqs && x.creditCount) {
-            let validCourse = false;
-            courseReqArr.forEach((item) => {
-              let found = reqCheck.courseInListCheck(item, [courseString]);
-              if (found.returnValue) {
-                validCourse = true;
-              }
-            });
-            if (validCourse) {
-              x.percentage = x.percentage + (1 / courseReqArr.length) * 100;
-            }
+             //update taken credits and course count
+             x.creditCountTaken = x.creditCountTaken + course.credits;
+             x.courseCountTaken = x.courseCountTaken + 1;
+             let validCourse = false;
+             let temp1 = x.percentage;
+             courseReqArr.forEach((item) => {
+               let found = reqCheck.courseInListCheck(item, [courseString]);
+               if (found.returnValue) {
+                 validCourse = true;
+               }
+             });
+             if (validCourse) {
+               temp1 = x.percentage + (1 / courseReqArr.length) * 100;
+             }
+             let temp2 = (x.creditCountTaken / x.creditCount) * 100;
+             let temp3 = (x.courseCountTaken / x.courseCount) * 100;
+             if (temp1 <= temp2 && temp1 <= temp3) {
+               x.percentage = temp1;
+             } else if (temp2 <= temp1 && temp2 <= temp3) {
+               x.percentage = temp2;
+             } else {
+               x.percentage = temp3;
+             }
           }
           x.coursesTaken.push(courseString);
           addedCourse = true;
