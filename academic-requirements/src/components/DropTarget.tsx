@@ -1166,8 +1166,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
     }
   }, [coursesInMultipleCategories]);
 
-  
-
   const removeFromRequirements = useCallback(
     (course: Course) => {
       let temp1 = 1000;
@@ -1200,8 +1198,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
           } else {
             reqList[i].percentage = temp3 * 100;
           }
-          if(reqGenList[i].percentage > 100){
-            reqGenList[i].percentage =100;
+          if (reqGenList[i].percentage > 100) {
+            reqGenList[i].percentage = 100;
           }
         }
       }
@@ -1344,12 +1342,12 @@ export const Container: FC<ContainerProps> = memo(function Container({
                 }
               }
             }
-            if(reqGenList[parentIndex].percentage >100){
-              reqGenList[parentIndex].percentage  = 100;
+            if (reqGenList[parentIndex].percentage > 100) {
+              reqGenList[parentIndex].percentage = 100;
             }
           }
-          if(reqGenList[i].percentage >100){
-            reqGenList[i].percentage =100;
+          if (reqGenList[i].percentage > 100) {
+            reqGenList[i].percentage = 100;
           }
         }
       }
@@ -1587,7 +1585,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
               x.percentage = (x.courseCountTaken / x.courseCount) * 100;
             }
             //The only requirement is a courses required list
-            
+
             if (!x.courseCount && x.courseReqs && !x.creditCount) {
               let validCourse = false;
               courseReqArr.forEach((item) => {
@@ -1692,7 +1690,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
                 x.percentage = temp3;
               }
             }
-            if (!x.courseCount && !x.courseReqs && !x.creditCount){
+            if (!x.courseCount && !x.courseReqs && !x.creditCount) {
               x.percentage = 100;
             }
             x.coursesTaken.push(courseString);
