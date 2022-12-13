@@ -678,7 +678,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
         updateWarning.oldSemester,
         updateWarning.draggedOut,
         false,
-        updateWarning.draggedOut,
+        updateWarning.draggedOut
       );
     }
     //Reset the warning
@@ -698,7 +698,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
     courseSemesterIndex: number,
     showMessage: boolean,
     movedRight: boolean,
-    draggedOut: boolean,
+    draggedOut: boolean
   ): boolean {
     // prereqCheck will be used to check prerequisites
     const preReqCheck = new StringProcessing();
@@ -733,14 +733,19 @@ export const Container: FC<ContainerProps> = memo(function Container({
           ) {
             failedCoursesList.push(x);
           }
-          // If the course prereq fails, but not due to moving the course, 
+          // If the course prereq fails, but not due to moving the course,
           // add it to the failedCoursesNoWarning list
           if (
-            !preReqCheck.courseInListCheck(
-              x !== undefined ? x.preReq : "",
-              previousCourses,
-              currentCoursesNames
-            ).failedString.includes(courseToRemove.subject + "_" + courseToRemove.number) && (draggedOut || movedRight)
+            !preReqCheck
+              .courseInListCheck(
+                x !== undefined ? x.preReq : "",
+                previousCourses,
+                currentCoursesNames
+              )
+              .failedString.includes(
+                courseToRemove.subject + "_" + courseToRemove.number
+              ) &&
+            (draggedOut || movedRight)
           ) {
             failedCoursesNoWarning.push(x);
           }
@@ -822,15 +827,18 @@ export const Container: FC<ContainerProps> = memo(function Container({
         }
         // If the course is failing, but not due to the latest course move, modify the warning message
         if (!failedCoursesNoWarning.find((z) => z === x)) {
-        message.length > 0
-          ? (message = message + "," + x.subject + "-" + x.number)
-          : (message = message + x.subject + "-" + x.number);
+          message.length > 0
+            ? (message = message + "," + x.subject + "-" + x.number)
+            : (message = message + x.subject + "-" + x.number);
         }
       });
 
       // Show a warning stating that the classes failed the prereqs
       if (
-        !message.includes(courseToRemove.subject + "" + courseToRemove.number) && message.length > 0
+        !message.includes(
+          courseToRemove.subject + "" + courseToRemove.number
+        ) &&
+        message.length > 0
       ) {
         setVisibility(true);
         setErrorMessage(
