@@ -287,7 +287,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
             }
           });
           //If there is a course add it to the temporary array for the semester
-          if (course) {
+          if (course && !CompletedCourses.find((x) => x === course.subject + "-" + course.number)) {
             tempArr.push(course);
           }
         });
