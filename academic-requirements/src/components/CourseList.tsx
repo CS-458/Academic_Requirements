@@ -5,10 +5,11 @@ import React from "react";
 import { ItemTypes } from "./Constants.js";
 //@ts-ignore
 import { Course } from "./DraggableCourse.tsx";
+import "../App.css";
 //Styling for the course list
 const style: CSSProperties = {
-  height: "100%",
-  width: "100%",
+  height: "30rem",
+  width: "90%",
   marginRight: ".5rem",
   marginBottom: ".5rem",
   color: "white",
@@ -17,6 +18,9 @@ const style: CSSProperties = {
   fontSize: "1rem",
   lineHeight: "normal",
   float: "left",
+  background: "#004990",
+  borderRadius: ".5rem",
+  overflow: "auto",
 };
 
 export interface CourseListProps {
@@ -41,7 +45,7 @@ export const CourseList: FC<CourseListProps> = memo(function CourseList({
 
   //changes the background color on hover over course list
   const isActive = isOver;
-  let backgroundColor = "#222";
+  let backgroundColor = "#004990";
   if (isActive) {
     backgroundColor = "darkgreen";
   }
