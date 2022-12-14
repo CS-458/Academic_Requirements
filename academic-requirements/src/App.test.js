@@ -126,6 +126,7 @@ describe("Test for App", () => {
         concentrationDisplayList={[]}
         takenCourses={[]}
         setTakenCourses={jest.fn()}
+        importData={jest.fn()}
       />
     );
 
@@ -154,6 +155,7 @@ describe("Test for App", () => {
         concentrationDisplayList={[]}
         takenCourses={[]}
         setTakenCourses={jest.fn()}
+        importData={jest.fn()}
       />
     );
     //Check that input page is displaying
@@ -185,6 +187,7 @@ describe("Test for App", () => {
         concentrationDisplayList={[]}
         takenCourses={[]}
         setTakenCourses={jest.fn()}
+        importData={jest.fn()}
       />
     );
     //Check that input page is displaying
@@ -228,6 +231,7 @@ describe("Test for App", () => {
         concentrationDisplayList={[]}
         takenCourses={[]}
         setTakenCourses={jest.fn()}
+        importData={jest.fn()}
       />
     );
     //Check that input page is displaying
@@ -270,6 +274,7 @@ describe("Test for App", () => {
         courseSubjectNumbers={[]}
         setUseFourYearPlan={setUseFourYearPlan}
         concentrationHasFourYearPlan={true}
+        importData={jest.fn()}
       />
     );
     const checkbox = getByTestId("fourYearPlanCheckbox");
@@ -300,6 +305,7 @@ describe("Test for App", () => {
         courseSubjectNumbers={[]}
         setUseFourYearPlan={jest.fn()}
         concentrationHasFourYearPlan={false}
+        importData={jest.fn()}
       />
     );
     try {
