@@ -91,14 +91,7 @@ export interface ContainerProps {
     creditCountTaken: number;
   }[];
   fourYearPlan: {};
-  semester1: string[];
-  semester2: string[];
-  semester3: string[];
-  semester4: string[];
-  semester5: string[];
-  semester6: string[];
-  semester7: string[];
-  semester8: string[];
+  importData: {};
 }
 
 
@@ -110,14 +103,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
   requirements, //List of requirements for major/concentration
   requirementsGen, //List of requirements for gen-eds
   fourYearPlan, // The four year plan if requested on Input page, or null
-  semester1,
-  semester2,
-  semester3,
-  semester4,
-  semester5,
-  semester6,
-  semester7,
-  semester8,
+  importData,
 }) {
 
   // useEffect(() => {
@@ -480,7 +466,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
     },
     [semesters]
   );
-  console.log(semesters);
+
   //handle a drop into the course list from a semester
   const handleReturnDrop = useCallback(
     (item: { name: string; dragSource: string }) => {

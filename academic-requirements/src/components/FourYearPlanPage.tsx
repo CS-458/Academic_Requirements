@@ -5,14 +5,7 @@ import ErrorPopup from "./ErrorPopup";
 import Example from "./example.ts";
 
 const FourYearPlanPage = (props: {
-  semester1: [];
-  semester2: [];
-  semester3: [];
-  semester4: [];
-  semester5: [];
-  semester6: [];
-  semester7: [];
-  semester8: [];
+  importData: {};
   showing: boolean;
   majorCourseList: {
     credits: number;
@@ -106,14 +99,7 @@ const FourYearPlanPage = (props: {
               requirements={props.requirements}
               requirementsGen={props.requirementsGen}
               fourYearPlan={props.fourYearPlan}
-              semester1={props.semester1}
-              semester2={props.semester2}
-              semester3={props.semester3}
-              semester4={props.semester4}
-              semester5={props.semester5}
-              semester6={props.semester6}
-              semester7={props.semester7}
-              semester8={props.semester8}
+              importData={props.importData}
             />
           </div>
         </div>

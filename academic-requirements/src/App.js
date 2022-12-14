@@ -182,6 +182,7 @@ function App() {
     fetch(`/courses/concentration?conid=${concentrationCode}`)
       .then((res) => res.json())
       .then((result) => {
+        console.log("result",result);
         // Sets concentrationCourseData to the result from the query
         setConcentrationCourseData(result);
       });
@@ -193,6 +194,7 @@ function App() {
       .then((res) => res.json())
       .then((result) => {
         // Sets concentrationCourseData to the result from the query
+        console.log("requirements",result);
         setRequirementsData(result);
       });
   }, [concentrationCode]);
@@ -202,6 +204,7 @@ function App() {
     fetch(`/requirements/gen?conid=${concentrationCode}`)
       .then((res) => res.json())
       .then((result) => {
+       
         // Sets concentrationCourseData to the result from the query
         setRequirementsGenData(result);
       });
@@ -210,50 +213,56 @@ function App() {
   // Gets the 'idMajor' relating to the 'name' of the selected major
   // Runs when major is updated
   useEffect(() => {
-    for (let i = 0; i < majorData.length; i++) {
-      if (majorDisplayData[i] == major) {
-        // Sets the majorCode to the 'idMajor' of the selected major
-        setMajorCode(majorData[i].idMajor);
-
-        // Whenever the major is updated, the existing four year plan and concentration
-        // are potentially invalid, so reset them.
-        setFourYearPlan(null);
-        setConcentration(null);
+      for (let i = 0; i < majorData.length; i++) {
+        if (majorDisplayData[i] == major) {
+          console.log("here");
+          // Sets the majorCode to the 'idMajor' of the selected major
+          setMajorCode(majorData[i].idMajor);
+          // Whenever the major is updated, the existing four year plan and concentration
+          // are potentially invalid, so reset them.
+          setFourYearPlan(null);
+          setConcentration(null);
+        }
       }
-    }
   }, [major]);
 
   // Gets the 'idConcentration' relating to the 'name' of the selected major
   // Runs when concentration is updated
   useEffect(() => {
-    for (let i = 0; i < concentrationData.length; i++) {
-      if (concentrationDisplayData[i] == concentration) {
-        // Sets the concentrationCode to the 'idConcentration' of the selected concentration
-        setConcentrationCode(concentrationData[i].idConcentration);
-        setFourYearPlan(JSON.parse(concentrationData[i].fourYearPlan));
+      for (let i = 0; i < concentrationData.length; i++) {
+        if (concentrationDisplayData[i] == concentration) {
+          // Sets the concentrationCode to the 'idConcentration' of the selected concentration
+          setConcentrationCode(concentrationData[i].idConcentration);
+          setFourYearPlan(JSON.parse(concentrationData[i].fourYearPlan));
+        }
       }
-    }
   }, [concentration]);
 
-  const [semester1, setSemester1] = useState([]);
-  const [semester2, setSemester2] = useState([]);
-  const [semester3, setSemester3] = useState([]);
-  const [semester4, setSemester4] = useState([]);
-  const [semester5, setSemester5] = useState([]);
-  const [semester6, setSemester6] = useState([]);
-  const [semester7, setSemester7] = useState([]);
-  const [semester8, setSemester8] = useState([]);
+  const [data, setData] = useState(null);
 
-  function importData(sem1, sem2, sem3, sem4, sem5, sem6, sem7, sem8) {
-    setSemester1(sem1)
-    setSemester2(sem2)
-    setSemester3(sem3)
-    setSemester4(sem4)
-    setSemester5(sem5)
-    setSemester6(sem6)
-    setSemester7(sem7)
-    setSemester8(sem8)
+  function importData(data) {
+    setData(data)
   }
+  useEffect(() => {
+    if(data){
+      fetch(`/majorID?mname=${data["Major"]}`)
+        .then((res) => res.json())
+        .then((result) => {
+          // Sets concentrationCourseData to the result from the query
+          console.log("major",result);
+          console.log(result[0].idMajor)
+          setMajorCode(result[0].idMajor);
+        });
+        fetch(`/concentrationID?cname=${data["Concentration"]}`)
+        .then((res) => res.json())
+        .then((result) => {
+          // Sets concentrationCourseData to the result from the query
+          console.log("concentration", result[0].idConcentration);
+          setConcentrationCode(result[0].idConcentration);
+        });
+    }
+  }, [data]);
+
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -288,14 +297,7 @@ function App() {
           requirements={requirements}
           requirementsGen={requirementsGen}
           fourYearPlan={useFourYearPlan ? fourYearPlan : null}
-          semester1={semester1}
-          semester2={semester2}
-          semester3={semester3}
-          semester4={semester4}
-          semester5={semester5}
-          semester6={semester6}
-          semester7={semester7}
-          semester8={semester8}
+          importData={data}
         />
         <ErrorPopup
           onClose={popupCloseHandler}
