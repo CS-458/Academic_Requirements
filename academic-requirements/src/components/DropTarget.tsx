@@ -91,7 +91,6 @@ export interface ContainerProps {
   importData: {};
 }
 
-
 export const Container: FC<ContainerProps> = memo(function Container({
   PassedCourseList, //The combination of major, concentration, and gen ed
   CompletedCourses, //List of completed courses in subject-number format
@@ -102,7 +101,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
   fourYearPlan, // The four year plan if requested on Input page, or null
   importData,
 }) {
-
   const [semesters, setSemesters] = useState<SemesterState[]>([
     {
       accepts: [ItemTypes.COURSE],
@@ -314,12 +312,13 @@ export const Container: FC<ContainerProps> = memo(function Container({
     if (importData) {
       selectedConcentration = importData["Concentration"];
       console.log("importData", importData);
-      console.log("ClassPlan",importData["ClassPlan"]);
-       //fill in the schedule
-       semesters.forEach((semester) => {
+      console.log("ClassPlan", importData["ClassPlan"]);
+      //fill in the schedule
+      semesters.forEach((semester) => {
         let tempArr: Course[] = [];
         //Get the semester data from the json
-        let courseStringArr = importData["ClassPlan"]["Semester" + semester.semesterNumber];
+        let courseStringArr =
+          importData["ClassPlan"]["Semester" + semester.semesterNumber];
         let credits = 0;
         //loop through each course in the list
         courseStringArr?.forEach((courseString) => {
@@ -357,7 +356,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
         var newWarningState = getWarning(credits);
         semester.Warning = newWarningState;
       });
-      
     }
   }, [importData]);
 
@@ -1245,11 +1243,12 @@ export const Container: FC<ContainerProps> = memo(function Container({
       }
       //recheck now that we have multiple category data
       if (importData) {
-         //fill in the schedule
-         semesters.forEach((semester) => {
+        //fill in the schedule
+        semesters.forEach((semester) => {
           let tempArr: Course[] = [];
           //Get the semester data from the json
-          let courseStringArr = importData["ClassPlan"]["Semester" + semester.semesterNumber];
+          let courseStringArr =
+            importData["ClassPlan"]["Semester" + semester.semesterNumber];
           let credits = 0;
           //loop through each course in the list
           courseStringArr?.forEach((courseString) => {
@@ -1287,7 +1286,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
           var newWarningState = getWarning(credits);
           semester.Warning = newWarningState;
         });
-        
       }
     }
   }, [coursesInMultipleCategories]);

@@ -47,24 +47,28 @@ const InputPage = (props: {
 
   //JSON that is imported
   const [importData, setImportData] = useState(null);
- 
-  useEffect(() => {
-    props.importData(importData);
-      console.log(importData);
-      if(importData){
-        setTimeout(() => {  
-        props.onClickGenerate(importData["Major"], importData["Concentration"], importData["Completed Courses"])
-      }, 1200);
-      }
-  },[importData])
 
   useEffect(() => {
-    if(importData){
+    props.importData(importData);
+    console.log(importData);
+    if (importData) {
+      setTimeout(() => {
+        props.onClickGenerate(
+          importData["Major"],
+          importData["Concentration"],
+          importData["Completed Courses"]
+        );
+      }, 1200);
+    }
+  }, [importData]);
+
+  useEffect(() => {
+    if (importData) {
       setMajor(importData["Major"]);
       setConcentration(importData["Concentration"]);
       setCoursesTaken(importData["Completed Courses"]);
     }
-  },[importData])
+  }, [importData]);
 
   const [coursesTaken, setCoursesTaken] = useState<Array<string>>(
     props.takenCourses

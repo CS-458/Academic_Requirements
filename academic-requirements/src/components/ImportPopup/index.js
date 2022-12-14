@@ -59,30 +59,38 @@ const ImportPopup = (props) => {
       fileReader.onload = function () {
         data = JSON.parse(fileReader.result);
         //Checks to make sure the JSON has the required properties
-        if(checkJSON(data)) {
+        if (checkJSON(data)) {
           //Returns JSON data
-          props.returnData(data)
-        }
-        else {
+          props.returnData(data);
+        } else {
           throwError("Not a valid file");
         }
-      }
+      };
       closeHandler();
     }
   };
 
   function checkJSON(thisData) {
     //Make sure the JSON has Major, Concentration, Completed, and ClassPlan
-    if(!thisData.hasOwnProperty("Major") || !thisData.hasOwnProperty("Concentration") || !thisData.hasOwnProperty("Completed Courses") ||
-      !thisData.hasOwnProperty("ClassPlan")) {
-        return false;
-    }
-    else {
+    if (
+      !thisData.hasOwnProperty("Major") ||
+      !thisData.hasOwnProperty("Concentration") ||
+      !thisData.hasOwnProperty("Completed Courses") ||
+      !thisData.hasOwnProperty("ClassPlan")
+    ) {
+      return false;
+    } else {
       //This is doing the same thing, but it is a level in ClassPlan, so we need to check ClassPlan first
-      if(!thisData["ClassPlan"].hasOwnProperty("Semester1") || !thisData["ClassPlan"].hasOwnProperty("Semester2") || !thisData["ClassPlan"].hasOwnProperty("Semester3") ||
-      !thisData["ClassPlan"].hasOwnProperty("Semester4") || !thisData["ClassPlan"].hasOwnProperty("Semester5") || !thisData["ClassPlan"].hasOwnProperty("Semester6") ||
-      !thisData["ClassPlan"].hasOwnProperty("Semester7") || !thisData["ClassPlan"].hasOwnProperty("Semester8"))
-      {
+      if (
+        !thisData["ClassPlan"].hasOwnProperty("Semester1") ||
+        !thisData["ClassPlan"].hasOwnProperty("Semester2") ||
+        !thisData["ClassPlan"].hasOwnProperty("Semester3") ||
+        !thisData["ClassPlan"].hasOwnProperty("Semester4") ||
+        !thisData["ClassPlan"].hasOwnProperty("Semester5") ||
+        !thisData["ClassPlan"].hasOwnProperty("Semester6") ||
+        !thisData["ClassPlan"].hasOwnProperty("Semester7") ||
+        !thisData["ClassPlan"].hasOwnProperty("Semester8")
+      ) {
         return false;
       }
     }
