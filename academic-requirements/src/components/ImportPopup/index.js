@@ -60,6 +60,9 @@ const ImportPopup = (props) => {
         if(checkJSON(data)) {
           props.returnData(data)
         }
+        else {
+          throwError("Not a valid file");
+        }
       }
       closeHandler();
     }
