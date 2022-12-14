@@ -311,8 +311,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
   useEffect(() => {
     if (importData) {
       selectedConcentration = importData["Concentration"];
-      console.log("importData", importData);
-      console.log("ClassPlan", importData["ClassPlan"]);
       //fill in the schedule
       semesters.forEach((semester) => {
         let tempArr: Course[] = [];
