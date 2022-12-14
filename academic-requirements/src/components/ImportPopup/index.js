@@ -6,6 +6,8 @@ import PropTypes from "prop-types";
 const ImportPopup = (props) => {
   const [show, setShow] = useState(false);
 
+  let data;
+
   const closeHandler = (e) => {
     setShow(false);
     props.onClose(false);
@@ -29,6 +31,9 @@ const ImportPopup = (props) => {
   const processUpload = () => {
     // HTML of the uploaded file
     var filenameElement = document.getElementById("fileName");
+
+    var file = document.getElementById("fileName").files[0];
+
     // if file has been selected
     if (filenameElement.files.length > 0) {
       //store file name in fileName
@@ -46,12 +51,51 @@ const ImportPopup = (props) => {
       closeHandler();
       throwError("Not a JSON File");
     }
-    // if it is file "uploads" (really justs closes the the pop up)
+    // if it is file "uploads"
     else {
-      console.log("upload");
+      let fileReader = new FileReader();
+      fileReader.readAsText(file);
+      //When the file reader reads the file
+      fileReader.onload = function () {
+        data = JSON.parse(fileReader.result);
+        //Checks to make sure the JSON has the required properties
+        if (checkJSON(data)) {
+          //Returns JSON data
+          props.returnData(data);
+        } else {
+          throwError("Not a valid file");
+        }
+      };
       closeHandler();
     }
   };
+
+  function checkJSON(thisData) {
+    //Make sure the JSON has Major, Concentration, Completed, and ClassPlan
+    if (
+      !thisData.hasOwnProperty("Major") ||
+      !thisData.hasOwnProperty("Concentration") ||
+      !thisData.hasOwnProperty("Completed Courses") ||
+      !thisData.hasOwnProperty("ClassPlan")
+    ) {
+      return false;
+    } else {
+      //This is doing the same thing, but it is a level in ClassPlan, so we need to check ClassPlan first
+      if (
+        !thisData["ClassPlan"].hasOwnProperty("Semester1") ||
+        !thisData["ClassPlan"].hasOwnProperty("Semester2") ||
+        !thisData["ClassPlan"].hasOwnProperty("Semester3") ||
+        !thisData["ClassPlan"].hasOwnProperty("Semester4") ||
+        !thisData["ClassPlan"].hasOwnProperty("Semester5") ||
+        !thisData["ClassPlan"].hasOwnProperty("Semester6") ||
+        !thisData["ClassPlan"].hasOwnProperty("Semester7") ||
+        !thisData["ClassPlan"].hasOwnProperty("Semester8")
+      ) {
+        return false;
+      }
+    }
+    return true;
+  }
 
   useEffect(() => {
     setShow(props.show);
@@ -93,6 +137,7 @@ ImportPopup.propTypes = {
   title: PropTypes.string.isRequired,
   show: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
+  returnData: PropTypes.func.isRequired,
 };
 
 export default ImportPopup;

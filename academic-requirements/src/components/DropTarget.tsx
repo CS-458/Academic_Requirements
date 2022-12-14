@@ -88,6 +88,7 @@ export interface ContainerProps {
     creditCountTaken: number;
   }[];
   fourYearPlan: {};
+  importData: {};
 }
 
 export const Container: FC<ContainerProps> = memo(function Container({
@@ -98,6 +99,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
   requirements, //List of requirements for major/concentration
   requirementsGen, //List of requirements for gen-eds
   fourYearPlan, // The four year plan if requested on Input page, or null
+  importData,
 }) {
   const [semesters, setSemesters] = useState<SemesterState[]>([
     {
@@ -306,6 +308,57 @@ export const Container: FC<ContainerProps> = memo(function Container({
     console.log(reqGenList);
   }, [fourYearPlan]);
 
+  useEffect(() => {
+    if (importData) {
+      selectedConcentration = importData["Concentration"];
+      console.log("importData", importData);
+      console.log("ClassPlan", importData["ClassPlan"]);
+      //fill in the schedule
+      semesters.forEach((semester) => {
+        let tempArr: Course[] = [];
+        //Get the semester data from the json
+        let courseStringArr =
+          importData["ClassPlan"]["Semester" + semester.semesterNumber];
+        let credits = 0;
+        //loop through each course in the list
+        courseStringArr?.forEach((courseString) => {
+          let subject = courseString.split("-")[0];
+          let number = courseString.split("-")[1];
+          var course;
+          //This variable prevents the course being added twice if it is in
+          //more than one category
+          let foundOnce = false;
+          //Find the course in the master list of courses
+          PassedCourseList.forEach((x) => {
+            if (
+              x.subject === subject &&
+              x.number === number &&
+              !CompletedCourses.find((y) => y === x.subject + "-" + x.number)
+            ) {
+              if (!foundOnce) {
+                //define the course and update it as needed
+                course = x;
+                course.dragSource = "Semester" + semester.semesterNumber;
+                checkRequirements(course, coursesInMultipleCategories);
+                foundOnce = true;
+              }
+            }
+          });
+          //If there is a course add it to the temporary array for the semester
+          if (course) {
+            tempArr.push(course);
+            credits += course.credits;
+          }
+        });
+        //update the necessary semester values
+        semester.courses = tempArr;
+        semester.SemesterCredits = credits;
+        var newWarningState = getWarning(credits);
+        semester.Warning = newWarningState;
+      });
+    }
+  }, [importData]);
+
   //SelectedCategory function. Hovland7Nov7
   function selectedCategory(_category) {
     setCategory(_category);
@@ -358,7 +411,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
         //find the course by name in the master list of all courses
         course = courses.find((item) => item.name === name);
       }
-
       //Could potentially add a duplicate if course is in schedule more than once
       setDroppedCourses(
         update(droppedCourses, course ? { $push: [course] } : { $push: [] })
@@ -1141,6 +1193,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
       });
       setReqList([...reqList]);
       setReqGenList([...reqGenList]);
+      //recheck now that we have multiple category data
       if (fourYearPlan) {
         //fill in the schedule
         semesters.forEach((semester) => {
@@ -1153,6 +1206,52 @@ export const Container: FC<ContainerProps> = memo(function Container({
           let credits = 0;
           //loop through each course in the list
           courseStringArr.forEach((courseString) => {
+            let subject = courseString.split("-")[0];
+            let number = courseString.split("-")[1];
+            var course;
+            //This variable prevents the course being added twice if it is in
+            //more than one category
+            let foundOnce = false;
+            //Find the course in the master list of courses
+            PassedCourseList.forEach((x) => {
+              if (
+                x.subject === subject &&
+                x.number === number &&
+                !CompletedCourses.find((y) => y === x.subject + "-" + x.number)
+              ) {
+                if (!foundOnce) {
+                  //define the course and update it as needed
+                  course = x;
+                  course.dragSource = "Semester" + semester.semesterNumber;
+                  checkRequirements(course, coursesInMultipleCategories);
+                  foundOnce = true;
+                }
+              }
+            });
+            //If there is a course add it to the temporary array for the semester
+            if (course) {
+              tempArr.push(course);
+              credits += course.credits;
+            }
+          });
+          //update the necessary semester values
+          semester.courses = tempArr;
+          semester.SemesterCredits = credits;
+          var newWarningState = getWarning(credits);
+          semester.Warning = newWarningState;
+        });
+      }
+      //recheck now that we have multiple category data
+      if (importData) {
+        //fill in the schedule
+        semesters.forEach((semester) => {
+          let tempArr: Course[] = [];
+          //Get the semester data from the json
+          let courseStringArr =
+            importData["ClassPlan"]["Semester" + semester.semesterNumber];
+          let credits = 0;
+          //loop through each course in the list
+          courseStringArr?.forEach((courseString) => {
             let subject = courseString.split("-")[0];
             let number = courseString.split("-")[1];
             var course;

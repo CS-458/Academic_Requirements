@@ -9,12 +9,6 @@ import ErrorPopup from "./ErrorPopup";
 
 import ImportPopup from "./ImportPopup";
 
-// Temporary imports until we get the real data (can be deleted later)
-// @ts-ignore
-import majors from "../mockDataLists/majors.tsx";
-// @ts-ignore
-import concentrations from "../mockDataLists/concentrations.tsx";
-
 // Input page is the page where the user inputs all of their information
 const InputPage = (props: {
   showing: boolean;
@@ -23,6 +17,7 @@ const InputPage = (props: {
   concentrationList: [];
   concentrationDisplayList: [];
   concentrationHasFourYearPlan: boolean;
+  importData(data): void;
 
   courseSubjectAcronyms: string[];
   setSelectedCourseSubject(subject: string): void;
@@ -50,10 +45,34 @@ const InputPage = (props: {
   const [concentrationOptions, setConcentrationOptions] =
     useState<Array<string>>(); // all available concentrations
 
+  //JSON that is imported
+  const [importData, setImportData] = useState(null);
+
+  useEffect(() => {
+    props.importData(importData);
+    console.log(importData);
+    if (importData) {
+      setTimeout(() => {
+        props.onClickGenerate(
+          importData["Major"],
+          importData["Concentration"],
+          importData["Completed Courses"]
+        );
+      }, 1200);
+    }
+  }, [importData]);
+
+  useEffect(() => {
+    if (importData) {
+      setMajor(importData["Major"]);
+      setConcentration(importData["Concentration"]);
+      setCoursesTaken(importData["Completed Courses"]);
+    }
+  }, [importData]);
+
   const [coursesTaken, setCoursesTaken] = useState<Array<string>>(
     props.takenCourses
   ); // courses taken list of strings
-  const tableRef = useRef<HTMLTableElement>(null);
 
   function handleUseFourYearPlan(e) {
     props.setUseFourYearPlan(e.target.checked);
@@ -67,7 +86,7 @@ const InputPage = (props: {
     setConcentration(""); // reset the concetration when major is updated
     setShowConcentration(true);
     props.onClickMajor(_major);
-    setConcentrationOptions(concentrations);
+    setConcentrationOptions(concentrationOptions);
   }
 
   //function selectedMinor(_minor) { setMinor(_minor); }
@@ -199,6 +218,7 @@ const InputPage = (props: {
             title="Upload"
             show={uploaderVisibility}
             onClose={popupCloseHandlerUp}
+            returnData={setImportData}
           />
           <div className="screen">
             <div className="input-grid">

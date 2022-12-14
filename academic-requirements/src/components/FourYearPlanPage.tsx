@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 //@ts-ignore
 import ErrorPopup from "./ErrorPopup";
 //@ts-ignore
 import Example from "./example.ts";
 
 const FourYearPlanPage = (props: {
+  importData: {};
   showing: boolean;
   majorCourseList: {
     credits: number;
@@ -98,6 +99,7 @@ const FourYearPlanPage = (props: {
               requirements={props.requirements}
               requirementsGen={props.requirementsGen}
               fourYearPlan={props.fourYearPlan}
+              importData={props.importData}
             />
           </div>
         </div>
