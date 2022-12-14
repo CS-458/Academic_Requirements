@@ -214,14 +214,13 @@ function App() {
   useEffect(() => {
     for (let i = 0; i < majorData.length; i++) {
       if (majorDisplayData[i] == major) {
-
         // Sets the majorCode to the 'idMajor' of the selected major
         setMajorCode(majorData[i].idMajor);
         // Whenever the major is updated, the existing four year plan and concentration
         // are potentially invalid, so reset them.
         setFourYearPlan(null);
-        if(!importData){
-        setConcentration(null);
+        if (!importData) {
+          setConcentration(null);
         }
       }
     }
@@ -244,7 +243,6 @@ function App() {
   function importData(data) {
     setData(data);
   }
-
   useEffect(() => {
     if (data) {
       fetch(`/majorID?mname=${data["Major"]}`)
