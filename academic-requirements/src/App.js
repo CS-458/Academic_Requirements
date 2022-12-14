@@ -214,13 +214,15 @@ function App() {
   useEffect(() => {
     for (let i = 0; i < majorData.length; i++) {
       if (majorDisplayData[i] == major) {
-        console.log("here");
+
         // Sets the majorCode to the 'idMajor' of the selected major
         setMajorCode(majorData[i].idMajor);
         // Whenever the major is updated, the existing four year plan and concentration
         // are potentially invalid, so reset them.
         setFourYearPlan(null);
+        if(!importData){
         setConcentration(null);
+        }
       }
     }
   }, [major]);
@@ -242,21 +244,19 @@ function App() {
   function importData(data) {
     setData(data);
   }
+
   useEffect(() => {
     if (data) {
       fetch(`/majorID?mname=${data["Major"]}`)
         .then((res) => res.json())
         .then((result) => {
           // Sets concentrationCourseData to the result from the query
-          console.log("major", result);
-          console.log(result[0].idMajor);
           setMajorCode(result[0].idMajor);
         });
       fetch(`/concentrationID?cname=${data["Concentration"]}`)
         .then((res) => res.json())
         .then((result) => {
           // Sets concentrationCourseData to the result from the query
-          console.log("concentration", result[0].idConcentration);
           setConcentrationCode(result[0].idConcentration);
         });
     }
