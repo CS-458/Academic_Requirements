@@ -274,28 +274,53 @@ export const Container: FC<ContainerProps> = memo(function Container({
       });
 
       //fill in the schedule
-      semesters.forEach((semester)=>{
-        let tempArr : Course[] =[];
-        let courseStringArr = fourYearPlan["ClassPlan"]["Semester"+semester.semesterNumber]["Courses"];
-        console.log(courseStringArr);
-        courseStringArr.forEach((courseString)=>{
+      semesters.forEach((semester) => {
+        let tempArr: Course[] = [];
+        //Get the semester data from the json
+        let courseStringArr =
+          fourYearPlan["ClassPlan"]["Semester" + semester.semesterNumber][
+            "Courses"
+          ];
+        let credits = 0;
+        //loop through each course in the list
+        courseStringArr.forEach((courseString) => {
           let subject = courseString.split("-")[0];
           let number = courseString.split("-")[1];
           var course;
-          PassedCourseList.forEach((x)=>{
-            if(x.subject === subject && x.number === number){
-              course = x;
-              checkRequirements(course, coursesInMultipleCategories);
+          //This variable prevents the course being added twice if it is in
+          //more than one category
+          let foundOnce = false;
+          //Find the course in the master list of courses
+          PassedCourseList.forEach((x) => {
+            if (
+              x.subject === subject &&
+              x.number === number &&
+              !CompletedCourses.find((y) => y === x.subject + "-" + x.number)
+            ) {
+              if (!foundOnce) {
+                //define the course and update it as needed
+                course = x;
+                course.dragSource = "Semester" + semester.semesterNumber;
+                checkRequirements(course, coursesInMultipleCategories);
+                foundOnce = true;
+              }
             }
-          })
-          if(course){
+          });
+          //If there is a course add it to the temporary array for the semester
+          if (course) {
             tempArr.push(course);
+            credits += course.credits;
           }
-        })
-        semester.courses = tempArr
-      })
-      
+        });
+        //update the necessary semester values
+        semester.courses = tempArr;
+        semester.SemesterCredits = credits;
+        var newWarningState = getWarning(credits);
+        semester.Warning = newWarningState;
+      });
     }
+    console.log(reqList);
+    console.log(reqGenList);
   }, [fourYearPlan]);
 
   useEffect(() => {
@@ -303,27 +328,48 @@ export const Container: FC<ContainerProps> = memo(function Container({
       selectedConcentration = importData["Concentration"];
       console.log("importData", importData);
       console.log("ClassPlan",importData["ClassPlan"]);
-      //fill in the schedule
-      semesters.forEach((semester)=>{
-        let tempArr : Course[] =[];
-        let courseStringArr = importData["ClassPlan"]["Semester"+semester.semesterNumber];
-        console.log(courseStringArr);
-        courseStringArr?.forEach((courseString)=>{
+       //fill in the schedule
+       semesters.forEach((semester) => {
+        let tempArr: Course[] = [];
+        //Get the semester data from the json
+        let courseStringArr = importData["ClassPlan"]["Semester" + semester.semesterNumber];
+        let credits = 0;
+        //loop through each course in the list
+        courseStringArr?.forEach((courseString) => {
           let subject = courseString.split("-")[0];
           let number = courseString.split("-")[1];
           var course;
-          PassedCourseList.forEach((x)=>{
-            if(x.subject === subject && x.number === number){
-              course = x;
-              checkRequirements(course, coursesInMultipleCategories);
+          //This variable prevents the course being added twice if it is in
+          //more than one category
+          let foundOnce = false;
+          //Find the course in the master list of courses
+          PassedCourseList.forEach((x) => {
+            if (
+              x.subject === subject &&
+              x.number === number &&
+              !CompletedCourses.find((y) => y === x.subject + "-" + x.number)
+            ) {
+              if (!foundOnce) {
+                //define the course and update it as needed
+                course = x;
+                course.dragSource = "Semester" + semester.semesterNumber;
+                checkRequirements(course, coursesInMultipleCategories);
+                foundOnce = true;
+              }
             }
-          })
-          if(course){
+          });
+          //If there is a course add it to the temporary array for the semester
+          if (course) {
             tempArr.push(course);
+            credits += course.credits;
           }
-        })
-        semester.courses = tempArr
-      })
+        });
+        //update the necessary semester values
+        semester.courses = tempArr;
+        semester.SemesterCredits = credits;
+        var newWarningState = getWarning(credits);
+        semester.Warning = newWarningState;
+      });
       
     }
   }, [importData]);
@@ -427,8 +473,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
           let pushCourse = semesters[index].courses;
           pushCourse.push(course);
           let newSemesterCount2 = getSemesterTotalCredits(index);
-          console.log(newSemesterCount2);
-          console.log(course);
           let newWarningState2 = getWarning(newSemesterCount2);
           setSemesters(
             update(semesters, {
@@ -531,7 +575,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
             },
           })
         );
-
         let noRemove = false;
         let count = 0;
         semesters.forEach((x) =>
@@ -737,15 +780,17 @@ export const Container: FC<ContainerProps> = memo(function Container({
           updateWarning.course,
           updateWarning.oldSemester,
           updateWarning.oldSemester === -1 ? false : satisfied.returnValue,
-          true
+          true,
+          false
         );
       }
       // Check all semesters past the new moved semester
       preReqCheckAllCoursesPastSemester(
         updateWarning.course,
         updateWarning.newSemester,
-        updateWarning.draggedOut,
-        false
+        true,
+        false,
+        updateWarning.draggedOut
       );
     }
     //Reset the warning
@@ -764,7 +809,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
     courseToRemove: Course,
     courseSemesterIndex: number,
     showMessage: boolean,
-    movedRight: boolean
+    movedRight: boolean,
+    draggedOut: boolean
   ): boolean {
     // prereqCheck will be used to check prerequisites
     const preReqCheck = new StringProcessing();
@@ -782,7 +828,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
       courseSemesterIndex === -1 ? 0 : courseSemesterIndex
     );
 
-    let failedCoursesList = new Array();
+    let failedCoursesList = new Array<Course>();
+    let failedCoursesNoWarning = new Array<Course>();
 
     semesters.forEach((currSemester, index) => {
       if (currSemester.semesterNumber - 1 >= courseSemesterIndex) {
@@ -797,6 +844,21 @@ export const Container: FC<ContainerProps> = memo(function Container({
             ).returnValue
           ) {
             failedCoursesList.push(x);
+          }
+          // If the course prereq fails, but not due to moving the course,
+          // add it to the failedCoursesNoWarning list
+          if (
+            !preReqCheck
+              .courseInListCheck(
+                x !== undefined ? x.preReq : "",
+                previousCourses,
+                currentCoursesNames
+              )
+              .failedString.includes(
+                courseToRemove.subject + "_" + courseToRemove.number
+              )
+          ) {
+            failedCoursesNoWarning.push(x);
           }
         });
 
@@ -867,21 +929,27 @@ export const Container: FC<ContainerProps> = memo(function Container({
     // If any courses have failed, notify the user of each course that failed
     if (showMessage && failedCoursesList.length > 0) {
       let message = "";
-      // Push each failed course to the warningCourses and modify the warning message
+      // Push each failed course to the warningCourses
       failedCoursesList.forEach((x) => {
         if (!warningPrerequisiteCourses.find((z) => z === x)) {
           let temp = warningPrerequisiteCourses;
           temp.push(x);
           setWarningPrerequisiteCourses(temp);
         }
-        message.length > 0
-          ? (message = message + "," + x.subject + "-" + x.number)
-          : (message = message + x.subject + "-" + x.number);
+        // If the course is failing, but not due to the latest course move, modify the warning message
+        if (!failedCoursesNoWarning.find((z) => z === x)) {
+          message.length > 0
+            ? (message = message + "," + x.subject + "-" + x.number)
+            : (message = message + x.subject + "-" + x.number);
+        }
       });
 
       // Show a warning stating that the classes failed the prereqs
       if (
-        !message.includes(courseToRemove.subject + "" + courseToRemove.number)
+        !message.includes(
+          courseToRemove.subject + "" + courseToRemove.number
+        ) &&
+        message.length > 0
       ) {
         setVisibility(true);
         setErrorMessage(
@@ -1139,6 +1207,54 @@ export const Container: FC<ContainerProps> = memo(function Container({
         checkRequirements(found, coursesInMultipleCategories);
       });
       setReqList([...reqList]);
+      setReqGenList([...reqGenList]);
+      if (fourYearPlan) {
+        //fill in the schedule
+        semesters.forEach((semester) => {
+          let tempArr: Course[] = [];
+          //Get the semester data from the json
+          let courseStringArr =
+            fourYearPlan["ClassPlan"]["Semester" + semester.semesterNumber][
+              "Courses"
+            ];
+          let credits = 0;
+          //loop through each course in the list
+          courseStringArr.forEach((courseString) => {
+            let subject = courseString.split("-")[0];
+            let number = courseString.split("-")[1];
+            var course;
+            //This variable prevents the course being added twice if it is in
+            //more than one category
+            let foundOnce = false;
+            //Find the course in the master list of courses
+            PassedCourseList.forEach((x) => {
+              if (
+                x.subject === subject &&
+                x.number === number &&
+                !CompletedCourses.find((y) => y === x.subject + "-" + x.number)
+              ) {
+                if (!foundOnce) {
+                  //define the course and update it as needed
+                  course = x;
+                  course.dragSource = "Semester" + semester.semesterNumber;
+                  checkRequirements(course, coursesInMultipleCategories);
+                  foundOnce = true;
+                }
+              }
+            });
+            //If there is a course add it to the temporary array for the semester
+            if (course) {
+              tempArr.push(course);
+              credits += course.credits;
+            }
+          });
+          //update the necessary semester values
+          semester.courses = tempArr;
+          semester.SemesterCredits = credits;
+          var newWarningState = getWarning(credits);
+          semester.Warning = newWarningState;
+        });
+      }
     }
   }, [coursesInMultipleCategories]);
 
@@ -1174,6 +1290,9 @@ export const Container: FC<ContainerProps> = memo(function Container({
           } else {
             reqList[i].percentage = temp3 * 100;
           }
+          if (reqGenList[i].percentage > 100) {
+            reqGenList[i].percentage = 100;
+          }
         }
       }
       //check if the course is filling any gen-eds
@@ -1182,8 +1301,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
         temp2 = 1000;
         temp3 = 1000;
         let courseString = course.subject + "-" + course.number;
-        let index = reqGenList[i].coursesTaken.indexOf(courseString);
-        if (index > -1) {
+        let index = reqGenList[i].coursesTaken?.indexOf(courseString);
+        if (index > -1 && index != undefined) {
           //remove the course from the requirment
           reqGenList[i].coursesTaken.splice(index, 1);
           if (reqGenList[i].creditCount != null) {
@@ -1315,6 +1434,12 @@ export const Container: FC<ContainerProps> = memo(function Container({
                 }
               }
             }
+            if (reqGenList[parentIndex].percentage > 100) {
+              reqGenList[parentIndex].percentage = 100;
+            }
+          }
+          if (reqGenList[i].percentage > 100) {
+            reqGenList[i].percentage = 100;
           }
         }
       }
@@ -1433,7 +1558,11 @@ export const Container: FC<ContainerProps> = memo(function Container({
           }
           //The requirement is a credit count, a course count, and a course list
           if (x.courseCount && x.courseReqs && x.creditCount) {
+            //update taken credits and course count
+            x.creditCountTaken = x.creditCountTaken + course.credits;
+            x.courseCountTaken = x.courseCountTaken + 1;
             let validCourse = false;
+            let temp1 = x.percentage;
             courseReqArr.forEach((item) => {
               let found = reqCheck.courseInListCheck(item, [courseString]);
               if (found.returnValue) {
@@ -1441,7 +1570,16 @@ export const Container: FC<ContainerProps> = memo(function Container({
               }
             });
             if (validCourse) {
-              x.percentage = x.percentage + (1 / courseReqArr.length) * 100;
+              temp1 = x.percentage + (1 / courseReqArr.length) * 100;
+            }
+            let temp2 = (x.creditCountTaken / x.creditCount) * 100;
+            let temp3 = (x.courseCountTaken / x.courseCount) * 100;
+            if (temp1 <= temp2 && temp1 <= temp3) {
+              x.percentage = temp1;
+            } else if (temp2 <= temp1 && temp2 <= temp3) {
+              x.percentage = temp2;
+            } else {
+              x.percentage = temp3;
             }
           }
           x.coursesTaken.push(courseString);
@@ -1552,8 +1690,8 @@ export const Container: FC<ContainerProps> = memo(function Container({
               x.percentage = (x.courseCountTaken / x.courseCount) * 100;
             }
             //The only requirement is a courses required list
+
             if (!x.courseCount && x.courseReqs && !x.creditCount) {
-              //TODO run some string processing
               let validCourse = false;
               courseReqArr.forEach((item) => {
                 let found = reqCheck.courseInListCheck(item, [courseString]);
@@ -1573,7 +1711,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
             //The requirement is a course count and a list of required courses
             if (x.courseCount && x.courseReqs && !x.creditCount) {
               let validCourse = false;
-              let temp1 = 0;
+              let temp1 = x.percentage;
               let temp2 = 0;
               courseReqArr.forEach((item) => {
                 let found = reqCheck.courseInListCheck(item, [courseString]);
@@ -1656,6 +1794,9 @@ export const Container: FC<ContainerProps> = memo(function Container({
               } else {
                 x.percentage = temp3;
               }
+            }
+            if (!x.courseCount && !x.courseReqs && !x.creditCount) {
+              x.percentage = 100;
             }
             x.coursesTaken.push(courseString);
             if (x.percentage > 100) {
@@ -1878,7 +2019,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
             <div onClick={() => extractCategories()}>
               <SearchableDropdown
                 options={categories}
-                label="Category"
+                label={null}
                 onSelectOption={selectedCategory} //If option chosen, selected Category activated.
                 showDropdown={true}
                 thin={true}
