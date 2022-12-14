@@ -3,7 +3,7 @@
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 75%;
+  width: 97%;
   /*display: -webkit-box;*/
   -webkit-line-clamp: 3;
   -webkit-box-orient: horizontal;
