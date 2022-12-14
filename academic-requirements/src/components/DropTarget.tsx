@@ -103,19 +103,6 @@ export const Container: FC<ContainerProps> = memo(function Container({
   importData,
 }) {
 
-  // useEffect(() => {
-  //   for(let i = 0; i < semester1.length; i++) {
-  //     console.log("THIS")
-  //     for(let j = 0; j < PassedCourseList.length; j++) {
-  //       if(semester1[i] == PassedCourseList[j].subject + "-" + PassedCourseList[j].number) {
-  //         let tempSemester = semesters;
-  //         tempSemester[0].courses.push(PassedCourseList[j]);
-  //         setSemesters(tempSemester);
-  //       }
-  //     }
-  //   }
-  // },[PassedCourseList]);
-
   const [semesters, setSemesters] = useState<SemesterState[]>([
     {
       accepts: [ItemTypes.COURSE],
@@ -1208,6 +1195,7 @@ export const Container: FC<ContainerProps> = memo(function Container({
       });
       setReqList([...reqList]);
       setReqGenList([...reqGenList]);
+      //recheck now that we have multiple category data
       if (fourYearPlan) {
         //fill in the schedule
         semesters.forEach((semester) => {
@@ -1254,6 +1242,52 @@ export const Container: FC<ContainerProps> = memo(function Container({
           var newWarningState = getWarning(credits);
           semester.Warning = newWarningState;
         });
+      }
+      //recheck now that we have multiple category data
+      if (importData) {
+         //fill in the schedule
+         semesters.forEach((semester) => {
+          let tempArr: Course[] = [];
+          //Get the semester data from the json
+          let courseStringArr = importData["ClassPlan"]["Semester" + semester.semesterNumber];
+          let credits = 0;
+          //loop through each course in the list
+          courseStringArr?.forEach((courseString) => {
+            let subject = courseString.split("-")[0];
+            let number = courseString.split("-")[1];
+            var course;
+            //This variable prevents the course being added twice if it is in
+            //more than one category
+            let foundOnce = false;
+            //Find the course in the master list of courses
+            PassedCourseList.forEach((x) => {
+              if (
+                x.subject === subject &&
+                x.number === number &&
+                !CompletedCourses.find((y) => y === x.subject + "-" + x.number)
+              ) {
+                if (!foundOnce) {
+                  //define the course and update it as needed
+                  course = x;
+                  course.dragSource = "Semester" + semester.semesterNumber;
+                  checkRequirements(course, coursesInMultipleCategories);
+                  foundOnce = true;
+                }
+              }
+            });
+            //If there is a course add it to the temporary array for the semester
+            if (course) {
+              tempArr.push(course);
+              credits += course.credits;
+            }
+          });
+          //update the necessary semester values
+          semester.courses = tempArr;
+          semester.SemesterCredits = credits;
+          var newWarningState = getWarning(credits);
+          semester.Warning = newWarningState;
+        });
+        
       }
     }
   }, [coursesInMultipleCategories]);
