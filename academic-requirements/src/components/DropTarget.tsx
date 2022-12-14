@@ -16,9 +16,6 @@ import SearchableDropdown from "./SearchableDropdown.tsx";
 import ErrorPopup from "./ErrorPopup";
 //@ts-ignore
 import { Requirement } from "./Requirement.tsx";
-import uploadedData from "./InputPage";
-import isUploaded from "./InputPage";
-
 
 //Defines the properties that each type should have
 interface SemesterState {
@@ -300,6 +297,36 @@ export const Container: FC<ContainerProps> = memo(function Container({
       
     }
   }, [fourYearPlan]);
+
+  useEffect(() => {
+    if (importData) {
+      selectedConcentration = importData["Concentration"];
+      console.log("importData", importData);
+      console.log("ClassPlan",importData["ClassPlan"]);
+      //fill in the schedule
+      semesters.forEach((semester)=>{
+        let tempArr : Course[] =[];
+        let courseStringArr = importData["ClassPlan"]["Semester"+semester.semesterNumber];
+        console.log(courseStringArr);
+        courseStringArr?.forEach((courseString)=>{
+          let subject = courseString.split("-")[0];
+          let number = courseString.split("-")[1];
+          var course;
+          PassedCourseList.forEach((x)=>{
+            if(x.subject === subject && x.number === number){
+              course = x;
+              checkRequirements(course, coursesInMultipleCategories);
+            }
+          })
+          if(course){
+            tempArr.push(course);
+          }
+        })
+        semester.courses = tempArr
+      })
+      
+    }
+  }, [importData]);
 
   //SelectedCategory function. Hovland7Nov7
   function selectedCategory(_category) {
