@@ -71,7 +71,7 @@ const ImportPopup = (props) => {
   function checkJSON(thisData) {
     console.log("checking json");
     if(!thisData.hasOwnProperty("Major") || !thisData.hasOwnProperty("Concentration") || !thisData.hasOwnProperty("Completed Courses") ||
-      "ClassPlan") {
+      !thisData.hasOwnProperty("ClassPlan")) {
         if(!thisData["ClassPlan"].hasOwnProperty("Semester1") || !thisData["ClassPlan"].hasOwnProperty("Semester2") || !thisData["ClassPlan"].hasOwnProperty("Semester3") ||
         !thisData["ClassPlan"].hasOwnProperty("Semester4") || !thisData["ClassPlan"].hasOwnProperty("Semester5") || !thisData["ClassPlan"].hasOwnProperty("Semester6") ||
         !thisData["ClassPlan"].hasOwnProperty("Semester7") || !thisData["ClassPlan"].hasOwnProperty("Semester8"))
