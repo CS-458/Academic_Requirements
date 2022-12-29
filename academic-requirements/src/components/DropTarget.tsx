@@ -2045,8 +2045,11 @@ export const Container: FC<ContainerProps> = memo(function Container({
           style={{ overflow: "hidden", clear: "both" }}
           className="class-dropdown"
         >
-          <div >
-            <div onClick={() => extractCategories()} className="course-box-header">
+          <div>
+            <div
+              onClick={() => extractCategories()}
+              className="course-box-header"
+            >
               <SearchableDropdown
                 options={categories}
                 label={null}
@@ -2067,13 +2070,17 @@ export const Container: FC<ContainerProps> = memo(function Container({
         </div>
         <div className="right-information-box">
           <div className="right-information-box-header">
-          {informationTypes.length == 1 && (
-            <p
-              style={{ textAlign: "center", padding: "0px", fontSize: "1.1em" }}
-            >
-              {displayedInformationType}
-            </p>
-          )}
+            {informationTypes.length == 1 && (
+              <p
+                style={{
+                  textAlign: "center",
+                  padding: "0px",
+                  fontSize: "1.1em",
+                }}
+              >
+                {displayedInformationType}
+              </p>
+            )}
             {informationTypes.length > 1 && (
               <SearchableDropdown
                 options={informationTypes}
