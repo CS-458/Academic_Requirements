@@ -80,7 +80,7 @@ const FourYearPlanPage = (props: {
       {props.showing && (
         <div className="screen">
           <div className="four-year-plan" data-testid="scheduleContent">
-            <h1>Academic Planner</h1>
+          <h1>Academic Planner</h1>
           </div>
           <ErrorPopup
             onClose={popupCloseHandler}
