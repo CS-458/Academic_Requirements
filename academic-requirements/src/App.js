@@ -182,7 +182,7 @@ function App() {
     fetch(`/courses/concentration?conid=${concentrationCode}`)
       .then((res) => res.json())
       .then((result) => {
-        console.log("result", result);
+        // console.log("result", result);
         // Sets concentrationCourseData to the result from the query
         setConcentrationCourseData(result);
       });
@@ -194,7 +194,7 @@ function App() {
       .then((res) => res.json())
       .then((result) => {
         // Sets concentrationCourseData to the result from the query
-        console.log("requirements", result);
+        //console.log("requirements", result);
         setRequirementsData(result);
       });
   }, [concentrationCode]);

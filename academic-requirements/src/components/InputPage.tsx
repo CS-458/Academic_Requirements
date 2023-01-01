@@ -50,7 +50,7 @@ const InputPage = (props: {
 
   useEffect(() => {
     props.importData(importData);
-    console.log(importData);
+    //console.log(importData);
     if (importData) {
       setTimeout(() => {
         props.onClickGenerate(
@@ -164,13 +164,6 @@ const InputPage = (props: {
         );
       }
     }
-    console.log("Adding course " + selectedAcronym + "-" + selectedNumber);
-    // setCoursesTaken(
-    //  coursesTaken.concat(selectedAcronym + "-" + selectedNumber)
-    // );
-    // props.setTakenCourses(
-    //   coursesTaken.concat(selectedAcronym + "-" + selectedNumber)
-    // );
   }
 
   // Removes the course from the coursesTaken list
