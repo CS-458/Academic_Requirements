@@ -3,7 +3,7 @@ import "./App.css";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import InputPage from "./components/InputPage.tsx";
-import FourYearPlanPage from "./components/FourYearPlanPage.tsx";
+import PassThrough from "./components/PassThrough.tsx";
 import ErrorPopup from "./components/ErrorPopup";
 function App() {
   /* Variables to store necessary info */
@@ -281,7 +281,7 @@ function App() {
           courseSubjectNumbers={courseSubjectNumbers}
           importData={importData}
         />
-        <FourYearPlanPage
+        <PassThrough
           data-testid="FourYearPage"
           showing={clickedGenerate}
           concentrationCourseList={concentrationCourseData}
