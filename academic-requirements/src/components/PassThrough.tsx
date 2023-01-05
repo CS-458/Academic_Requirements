@@ -64,17 +64,6 @@ const PassThrough = (props: {
   }[];
   fourYearPlan: {};
 }) => {
-  //Functions and variables for controlling an error popup
-  const [visibility, setVisibility] = useState(false);
-  const popupCloseHandler = () => {
-    setVisibility(false);
-  };
-  const [error, setError] = useState("");
-
-  function throwError(error) {
-    setVisibility(true);
-    setError(error);
-  }
 
   return (
     <div>
@@ -83,12 +72,6 @@ const PassThrough = (props: {
           <div className="four-year-plan" data-testid="scheduleContent">
             <h1>Academic Planner</h1>
           </div>
-          <ErrorPopup
-            onClose={popupCloseHandler}
-            show={visibility}
-            title="Error"
-            error={error}
-          />
           <div className="page">
             <FourYearPlanPage
               PassedCourseList={props.majorCourseList
