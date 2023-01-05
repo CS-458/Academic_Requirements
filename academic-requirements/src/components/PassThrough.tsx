@@ -1,10 +1,7 @@
-import React, { useEffect, useState } from "react";
-//@ts-ignore
-import ErrorPopup from "./ErrorPopup";
-//@ts-ignore
-//import Example from "./example.ts";
+import React from "react";
 //@ts-ignore
 import FourYearPlanPage from "./FourYearPlanPage.tsx";
+
 const PassThrough = (props: {
   importData: {};
   showing: boolean;
@@ -64,7 +61,6 @@ const PassThrough = (props: {
   }[];
   fourYearPlan: {};
 }) => {
-
   return (
     <div>
       {props.showing && (
