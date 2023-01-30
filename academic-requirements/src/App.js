@@ -3,7 +3,7 @@ import "./App.css";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import InputPage from "./components/InputPage.tsx";
-import FourYearPlanPage from "./components/FourYearPlanPage.tsx";
+import PassThrough from "./components/PassThrough.tsx";
 import ErrorPopup from "./components/ErrorPopup";
 function App() {
   /* Variables to store necessary info */
@@ -182,7 +182,7 @@ function App() {
     fetch(`/courses/concentration?conid=${concentrationCode}`)
       .then((res) => res.json())
       .then((result) => {
-        console.log("result", result);
+        // console.log("result", result);
         // Sets concentrationCourseData to the result from the query
         setConcentrationCourseData(result);
       });
@@ -194,7 +194,7 @@ function App() {
       .then((res) => res.json())
       .then((result) => {
         // Sets concentrationCourseData to the result from the query
-        console.log("requirements", result);
+        //console.log("requirements", result);
         setRequirementsData(result);
       });
   }, [concentrationCode]);
@@ -281,7 +281,7 @@ function App() {
           courseSubjectNumbers={courseSubjectNumbers}
           importData={importData}
         />
-        <FourYearPlanPage
+        <PassThrough
           data-testid="FourYearPage"
           showing={clickedGenerate}
           concentrationCourseList={concentrationCourseData}
